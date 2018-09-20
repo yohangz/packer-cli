@@ -38,22 +38,31 @@ import chalk from 'chalk';
 
 const args = process.argv.splice(2);
 
-const packageJson = JSON.parse(fs.readFileSync(process.cwd() + '/package.json', 'utf8'));
-const config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', 'utf8'));
-
-const cliPackageJson = require('../package.json');
-
 const configResource = require('../resources/dynamic/config.json');
 const packageResource = require('../resources/dynamic/package.json');
 
 // Build utils
 
-const baseConfig = {
-  input: `${config.source}/${config.entry}`,
-  output: {
-    name: packageJson.name,
-    sourcemap: true
-  }
+const readConfig = () => {
+  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'config.json'), 'utf8'));
+};
+
+const readPackageData = () => {
+  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+};
+
+const readCLIPackageData = () => {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+};
+
+const getBaseConfig = (config, packageJson) => {
+ return {
+   input: `${config.source}/${config.entry}`,
+   output: {
+     name: packageJson.name,
+     sourcemap: true
+   }
+ };
 };
 
 const makeDir = (name) => {
@@ -62,7 +71,7 @@ const makeDir = (name) => {
   }
 };
 
-const rollupStyleBuildPlugin = (watch) => {
+const rollupStyleBuildPlugin = (watch, config) => {
   return rollupSass({
     output: config.bundleStyle || function (styles, styleNodes) {
       const styleDist = `${watch? config.watch.script: config.out}/style`;
@@ -100,24 +109,28 @@ const rollupStyleBuildPlugin = (watch) => {
   })
 };
 
-const rollupReplacePlugin = rollupReplace({
-  patterns: config.pathReplacePatterns
-});
+const rollupReplacePlugin = (config) => {
+  return rollupReplace({
+    patterns: config.pathReplacePatterns
+  });
+};
 
-const resolvePlugins = [
-  rollupIgnore(config.ignore),
-  rollupResolve({
-    jsnext: true,
-    main: true,
-    browser: true,
-    preferBuiltins: false
-  }),
-  rollupCommonjs({
-    include: 'node_modules/**'
-  })
-];
+const resolvePlugins = (config) => {
+  return [
+    rollupIgnore(config.ignore),
+    rollupResolve({
+      jsnext: true,
+      main: true,
+      browser: true,
+      preferBuiltins: false
+    }),
+    rollupCommonjs({
+      include: 'node_modules/**'
+    })
+  ];
+};
 
-const buildPlugin = (esVersion, generateDefinition, watch) => {
+const buildPlugin = (esVersion, generateDefinition, watch, config) => {
   if (config.tsProject) {
     let buildConf = {
       tsconfig: `tsconfig.${esVersion}.json`,
@@ -155,18 +168,20 @@ const buildPlugin = (esVersion, generateDefinition, watch) => {
   });
 };
 
-const lintPlugins = [
-  rollupTsLint({
-    include: [`${config.source}/**/*.ts`]
-  }),
-  rollupSassLint({
-    include: 'src/**/*.scss',
-  })
-];
-
-const preBundlePlugins = () => {
+const lintPlugins = (config) => {
   return [
-    rollupReplacePlugin,
+    rollupTsLint({
+      include: [`${config.source}/**/*.ts`]
+    }),
+    rollupSassLint({
+      include: 'src/**/*.scss',
+    })
+  ];
+};
+
+const preBundlePlugins = (config) => {
+  return [
+    rollupReplacePlugin(config),
     rollupHandlebars(),
     rollupImage({
       extensions: /\.(png|jpg|jpeg|gif|svg)$/,
@@ -225,6 +240,9 @@ gulp.task('watch:clean', () => {
 // Base build tasks
 
 gulp.task('build:copy:essentials', () => {
+  const packageJson = readPackageData();
+  const config = readConfig();
+
   let fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
 
   let targetPackage = {
@@ -257,6 +275,10 @@ gulp.task('build:copy:essentials', () => {
 });
 
 gulp.task('build:bundle', async () => {
+  const config = readConfig();
+  const packageJson = readPackageData();
+  const baseConfig = getBaseConfig(config, packageJson);
+
   // flat bundle.
   const flatConfig = merge({}, baseConfig, {
     output: {
@@ -267,11 +289,11 @@ gulp.task('build:bundle', async () => {
     },
     external: Object.keys(config.flatGlobals),
     plugins: [
-      ...lintPlugins,
-      rollupStyleBuildPlugin(false),
-      ...preBundlePlugins(),
-      ...resolvePlugins,
-      buildPlugin('es5', true, false),
+      ...lintPlugins(config),
+      rollupStyleBuildPlugin(false, config),
+      ...preBundlePlugins(config),
+      ...resolvePlugins(config),
+      buildPlugin('es5', true, false, config),
       ...postBundlePlugins()
     ]
   });
@@ -287,9 +309,9 @@ gulp.task('build:bundle', async () => {
     external: Object.keys(config.flatGlobals),
     plugins: [
       ignoreImportPlugin,
-      ...preBundlePlugins(),
-      ...resolvePlugins,
-      buildPlugin('es5', false, false),
+      ...preBundlePlugins(config),
+      ...resolvePlugins(config),
+      buildPlugin('es5', false, false, config),
       uglify(),
       ...postBundlePlugins()
     ]
@@ -303,8 +325,8 @@ gulp.task('build:bundle', async () => {
     },
     plugins: [
       ignoreImportPlugin,
-      ...preBundlePlugins(),
-      buildPlugin('es5', false, false),
+      ...preBundlePlugins(config),
+      buildPlugin('es5', false, false, config),
       ...postBundlePlugins()
     ],
     external: config.esmExternals
@@ -319,8 +341,8 @@ gulp.task('build:bundle', async () => {
 
     plugins: [
       ignoreImportPlugin,
-      ...preBundlePlugins(),
-      buildPlugin('es2015', false, false),
+      ...preBundlePlugins(config),
+      buildPlugin('es2015', false, false, config),
       ...postBundlePlugins()
     ],
     external: config.esmExternals
@@ -341,6 +363,10 @@ gulp.task('build', gulp.series('build:clean', 'build:copy:essentials', 'build:bu
 // Watch tasks
 
 gulp.task('build:watch', async () => {
+  const config = readConfig();
+  const packageJson = readPackageData();
+  const baseConfig = getBaseConfig(config, packageJson);
+
   makeDir(config.watch.script);
 
   const watchConfig = merge({}, baseConfig, {
@@ -352,11 +378,11 @@ gulp.task('build:watch', async () => {
     },
     external: Object.keys(config.flatGlobals),
     plugins: [
-      ...lintPlugins,
-      rollupStyleBuildPlugin(true),
-      ...preBundlePlugins(),
-      ...resolvePlugins,
-      buildPlugin('es5', false, true),
+      ...lintPlugins(config),
+      rollupStyleBuildPlugin(true, config),
+      ...preBundlePlugins(config),
+      ...resolvePlugins(config),
+      buildPlugin('es5', false, true, config),
       rollupServe({
         contentBase: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`],
         port: config.watch.port,
@@ -413,6 +439,8 @@ gulp.task('test', async (done) => {
 });
 
 gulp.task('generate', (done) => {
+  const cliPackageData = readCLIPackageData();
+
   const questions = [
     {
       type: 'input',
@@ -485,13 +513,14 @@ gulp.task('generate', (done) => {
     let packageJson = packageResource;
     packageJson.name = answers.name;
     packageJson.description = answers.description;
+    packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
 
     if (answers.username && answers.email) {
       packageJson.author = `${answers.username} <${answers.email}>`;
       packageJson.repository = `https://github.com/${answers.username}/${answers.name}.git`;
     }
 
-    gulp.src([ path.join(process.cwd(), 'node_modules', cliPackageJson.name, 'resources/static/{.**,**}') ])
+    gulp.src([ path.join(__dirname, '../resources/static/{.**,**}') ])
       .pipe(gulpFile('config.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
       .pipe(gulp.dest(`${process.cwd()}/${answers.name}`))
