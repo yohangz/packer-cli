@@ -39,7 +39,7 @@ You can simply run the following command in preferred directory to generate a ne
 
 or
 
-```npm install packer-cli -g && packer-cli new my-library```
+```npm install packer-cli -g && packer new my-library```
  
 Once project is generated and dependencies are installed, you can use the following CLI commands:
 
