@@ -1,6 +1,6 @@
 {
   "name": "packer-cli",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Full-fledged CLI tool to generate library node module modules compliant with Browser and NodeJS with vanilla JS and Typescript source support.",
   "bin": {
     "packer": "bin/packer-cli.js"
@@ -16,7 +16,7 @@
     "build:cli": "rollup src/packer-cli.mjs -o dist/lib/packer-cli.js -f cjs",
     "build:karma-plugin": "rollup src/karma-packer-plugin.mjs -o dist/lib/karma-packer-plugin.js -f cjs",
     "build:copy:static": "cp -R LICENSE README.md bin resources dist/",
-    "build:copy:package": "cp package-dist.json dist/package.json",
+    "build:copy:package": "node package-build.js",
     "build:clean": "rm -rf dist",
     "build": "npm run build:clean && npm run build:cli && npm run build:karma-plugin && npm run build:copy:package && npm run build:copy:static",
     "version": "npm run build",
