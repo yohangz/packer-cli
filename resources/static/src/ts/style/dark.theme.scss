@@ -1,0 +1,17 @@
+$background-colour: #000 !default;
+$font-colour: #fff !default;
+
+body {
+  background: $background-colour;
+}
+
+.container {
+  color: $font-colour;
+  vertical-align: center;
+}
+
+.greeting {
+  ::before {
+    content: url('../assets/thumb-up.svg');
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "namespace": "",
+  "entry": "index.ts",
+  "source": "src/ts",
+  "out": "dist",
+  "tsProject": true,
+  "watch": {
+    "script": ".tmp",
+    "demo": "demo/watch",
+    "port": 4000,
+    "open": true
+  },
+  "copy": [
+    "README.md",
+    "LICENSE"
+  ],
+  "flatGlobals": {},
+  "esmExternals": [
+    "handlebars/runtime"
+  ],
+  "pathReplacePatterns": [
+    {
+      "test": "./conf/conf1",
+      "replace": "./conf/conf2"
+    }
+  ],
+  "ignore": [],
+  "imageInlineLimit": 1000000,
+  "assetPaths": [
+    "src/assets"
+  ],
+  "bundleStyle": false,
+  "bundleFormat": "umd"
+}
