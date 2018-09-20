@@ -39,6 +39,7 @@
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-file": "^0.4.0",
+    "handlebars": "^4.0.12",
     "inquirer": "^6.2.0",
     "jasmine-core": "^3.1.0",
     "karma": "^2.0.4",
