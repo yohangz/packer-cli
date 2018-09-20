@@ -222,6 +222,7 @@ const bundleBuild = async (config, type) => {
 // Clean tasks
 
 gulp.task('build:clean', () => {
+  const config = readConfig();
   return gulp.src([`${process.cwd()}/.rpt2_cache`, `${process.cwd()}/${config.out}`], {
       read: false,
       allowEmpty: true
@@ -230,6 +231,7 @@ gulp.task('build:clean', () => {
 });
 
 gulp.task('watch:clean', () => {
+  const config = readConfig();
   return gulp.src([`${process.cwd()}/.rpt2_cache`, `${process.cwd()}/${config.watch.script}`], {
     read: false,
     allowEmpty: true
@@ -271,7 +273,7 @@ gulp.task('build:copy:essentials', () => {
       console.log(chalk.red(`${type} bundle build Failure`));
       console.error(error);
     }))
-    .pipe(gulp.dest(`${process.cwd()}/${config.out}`))
+    .pipe(gulp.dest(`${process.cwd()}/${config.out}`));
 });
 
 gulp.task('build:bundle', async () => {
