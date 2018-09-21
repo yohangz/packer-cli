@@ -10,7 +10,8 @@
   },
   "author": "",
   "repository": "",
-  "license": "MIT",
+  "license": "",
+  "homepage": "",
   "dependencies": {
     "handlebars": "^4.0.11",
     "tslib": "^1.9.3"
