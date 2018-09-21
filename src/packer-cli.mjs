@@ -25,6 +25,8 @@ import { Server } from 'karma';
 
 import inquirer from 'inquirer';
 import npmValidate from 'validate-npm-package-name';
+import isUrl from 'validator/lib/isURL';
+import isEmail from 'validator/lib/isEmail';
 
 import postCss from 'postcss';
 import postCssAutoPrefix from 'autoprefixer';
@@ -53,6 +55,52 @@ const readPackageData = () => {
 
 const readCLIPackageData = () => {
   return JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+};
+
+const parseLicense = (license) => {
+  let licenseFileName = '';
+
+  switch (license) {
+    case 'MIT License':
+      licenseFileName = 'MIT';
+      break;
+    case 'Apache 2 License':
+      licenseFileName = 'Apache-2.0';
+      break;
+    case 'Mozilla Public License 2.0':
+      licenseFileName = 'MPL-2.0';
+      break;
+    case 'BSD 2-Clause (FreeBSD) License':
+      licenseFileName = 'BSD-2-Clause-FreeBSD';
+      break;
+    case 'BSD 3-Clause (NewBSD) License':
+      licenseFileName = 'BSD-3-Clause';
+      break;
+    case 'Internet Systems Consortium (ISC) License':
+      licenseFileName = 'ISC';
+      break;
+    case 'GNU LGPL 3.0 License':
+      licenseFileName = 'LGPL-3.0';
+      break;
+    case 'GNU GPL 3.0 License':
+      licenseFileName = 'GPL-3.0';
+      break;
+    case 'Unlicense':
+      licenseFileName = 'unlicense';
+      break;
+    case 'No License':
+      licenseFileName = 'UNLICENSED';
+      break;
+  }
+
+  return licenseFileName;
+};
+
+const writeLicenseFile = (packageName, license, year, author) => {
+  let licenseContent = fs.readFileSync(path.join(__dirname, '../resources/license', `${license}.tmpl`), 'utf8');
+  licenseContent = licenseContent.replace('<%- year %>', year);
+  licenseContent = licenseContent.replace('<%- author %>', author);
+  fs.writeFileSync(path.join(process.cwd(), packageName, 'LICENSE'), licenseContent);
 };
 
 const getBaseConfig = (config, packageJson) => {
@@ -456,17 +504,28 @@ gulp.task('generate', (done) => {
     {
       type: 'input',
       name: 'description',
-      message: 'Give us a small description about the library?'
+      message: 'Give us a small description about the library (optional)?'
     },
     {
       type: 'input',
-      name: 'username',
-      message: 'What is your git account username?'
+      name: 'author',
+      message: 'Author\'s name (optional)?'
     },
     {
       type: 'input',
       name: 'email',
-      message: 'What is your git account email?'
+      message: 'Author\'s email address (optional)?',
+      validate: (value) => {
+        return !value || isEmail(value) ? true: 'Value must be a valid email address';
+      }
+    },
+    {
+      type: 'input',
+      name: 'website',
+      message: 'Library homepage link (optional)?',
+      validate: (value) => {
+        return !value || isUrl(value) ? true: 'Value must be a valid URL';
+      }
     },
     {
       type: 'confirm',
@@ -482,6 +541,7 @@ gulp.task('generate', (done) => {
       type: 'list',
       message: 'What\'s the build bundle format you want to use?',
       name: 'bundleFormat',
+      default: 0,
       choices: [
         'umd',
         'amd',
@@ -489,7 +549,10 @@ gulp.task('generate', (done) => {
         'system',
         'esm',
         'cjs'
-      ]
+      ],
+      validate: (value) => {
+        return !!value || 'Bundle format is required';
+      }
     },
     {
       type: 'input',
@@ -502,31 +565,61 @@ gulp.task('generate', (done) => {
         const matches = value.match(/^[a-zA-Z\.]+$/);
         return !!matches || 'Namespace should be an object path, i.e: \'ys.nml.lib\'';
       }
+    },
+    {
+      type: 'input',
+      name: 'year',
+      message: 'What is the library copyright year (optional)?',
+      default: (new Date()).getFullYear(),
+    },
+    {
+      type: 'list',
+      message: 'What\'s the license you want to use?',
+      name: 'license',
+      default: 0,
+      choices: [
+        'MIT License',
+        'Apache 2 License',
+        'Mozilla Public License 2.0',
+        'BSD 2-Clause (FreeBSD) License',
+        'BSD 3-Clause (NewBSD) License',
+        'Internet Systems Consortium (ISC) License',
+        'GNU LGPL 3.0 License',
+        'GNU GPL 3.0 License',
+        'Unlicense',
+        'No License'
+      ],
+      validate: (value) => {
+        return !!value || 'License is required';
+      }
     }
   ];
 
-  inquirer.prompt(questions).then(answers => {
+  inquirer.prompt(questions).then(options => {
     let packageConfig = configResource;
-    packageConfig.bundleStyle = answers.bundleStyles;
-    packageConfig.bundleFormat = answers.bundleFormat;
-    packageConfig.tsProject = answers.tsProject;
-    packageConfig.namespace = answers.namespace;
+    packageConfig.bundleStyle = options.bundleStyles;
+    packageConfig.bundleFormat = options.bundleFormat;
+    packageConfig.tsProject = options.tsProject;
+    packageConfig.namespace = options.namespace;
 
     let packageJson = packageResource;
-    packageJson.name = answers.name;
-    packageJson.description = answers.description;
+    packageJson.name = options.name;
+    packageJson.description = options.description;
     packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
+    packageJson.homepage = options.homepage;
+    packageJson.license = parseLicense(options.license);
 
-    if (answers.username && answers.email) {
-      packageJson.author = `${answers.username} <${answers.email}>`;
-      packageJson.repository = `https://github.com/${answers.username}/${answers.name}.git`;
+    if (options.author && options.email) {
+      packageJson.author = `${options.author} <${options.email}>`;
+      packageJson.repository = `https://github.com/${options.author}/${options.name}.git`;
     }
 
     gulp.src([ path.join(__dirname, '../resources/static/{.**,**}') ])
       .pipe(gulpFile('config.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
-      .pipe(gulp.dest(`${process.cwd()}/${answers.name}`))
+      .pipe(gulp.dest(`${process.cwd()}/${options.name}`))
       .on('end', () => {
+        writeLicenseFile(options.name, packageJson.license, options.year, options.author);
         done()
       });
   });

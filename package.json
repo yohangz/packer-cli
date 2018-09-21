@@ -74,7 +74,8 @@
     "rollup-plugin-uglify": "^4.0.0",
     "sass-lint": "^1.12.1",
     "typescript": "^2.9.2",
-    "validate-npm-package-name": "^3.0.0"
+    "validate-npm-package-name": "^3.0.0",
+    "validator": "^10.7.1"
   },
   "private": false
 }
