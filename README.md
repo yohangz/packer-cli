@@ -41,7 +41,7 @@ or
 
 ```npm install packer-cli -g && packer new my-library```
 
-then CLI will query questions associated to custom project generation,
+Then CLI will query questions associated to custom project generation,
 
 ```sh
 What would you name your library? my-project
@@ -71,6 +71,12 @@ npm run test
 
 # Run unit test suite on continues integration environment mode
 npm run test:ci
+
+# Bump package version and push updated package config
+npm version major|monor|patch
+
+# Build project and publish to NPM
+npm run release
 ```
 
 # Generated Project Structure

@@ -33,16 +33,6 @@
 
 # Usage
 
-To use this starter you can simply clone or fork it to your preferred location and install the dependencies
-
-```npm install```
-
-or
-
-```yarn install```
- 
-Once the repository has been cloned locally, you can use the following CLI commands:
-
 ```sh
 # Run project on watch mode
 npm run watch
@@ -55,6 +45,12 @@ npm run test
 
 # Run unit test suite on continues integration environment mode
 npm run test:ci
+
+# Bump package version and push updated package config
+npm version major|monor|patch
+
+# Build project and publish to NPM
+npm run release
 ```
 
 # Build Configuration
