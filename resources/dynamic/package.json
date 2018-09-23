@@ -6,7 +6,11 @@
     "build": "packer build",
     "watch": "packer watch",
     "test": "packer test",
-    "test:ci": "CI=true packer test"
+    "test:ci": "CI=true packer test",
+    "preversion": "npm run build",
+    "postversion": "git push && git push --tags",
+    "prerelease": "npm run build",
+    "release": "npm publish dist"
   },
   "author": "",
   "repository": "",
