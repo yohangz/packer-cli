@@ -419,6 +419,20 @@ gulp.task('build:watch', async () => {
 
   makeDir(config.watch.script);
 
+  let rollupServePlugins = [];
+  if (config.watch.serve) {
+    rollupServePlugins = [
+      rollupServe({
+        contentBase: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`],
+        port: config.watch.port,
+        open: config.watch.open,
+      }),
+      rollupLivereload({
+        watch: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`]
+      })
+    ]
+  }
+
   const watchConfig = merge({}, baseConfig, {
     output: {
       name: config.namespace,
@@ -433,14 +447,7 @@ gulp.task('build:watch', async () => {
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
       buildPlugin('es5', false, true, config),
-      rollupServe({
-        contentBase: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`],
-        port: config.watch.port,
-        open: config.watch.open,
-      }),
-      rollupLivereload({
-        watch: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`]
-      }),
+      ...rollupServePlugins,
       rollupProgress()
     ],
     watch: {
