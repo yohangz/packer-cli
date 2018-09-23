@@ -104,6 +104,7 @@ Build configuration can be changed depending on your preference.
     "script": ".tmp",
     "demo": "demo/watch",
     "port": 4000,
+    "serve": true,
     "open": true
   },
   "copy": [
@@ -141,6 +142,7 @@ Build configuration can be changed depending on your preference.
 | watch.script                	| string           	| watch build temp directory                                                       	|
 | watch.demo                  	| string           	| watch demo page dir                                                              	|
 | watch.port                  	| number           	| watch server port                                                                	|
+| watch.serve                  	| boolean          	| Serve project via browser on watch mode
 | watch.open                  	| boolean          	| open browser automatically                                                       	|
 | copy                        	| array of strings 	| List of files paths to copy on build.                                            	|
 | flatGlobals                 	| object           	| flat bundle build global dependencies.  Listed will not be treated as externals. 	|
