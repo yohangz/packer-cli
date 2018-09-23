@@ -40,6 +40,22 @@ You can simply run the following command in preferred directory to generate a ne
 or
 
 ```npm install packer-cli -g && packer new my-library```
+
+then CLI will query questions associated to custom project generation,
+
+```sh
+What would you name your library? my-project
+Give us a small description about the library (optional)? Client complient node module
+Author's name (optional)? Yohan Gomez
+Author's email address (optional)? yohan.gz@gmail.com
+Library homepage link (optional)? http://www.my-project.com
+Do you want to use typescript? Yes
+Do you want to inline bundle CSS styles in script? Yes
+What's the build bundle format you want to use? umd
+What's the library namespace you want to use? my.lib
+What is the library copyright year (optional)? 2018
+What's the license you want to use? MIT License
+```
  
 Once project is generated and dependencies are installed, you can use the following CLI commands:
 
