@@ -1,5 +1,5 @@
 # Packer CLI
-> Full-fledged CLI tool to package library node module modules compliant with Browser and NodeJS with vanilla JS and Typescript source support.
+> Inspired by Angular CLI >>> Full-fledged CLI tool to package library node module modules compliant with Browser and NodeJS with vanilla JS and Typescript source support.
 
 [![Build Status](https://travis-ci.org/yohangz/packer-cli.svg?branch=master)](https://travis-ci.org/yohangz/packer-cli)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/yohangz/packer-cli/blob/master/LICENSE)
