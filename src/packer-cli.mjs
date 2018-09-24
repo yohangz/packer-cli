@@ -36,12 +36,15 @@ import typescript from 'typescript';
 import merge from 'lodash/merge';
 import path from 'path';
 import fs from 'fs';
+import { spawn } from 'child_process';
 import chalk from 'chalk';
 
 const args = process.argv.splice(2);
 
 const configResource = require('../resources/dynamic/config.json');
 const packageResource = require('../resources/dynamic/package.json');
+
+const isWindows = process.platform === 'win32';
 
 // Build utils
 
@@ -55,6 +58,20 @@ const readPackageData = () => {
 
 const readCLIPackageData = () => {
   return JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+};
+
+const installNodeModules = () => {
+  const command = isWindows? 'npm.cmd' : 'npm';
+  const options = {
+    stdio: 'inherit' //feed all child process logging into parent process
+  };
+
+  return new Promise((resolve) => {
+    const childProcess = spawn(command, [ 'install' ], options);
+    childProcess.on('close', () => {
+      resolve.resolve();
+    });
+  });
 };
 
 const parseLicense = (license) => {
@@ -627,7 +644,9 @@ gulp.task('generate', (done) => {
       .pipe(gulp.dest(`${process.cwd()}/${options.name}`))
       .on('end', () => {
         writeLicenseFile(options.name, packageJson.license, options.year, options.author);
-        done()
+        installNodeModules().then(() => {
+          done();
+        })
       });
   });
 });
