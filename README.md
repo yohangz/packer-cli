@@ -208,7 +208,7 @@ Build configuration can be changed depending on your preference.
 | watch.open                  	| boolean          	| open browser automatically                                                       	|
 | copy                        	| array of strings 	| List of files paths to copy on build.                                            	|
 | flatGlobals                 	| object           	| flat bundle build global dependencies.  Listed will not be treated as externals. 	|
-| esmExternals                	|                  	| ESM build external dependencies                                                  	|
+| esmExternals                	| array of string   | ESM build external dependencies                                                  	|
 | pathReplacePatterns         	| array of objects 	| Import path replace pattern collection                                           	|
 | pathReplacePatterns.test    	| string           	| Path to find                                                                     	|
 | pathReplacePatterns.replace 	| string           	| Path to replace                                                                  	|
