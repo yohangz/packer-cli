@@ -19,7 +19,8 @@
     "build:copy:package": "node package-build.js",
     "build:clean": "rm -rf dist",
     "build": "npm run build:clean && npm run build:cli && npm run build:karma-plugin && npm run build:copy:package && npm run build:copy:static",
-    "version": "npm run build",
+    "preversion": "npm run build",
+    "postversion": "git push && git push --tags",
     "prerelease": "npm run build",
     "release": "npm publish dist"
   },
