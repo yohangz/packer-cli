@@ -60,14 +60,14 @@ const readCLIPackageData = () => {
   return JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
 };
 
-const installNodeModules = () => {
-  const command = isWindows? 'npm.cmd' : 'npm';
+const installNodeModules = (command, args) => {
+  const cmd = isWindows? `${command}.cmd` : command;
   const options = {
     stdio: 'inherit' //feed all child process logging into parent process
   };
 
   return new Promise((resolve) => {
-    const childProcess = spawn(command, [ 'install' ], options);
+    const childProcess = spawn(cmd, args, options);
     childProcess.on('close', () => {
       resolve.resolve();
     });
@@ -616,7 +616,13 @@ gulp.task('generate', (done) => {
       validate: (value) => {
         return !!value || 'License is required';
       }
-    }
+    },
+    {
+      type: 'confirm',
+      message: 'Do you want to use yarn as package manager?',
+      name: 'isYarn',
+      default: false
+    },
   ];
 
   inquirer.prompt(questions).then(options => {
@@ -644,7 +650,7 @@ gulp.task('generate', (done) => {
       .pipe(gulp.dest(`${process.cwd()}/${options.name}`))
       .on('end', () => {
         writeLicenseFile(options.name, packageJson.license, options.year, options.author);
-        installNodeModules().then(() => {
+        installNodeModules(options.isYarn? 'yarn': 'npm', [ 'install' ]).then(() => {
           done();
         })
       });
