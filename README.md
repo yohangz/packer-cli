@@ -44,17 +44,57 @@ or
 Then CLI will query questions associated to custom project generation,
 
 ```sh
+# Library name will be used when package is published to NPM
 What would you name your library? my-project
+
+# Description about the library
 Give us a small description about the library (optional)? Client complient node module
+
+# Name of the library author
 Author's name (optional)? Yohan Gomez
+
+# Name of the library author.
 Author's email address (optional)? yohan.gz@gmail.com
+
+# Web home page of the library. This must be a valid URL.
 Library homepage link (optional)? http://www.my-project.com
-Do you want to use typescript? Yes
-Do you want to inline bundle CSS styles in script? Yes
+
+# Use typescript transpiler if Yes.
+Do you want to use typescript? (Y/n) Yes
+
+# Inline bundle style sheets within bundled script files.
+Do you want to inline bundle CSS styles in script? (Y/n) Yes
+
+# You can close from the bundel formats options list.
 What's the build bundle format you want to use? umd
+- umd
+- amd
+- iife
+- system
+- esm
+- cjs
+
+# Library namespace will be used when exposing the libray via global scope.
 What's the library namespace you want to use? my.lib
+
+# Library copyright year will be included in license file.
 What is the library copyright year (optional)? 2018
+
+# License type which suould be used.
 What's the license you want to use? MIT License
+- MIT License
+- Apache 2 License
+- Mozilla Public License 2.0
+- BSD 2-Clause (FreeBSD) License
+- BSD 3-Clause (NewBSD) License
+- Internet Systems Consortium (ISC) License
+- GNU LGPL 3.0 License
+- GNU GPL 3.0 License
+- Unlicense
+- No License
+
+# Use yarn package manager instaid of NPM CLI if true.
+Do you want to use yarn as package manager? (Y/n) Yes
 ```
  
 Once project is generated and dependencies are installed, you can use the following CLI commands:
