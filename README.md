@@ -160,13 +160,16 @@ Build configuration can be changed depending on your preference.
   "namespace": "ts.lib",
   "entry": "index.ts",
   "source": "src/ts",
-  "out": "dist",
+  "dist": {
+    "out": "dist",
+    "styles": "styles"
+  },
   "tsProject": true,
   "watch": {
     "script": ".tmp",
     "demo": "demo/watch",
-    "port": 4000,
     "serve": true,
+    "port": 4000,
     "open": true
   },
   "copy": [
@@ -186,7 +189,7 @@ Build configuration can be changed depending on your preference.
   "ignore": [],
   "imageInlineLimit": 1000000,
   "assetPaths": [
-    "src/assets"
+    "src/ts/assets"
   ],
   "bundleStyle": false,
   "bundleFormat": "umd"
@@ -198,13 +201,14 @@ Build configuration can be changed depending on your preference.
 | namespace                   	| string           	| application namespace to be used                                                 	|
 | entry                       	| string           	| entry typescript file                                                            	|
 | source                      	| string           	| source directory                                                                 	|
-| out                         	| string           	| build output directory                                                           	|
+| dist.out                      | string           	| build artifact output directory                                                   |
+| dist.styles                   | string           	| build associated stylesheet output directory within out dir                       |
 | tsProject                     | boolean           | Set true if library source is in Typescript                                       |
 | watch                       	| object           	| watch mode configuration object                                                  	|
 | watch.script                	| string           	| watch build temp directory                                                       	|
 | watch.demo                  	| string           	| watch demo page dir                                                              	|
 | watch.port                  	| number           	| watch server port                                                                	|
-| watch.serve                  	| boolean          	| Serve project via browser on watch mode
+| watch.serve                  	| boolean          	| Serve project via browser on watch mode                                           |
 | watch.open                  	| boolean          	| open browser automatically                                                       	|
 | copy                        	| array of strings 	| List of files paths to copy on build.                                            	|
 | flatGlobals                 	| object           	| flat bundle build global dependencies.  Listed will not be treated as externals. 	|
