@@ -10,7 +10,6 @@ import rollupReplace from 'rollup-plugin-re'
 import rollupIgnore from 'rollup-plugin-ignore';
 import { uglify } from 'rollup-plugin-uglify';
 import rollupTsLint from 'rollup-plugin-tslint';
-import rollupSass from 'rollup-plugin-sass';
 import rollupSassLint from 'rollup-plugin-sass-lint';
 import rollupLivereload from 'rollup-plugin-livereload';
 import rollupServe from 'rollup-plugin-serve';
@@ -20,6 +19,7 @@ import rollupFilesize from 'rollup-plugin-filesize';
 import rollupProgress from 'rollup-plugin-progress';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupBabel from 'rollup-plugin-babel';
+import rollupPostCss from 'rollup-plugin-postcss'
 
 import { Server } from 'karma';
 
@@ -28,7 +28,6 @@ import npmValidate from 'validate-npm-package-name';
 import isUrl from 'validator/lib/isURL';
 import isEmail from 'validator/lib/isEmail';
 
-import postCss from 'postcss';
 import postCssAutoPrefix from 'autoprefixer';
 import postCssImageInline from 'postcss-image-inliner';
 
@@ -136,42 +135,19 @@ const makeDir = (name) => {
   }
 };
 
-const rollupStyleBuildPlugin = (watch, config) => {
-  return rollupSass({
-    output: config.bundleStyle || function (styles, styleNodes) {
-      const styleDist = `${watch? config.watch.script: config.out}/style`;
-      makeDir(styleDist);
-
-      styleNodes.reduce((acc, node) => {
-        const baseName = path.basename(node.id);
-        const currentNode = acc.find(accNode => accNode.name === baseName);
-        if (currentNode) {
-          currentNode.styles += node.content;
-        } else {
-          acc.push({
-            name: baseName,
-            styles: node.content
-          });
-        }
-
-        return acc;
-      }, []).forEach((node) => {
-        fs.writeFileSync(`${process.cwd()}/${styleDist}/${node.name.slice(0, -4)}css`, node.styles);
-      });
-    },
-    insert: config.bundleStyle,
-    processor: (css) => {
-      return postCss([
-        postCssImageInline({
-          maxFileSize: config.imageInlineLimit,
-          assetPaths: config.assetPaths
-        }),
-        postCssAutoPrefix,
-      ])
-        .process(css, { from: undefined })
-        .then(result => result.css)
-    }
-  })
+const rollupStyleBuildPlugin = (config, packageJson, watch, minify) => {
+  return rollupPostCss({
+    plugins: [
+      postCssImageInline({
+        maxFileSize: config.imageInlineLimit,
+        assetPaths: config.assetPaths
+      }),
+      postCssAutoPrefix,
+    ],
+    sourceMap: true,
+    minimize: minify,
+    extract: path.join(process.cwd(), watch? config.watch.script:  config.dist.out, config.dist.styles, packageJson.name + (minify? '.min.css': '.css'))
+  });
 };
 
 const rollupReplacePlugin = (config) => {
@@ -207,7 +183,7 @@ const buildPlugin = (esVersion, generateDefinition, watch, config) => {
       buildConf.tsconfigOverride  = {
         compilerOptions: {
           declaration: true,
-          declarationDir: `${process.cwd()}/${config.out}`
+          declarationDir: `${process.cwd()}/${config.dist.out}`
         }
       };
 
@@ -288,7 +264,7 @@ const bundleBuild = async (config, type) => {
 
 gulp.task('build:clean', () => {
   const config = readConfig();
-  return gulp.src([`${process.cwd()}/.rpt2_cache`, `${process.cwd()}/${config.out}`], {
+  return gulp.src([`${process.cwd()}/.rpt2_cache`, `${process.cwd()}/${config.dist.out}`], {
       read: false,
       allowEmpty: true
     })
@@ -338,7 +314,7 @@ gulp.task('build:copy:essentials', () => {
       console.log(chalk.red(`${type} bundle build Failure`));
       console.error(error);
     }))
-    .pipe(gulp.dest(`${process.cwd()}/${config.out}`));
+    .pipe(gulp.dest(`${process.cwd()}/${config.dist.out}`));
 });
 
 gulp.task('build:bundle', async () => {
@@ -351,13 +327,14 @@ gulp.task('build:bundle', async () => {
     output: {
       name: config.namespace,
       format: config.bundleFormat,
-      file: path.join(process.cwd(), config.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.js`),
+      file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.js`),
       globals: config.flatGlobals
     },
     external: Object.keys(config.flatGlobals),
     plugins: [
       ...lintPlugins(config),
-      rollupStyleBuildPlugin(false, config),
+      rollupStyleBuildPlugin(config, packageJson, false, false),
+      ignoreImportPlugin,
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
       buildPlugin('es5', true, false, config),
@@ -370,11 +347,12 @@ gulp.task('build:bundle', async () => {
     output: {
       name: config.namespace,
       format: config.bundleFormat,
-      file: path.join(process.cwd(), config.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.min.js`),
+      file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.min.js`),
       globals: config.flatGlobals
     },
     external: Object.keys(config.flatGlobals),
     plugins: [
+      rollupStyleBuildPlugin(config, packageJson, false, true),
       ignoreImportPlugin,
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
@@ -388,7 +366,7 @@ gulp.task('build:bundle', async () => {
   const fesm5config = merge({}, baseConfig, {
     output: {
       format: 'es',
-      file: path.join(process.cwd(), config.out, 'fesm5', `${packageJson.name}.es5.js`),
+      file: path.join(process.cwd(), config.dist.out, 'fesm5', `${packageJson.name}.es5.js`),
     },
     plugins: [
       ignoreImportPlugin,
@@ -403,7 +381,7 @@ gulp.task('build:bundle', async () => {
   const fesm2015config = merge({}, baseConfig, {
     output: {
       format: 'es',
-      file: path.join(process.cwd(), config.out, 'fesm2015', `${packageJson.name}.js`),
+      file: path.join(process.cwd(), config.dist.out, 'fesm2015', `${packageJson.name}.js`),
     },
 
     plugins: [
@@ -460,7 +438,8 @@ gulp.task('build:watch', async () => {
     external: Object.keys(config.flatGlobals),
     plugins: [
       ...lintPlugins(config),
-      rollupStyleBuildPlugin(true, config),
+      rollupStyleBuildPlugin(config, packageJson, false, false),
+      ignoreImportPlugin,
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
       buildPlugin('es5', false, true, config),

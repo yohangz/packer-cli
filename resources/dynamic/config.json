@@ -2,7 +2,10 @@
   "namespace": "",
   "entry": "index.ts",
   "source": "src/ts",
-  "out": "dist",
+  "dist": {
+    "out": "dist",
+    "styles": "styles"
+  },
   "tsProject": true,
   "watch": {
     "script": ".tmp",
@@ -28,7 +31,7 @@
   "ignore": [],
   "imageInlineLimit": 1000000,
   "assetPaths": [
-    "src/assets"
+    "src/ts/assets"
   ],
   "bundleStyle": false,
   "bundleFormat": "umd"
