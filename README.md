@@ -1,6 +1,3 @@
-# Packer CLI
-> Inspired by Angular CLI >>> Full-fledged CLI tool to package library node module modules compliant with Browser and NodeJS with vanilla JS and Typescript source support.
-
 <p align="center">
   <img src="https://image.ibb.co/kDPZu9/packer.png" alt="Packer CLI"/>
   
@@ -14,6 +11,8 @@
     <img src="https://badge.fury.io/js/packer-cli.svg" alt="npm version" height="18">
   </a>
 </p>
+
+> Full-fledged CLI tool to package library node module modules compliant with Browser and NodeJS with vanilla JS and Typescript source support | Inspired by Angular CLI
 
 # Features
 
