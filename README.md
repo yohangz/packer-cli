@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://image.ibb.co/kDPZu9/packer.png" alt="Packer CLI"/>
+  <img src="https://image.ibb.co/g1heu9/packer_cli.png" alt="Packer CLI"/>
   
   <a href="https://travis-ci.org/yohangz/packer-cli">
     <img src="https://travis-ci.org/yohangz/packer-cli.svg?branch=master" alt="travis build" height="18">
@@ -24,8 +24,8 @@
 - [x] Babel 7.x
 - [x] TS Lint code analysis
 - [x] Precompiled handlebars templating
+- [x] Support SCSS, LESS and Stylus and vanilla CSS
 - [x] Post CSS based image inline and auto prefixing
-- [x] Styling using SCSS
 - [x] SCSS Lint
 - [x] Karma 
 - [x] Jasmine 
