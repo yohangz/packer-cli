@@ -112,11 +112,11 @@ const parseLicense = (license) => {
   return licenseFileName;
 };
 
-const writeLicenseFile = (packageName, license, year, author) => {
+const getLicenseFile = (license, year, author) => {
   let licenseContent = fs.readFileSync(path.join(__dirname, '../resources/license', `${license}.tmpl`), 'utf8');
   licenseContent = licenseContent.replace('<%- year %>', year);
   licenseContent = licenseContent.replace('<%- author %>', author);
-  fs.writeFileSync(path.join(process.cwd(), packageName, 'LICENSE'), licenseContent);
+  return licenseContent;
 };
 
 const getBaseConfig = (config, packageJson) => {
@@ -626,9 +626,9 @@ gulp.task('generate', (done) => {
     gulp.src([ path.join(__dirname, '../resources/static/{.**,**}') ])
       .pipe(gulpFile('config.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
+      .pipe(gulpFile('LICENSE', getLicenseFile(packageJson.license, options.year, options.author)))
       .pipe(gulp.dest(`${process.cwd()}/${options.name}`))
       .on('end', () => {
-        writeLicenseFile(options.name, packageJson.license, options.year, options.author);
         installNodeModules(options.isYarn? 'yarn': 'npm', [ 'install' ]).then(() => {
           done();
         })
