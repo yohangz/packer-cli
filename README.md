@@ -49,14 +49,11 @@ You can simply run the following command in preferred directory to generate a ne
 
 or
 
-```npm install packer-cli -g && packer new my-library```
+```npm install packer-cli -g && packer generate my-library```
 
 Then CLI will query questions associated to custom project generation,
 
 ```sh
-# Library name will be used when package is published to NPM
-What would you name your library? my-project
-
 # Description about the library
 Give us a small description about the library (optional)? Client complient node module
 
