@@ -4,6 +4,8 @@
   "description": "",
   "scripts": {
     "lint": "packer lint",
+    "lint:style": "packer lint --style",
+    "lint:script": "packer lint --script",
     "build": "packer build",
     "watch": "packer watch",
     "test": "packer test",

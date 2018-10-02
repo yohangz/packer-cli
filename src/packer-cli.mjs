@@ -304,6 +304,8 @@ gulp.task('lint:script:es', (done) => {
   }
 });
 
+gulp.task('lint:script', gulp.series('lint:script:ts', 'lint:script:es'));
+
 gulp.task('lint', gulp.series('lint:style', 'lint:script:ts', 'lint:script:es'));
 
 // Base build tasks
@@ -683,10 +685,25 @@ switch (args[0]) {
   case 'clean':
     gulp.series('build:clean', 'watch:clean')();
     break;
-  case 'lint':
-    gulp.series('lint')();
+  case 'lint': {
+    if (args.length > 1) {
+      switch(args[1]) {
+        case '--style':
+          gulp.series('lint:style')();
+          break;
+        case '--script':
+          gulp.series('lint:script')();
+          break;
+        default:
+          console.log(chalk.red('Invalid lint task argument'));
+      }
+    } else {
+      gulp.series('lint')();
+    }
+
     break;
+  }
   default:
-    gulp.series('build')();
+    console.log(chalk.red('Invalid task name argument'));
     break;
 }
