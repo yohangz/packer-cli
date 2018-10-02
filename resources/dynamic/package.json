@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "lint": "packer lint",
     "build": "packer build",
     "watch": "packer watch",
     "test": "packer test",
@@ -23,13 +24,19 @@
   "devDependencies": {
     "@types/jasmine": "^2.8.8",
     "jasmine-core": "^3.1.0",
-    "karma": "^2.0.4",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.2",
     "karma-jasmine": "^1.1.2",
     "karma-jasmine-html-reporter": "^1.1.0",
+    "stylelint-config-standard": "^18.2.0",
     "puppeteer": "^1.5.0",
-    "typescript": "^2.9.2"
+    "typescript": "^3.0.3",
+    "eslint-config-standard": "*",
+    "eslint": ">=5.0.0",
+    "eslint-plugin-import": ">=2.13.0",
+    "eslint-plugin-node": ">=7.0.0",
+    "eslint-plugin-promise": ">=4.0.0",
+    "eslint-plugin-standard": ">=4.0.0"
   },
   "private": false
 }
