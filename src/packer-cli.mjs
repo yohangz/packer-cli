@@ -9,8 +9,6 @@ import rollupCommonjs from 'rollup-plugin-commonjs';
 import rollupReplace from 'rollup-plugin-re'
 import rollupIgnore from 'rollup-plugin-ignore';
 import { uglify } from 'rollup-plugin-uglify';
-import rollupTsLint from 'rollup-plugin-tslint';
-import rollupSassLint from 'rollup-plugin-sass-lint';
 import rollupLivereload from 'rollup-plugin-livereload';
 import rollupServe from 'rollup-plugin-serve';
 import rollupImage from 'rollup-plugin-img';
@@ -19,7 +17,7 @@ import rollupFilesize from 'rollup-plugin-filesize';
 import rollupProgress from 'rollup-plugin-progress';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupBabel from 'rollup-plugin-babel';
-import rollupPostCss from 'rollup-plugin-postcss'
+import rollupPostCss from 'rollup-plugin-postcss';
 
 import { Server } from 'karma';
 
@@ -55,20 +53,18 @@ const readPackageData = () => {
   return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
 };
 
-const readCLIPackageData = () => {
-  return JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
-};
-
-const installNodeModules = (command, args) => {
+const runShellCommand = (command, args, dir) => {
   const cmd = isWindows? `${command}.cmd` : command;
   const options = {
-    stdio: 'inherit' //feed all child process logging into parent process
+    detached: true,
+    stdio: 'inherit',
+    cwd: dir
   };
 
   return new Promise((resolve) => {
-    const childProcess = spawn(cmd, args, options);
+    const childProcess = spawn(cmd, [ args ], options);
     childProcess.on('close', () => {
-      resolve.resolve();
+      resolve();
     });
   });
 };
@@ -114,8 +110,15 @@ const parseLicense = (license) => {
 
 const getLicenseFile = (license, year, author) => {
   let licenseContent = fs.readFileSync(path.join(__dirname, '../resources/license', `${license}.tmpl`), 'utf8');
-  licenseContent = licenseContent.replace('<%- year %>', year);
-  licenseContent = licenseContent.replace('<%- author %>', author);
+
+  if (year) {
+    licenseContent = licenseContent.replace('<%- year %>', year);
+  }
+
+  if (author) {
+    licenseContent = licenseContent.replace('<%- author %>', author);
+  }
+
   return licenseContent;
 };
 
@@ -142,7 +145,7 @@ const rollupStyleBuildPlugin = (config, packageJson, watch, minify) => {
         maxFileSize: config.imageInlineLimit,
         assetPaths: config.assetPaths
       }),
-      postCssAutoPrefix,
+      postCssAutoPrefix
     ],
     sourceMap: true,
     minimize: minify,
@@ -209,17 +212,6 @@ const buildPlugin = (esVersion, generateDefinition, watch, config) => {
   });
 };
 
-const lintPlugins = (config) => {
-  return [
-    rollupTsLint({
-      include: [`${config.source}/**/*.ts`]
-    }),
-    rollupSassLint({
-      include: 'src/**/*.scss',
-    })
-  ];
-};
-
 const preBundlePlugins = (config) => {
   return [
     rollupReplacePlugin(config),
@@ -280,6 +272,40 @@ gulp.task('watch:clean', () => {
     .pipe(clean());
 });
 
+// Lint tasks
+
+gulp.task('lint:style', (done) => {
+  console.log(chalk.blue('[Style Lint]'));
+  const config = readConfig();
+  runShellCommand('stylelint', [ path.join(config.source, '**/*.{styl,scss,sass,less,css}') ], process.cwd()).then(() => {
+    done();
+  });
+});
+
+gulp.task('lint:script:ts', (done) => {
+  const config = readConfig();
+
+  if (config.tsProject) {
+    console.log(chalk.blue('[TS Lint]'));
+    runShellCommand('tslint', [path.join(config.source, '**/*.{ts,tsx}')], process.cwd()).then(() => {
+      done();
+    });
+  }
+});
+
+gulp.task('lint:script:es', (done) => {
+  const config = readConfig();
+
+  if (!config.tsProject) {
+    console.log(chalk.blue('[ES Lint]'));
+    runShellCommand('eslint', [ path.join(config.source, '**/*.{js,mjs}') ], process.cwd()).then(() => {
+      done();
+    });
+  }
+});
+
+gulp.task('lint', gulp.series('lint:style', 'lint:script:ts', 'lint:script:es'));
+
 // Base build tasks
 
 gulp.task('build:copy:essentials', () => {
@@ -314,7 +340,7 @@ gulp.task('build:copy:essentials', () => {
       console.log(chalk.red(`${type} bundle build Failure`));
       console.error(error);
     }))
-    .pipe(gulp.dest(`${process.cwd()}/${config.dist.out}`));
+    .pipe(gulp.dest(path.join(process.cwd(), config.dist.out)));
 });
 
 gulp.task('build:bundle', async () => {
@@ -332,7 +358,6 @@ gulp.task('build:bundle', async () => {
     },
     external: Object.keys(config.flatGlobals),
     plugins: [
-      ...lintPlugins(config),
       rollupStyleBuildPlugin(config, packageJson, false, false),
       ignoreImportPlugin,
       ...preBundlePlugins(config),
@@ -437,7 +462,6 @@ gulp.task('build:watch', async () => {
     },
     external: Object.keys(config.flatGlobals),
     plugins: [
-      ...lintPlugins(config),
       rollupStyleBuildPlugin(config, packageJson, false, false),
       ignoreImportPlugin,
       ...preBundlePlugins(config),
@@ -492,18 +516,7 @@ gulp.task('test', async (done) => {
 });
 
 gulp.task('generate', (done) => {
-  const cliPackageData = readCLIPackageData();
-
   const questions = [
-    {
-      type: 'input',
-      name: 'name',
-      message: 'What would you name your library?',
-      validate: (value) => {
-        const state = npmValidate(value);
-        return state.validForNewPackages || state.errors.join('\n');
-      }
-    },
     {
       type: 'input',
       name: 'description',
@@ -604,6 +617,21 @@ gulp.task('generate', (done) => {
     },
   ];
 
+  if (args.length !== 2) {
+    console.log('Please provide a library name to generate the project');
+    console.log('npx packer-cli generate my-library');
+    done();
+    return;
+  }
+
+  const packageName = args[1];
+  const packageNameValidity = npmValidate(packageName);
+  if (!packageNameValidity.validForNewPackages) {
+    console.log(state.errors.join('\n'));
+    done();
+    return;
+  }
+
   inquirer.prompt(questions).then(options => {
     let packageConfig = configResource;
     packageConfig.bundleStyle = options.bundleStyles;
@@ -612,24 +640,27 @@ gulp.task('generate', (done) => {
     packageConfig.namespace = options.namespace;
 
     let packageJson = packageResource;
-    packageJson.name = options.name;
+    packageJson.name = packageName;
     packageJson.description = options.description;
-    packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
+    // packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
     packageJson.homepage = options.homepage;
     packageJson.license = parseLicense(options.license);
 
     if (options.author && options.email) {
       packageJson.author = `${options.author} <${options.email}>`;
-      packageJson.repository = `https://github.com/${options.author}/${options.name}.git`;
+      packageJson.repository = `https://github.com/${options.author}/${packageName}.git`;
     }
+
+    const projectDir = `${process.cwd()}/${packageName}`;
 
     gulp.src([ path.join(__dirname, '../resources/static/{.**,**}') ])
       .pipe(gulpFile('config.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
       .pipe(gulpFile('LICENSE', getLicenseFile(packageJson.license, options.year, options.author)))
-      .pipe(gulp.dest(`${process.cwd()}/${options.name}`))
+      .pipe(gulp.dest(projectDir))
       .on('end', () => {
-        installNodeModules(options.isYarn? 'yarn': 'npm', [ 'install' ]).then(() => {
+        runShellCommand(options.isYarn? 'yarn': 'npm', [ 'install' ], projectDir).then(() => {
+          console.log('Dependency install done');
           done();
         })
       });
@@ -637,7 +668,7 @@ gulp.task('generate', (done) => {
 });
 
 switch (args[0]) {
-  case 'new':
+  case 'generate':
     gulp.series('generate')();
     break;
   case 'build':
@@ -651,6 +682,9 @@ switch (args[0]) {
     break;
   case 'clean':
     gulp.series('build:clean', 'watch:clean')();
+    break;
+  case 'lint':
+    gulp.series('lint')();
     break;
   default:
     gulp.series('build')();
