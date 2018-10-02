@@ -22,11 +22,12 @@
 - [x] Travis
 - [x] Typescript 2.x
 - [x] Babel 7.x
-- [x] TS Lint code analysis
+- [x] TS Lint based Typescript code analysis
+- [x] ES Lint based Javascript code analysis
+- [x] Style lint based style sheet code analysis.
 - [x] Precompiled handlebars templating
 - [x] Support SCSS, LESS and Stylus and vanilla CSS
 - [x] Post CSS based image inline and auto prefixing
-- [x] SCSS Lint
 - [x] Karma 
 - [x] Jasmine 
 - [x] Rollup and Gulp based build process
@@ -113,6 +114,15 @@ npm run watch
 # Production build
 npm run build
 
+# Run Style and script lint tasks
+npm run lint
+
+# Run style lint task
+npm run lint:style
+
+# Run script lint task
+npm run lint:script
+
 # Run unit test suite on development envrionemnt watch mode
 npm run test
 
@@ -144,8 +154,9 @@ npm run release
 │   ├── /package.json           # Package.json file with publish artifact specific configuration.
 │   └── /README.md              # Package documentation markup file.
 ├── .editorconfig               # Define and maintain consistent coding styles between different editors and IDEs.
+├── .eslintrc.yml               # ES Lint configuration.
 ├── .gitignore                  # Contains files to be ignored when pushing to git.
-├── .scss-lint.yml              # SCSS Lint config file.
+├── .stylelintrc.json           # Style lint configuration.
 ├── .travis.yml                 # Travis CI configuration file.
 ├── config.json                 # This file contains library build configuration options.
 ├── karma.conf.js               # This file contains karma unit test runner configuration.
