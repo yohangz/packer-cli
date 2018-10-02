@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Watch Demo</title>
-    <link rel="stylesheet" href="style/dark.theme.css">
+    <title>Build Demo</title>
+    <link href="../../dist/styles/<%- projectName %>.css">
 </head>
 <body>
     <div class="container"></div>
-    <script src="typescript-library-starter.umd.js"></script>
+    <script src="../../dist/bundles/<%- projectName %>.umd.js"></script>
     <script type="application/javascript">
       let main = new window.ts.lib.Main("Aloha, ");
       main.greet();

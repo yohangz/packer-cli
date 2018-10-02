@@ -1,6 +1,7 @@
 import gulp from 'gulp';
 import gulpFile from 'gulp-file';
 import clean from 'gulp-clean';
+import gulpFilter from 'gulp-filter';
 
 import { rollup, watch } from 'rollup';
 import rollupTypescript from 'rollup-plugin-typescript2';
@@ -52,6 +53,11 @@ const readConfig = () => {
 const readPackageData = () => {
   return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
 };
+
+const readCLIPackageData = () => {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+};
+
 
 const runShellCommand = (command, args, dir) => {
   const cmd = isWindows? `${command}.cmd` : command;
@@ -112,14 +118,34 @@ const getLicenseFile = (license, year, author) => {
   let licenseContent = fs.readFileSync(path.join(__dirname, '../resources/license', `${license}.tmpl`), 'utf8');
 
   if (year) {
-    licenseContent = licenseContent.replace('<%- year %>', year);
+    licenseContent = licenseContent.replace(/\<\%\- year \%\>/g, year);
   }
 
   if (author) {
-    licenseContent = licenseContent.replace('<%- author %>', author);
+    licenseContent = licenseContent.replace(/\<\%\- author \%\>/g, author);
   }
 
   return licenseContent;
+};
+
+const getBuildDemoFile = (projectName) => {
+  let buildDemo = fs.readFileSync(path.join(__dirname, '../resources/dynamic/demo/build', `index.html`), 'utf8');
+
+  if (projectName) {
+    buildDemo = buildDemo.replace(/\<\%\- projectName \%\>/g, projectName);
+  }
+
+  return buildDemo;
+};
+
+const getWatchDemoFile = (projectName) => {
+  let watchDemo = fs.readFileSync(path.join(__dirname, '../resources/dynamic/demo/watch', `index.html`), 'utf8');
+
+  if (projectName) {
+    watchDemo = watchDemo.replace(/\<\%\- projectName \%\>/g, projectName);
+  }
+
+  return watchDemo;
 };
 
 const getBaseConfig = (config, packageJson) => {
@@ -518,6 +544,8 @@ gulp.task('test', async (done) => {
 });
 
 gulp.task('generate', (done) => {
+  const cliPackageData = readCLIPackageData();
+
   const questions = [
     {
       type: 'input',
@@ -644,7 +672,7 @@ gulp.task('generate', (done) => {
     let packageJson = packageResource;
     packageJson.name = packageName;
     packageJson.description = options.description;
-    // packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
+    packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
     packageJson.homepage = options.homepage;
     packageJson.license = parseLicense(options.license);
 
@@ -653,16 +681,21 @@ gulp.task('generate', (done) => {
       packageJson.repository = `https://github.com/${options.author}/${packageName}.git`;
     }
 
-    const projectDir = `${process.cwd()}/${packageName}`;
+    const projectDir = path.join(process.cwd(), packageName);
 
     gulp.src([ path.join(__dirname, '../resources/static/{.**,**}') ])
       .pipe(gulpFile('config.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
       .pipe(gulpFile('LICENSE', getLicenseFile(packageJson.license, options.year, options.author)))
       .pipe(gulp.dest(projectDir))
+      .pipe(gulpFilter('*'))
+      .pipe(gulpFile('index.html', getWatchDemoFile(packageName)))
+      .pipe(gulp.dest(path.join(projectDir, 'demo/watch')))
+      .pipe(gulpFilter('*'))
+      .pipe(gulpFile('index.html', getBuildDemoFile(packageName)))
+      .pipe(gulp.dest(path.join(projectDir, 'demo/build')))
       .on('end', () => {
         runShellCommand(options.isYarn? 'yarn': 'npm', [ 'install' ], projectDir).then(() => {
-          console.log('Dependency install done');
           done();
         })
       });
