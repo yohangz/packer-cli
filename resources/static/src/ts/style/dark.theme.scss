@@ -12,6 +12,6 @@ body {
 
 .greeting {
   ::before {
-    content: url('../assets/thumb-up.svg');
+    content: url('../../assets/thumb-up.svg');
   }
 }

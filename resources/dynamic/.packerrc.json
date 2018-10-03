@@ -31,7 +31,7 @@
   "ignore": [],
   "imageInlineLimit": 1000000,
   "assetPaths": [
-    "src/ts/assets"
+    "src/assets"
   ],
   "bundleStyle": false,
   "bundleFormat": "umd"
