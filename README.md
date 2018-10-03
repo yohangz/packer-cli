@@ -158,7 +158,7 @@ npm run release
 ├── .gitignore                  # Contains files to be ignored when pushing to git.
 ├── .stylelintrc.json           # Style lint configuration.
 ├── .travis.yml                 # Travis CI configuration file.
-├── config.json                 # This file contains library build configuration options.
+├── .packerrc.json              # This file contains library build configuration options.
 ├── karma.conf.js               # This file contains karma unit test runner configuration.
 ├── LICENSE                     # License agreement file
 ├── package.json                # NPM configuration and medata.
