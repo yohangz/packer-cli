@@ -3,13 +3,13 @@ import gulpFile from 'gulp-file';
 import clean from 'gulp-clean';
 import gulpFilter from 'gulp-filter';
 
-import { rollup, watch } from 'rollup';
+import {rollup, watch} from 'rollup';
 import rollupTypescript from 'rollup-plugin-typescript2';
 import rollupResolve from 'rollup-plugin-node-resolve';
 import rollupCommonjs from 'rollup-plugin-commonjs';
 import rollupReplace from 'rollup-plugin-re'
 import rollupIgnore from 'rollup-plugin-ignore';
-import { uglify } from 'rollup-plugin-uglify';
+import {uglify} from 'rollup-plugin-uglify';
 import rollupLivereload from 'rollup-plugin-livereload';
 import rollupServe from 'rollup-plugin-serve';
 import rollupImage from 'rollup-plugin-img';
@@ -20,7 +20,7 @@ import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupBabel from 'rollup-plugin-babel';
 import rollupPostCss from 'rollup-plugin-postcss';
 
-import { Server } from 'karma';
+import {Server} from 'karma';
 
 import inquirer from 'inquirer';
 import npmValidate from 'validate-npm-package-name';
@@ -34,7 +34,7 @@ import typescript from 'typescript';
 import merge from 'lodash/merge';
 import path from 'path';
 import fs from 'fs';
-import { spawn } from 'child_process';
+import {spawn} from 'child_process';
 import chalk from 'chalk';
 
 const args = process.argv.splice(2);
@@ -60,7 +60,7 @@ const readCLIPackageData = () => {
 
 
 const runShellCommand = (command, args, dir) => {
-  const cmd = isWindows? `${command}.cmd` : command;
+  const cmd = isWindows ? `${command}.cmd` : command;
   const options = {
     detached: true,
     stdio: 'inherit',
@@ -68,7 +68,7 @@ const runShellCommand = (command, args, dir) => {
   };
 
   return new Promise((resolve) => {
-    const childProcess = spawn(cmd, [ args ], options);
+    const childProcess = spawn(cmd, [args], options);
     childProcess.on('close', () => {
       resolve();
     });
@@ -128,38 +128,36 @@ const getLicenseFile = (license, year, author) => {
   return licenseContent;
 };
 
-const getBuildDemoFile = (projectName) => {
+const getBuildDemoFile = (projectName, namespace) => {
   let buildDemo = fs.readFileSync(path.join(__dirname, '../resources/dynamic/demo/build', `index.html`), 'utf8');
 
-  if (projectName) {
-    buildDemo = buildDemo.replace(/\<\%\- projectName \%\>/g, projectName);
-  }
+  buildDemo = buildDemo.replace(/\<\%\- projectName \%\>/g, projectName);
+  buildDemo = buildDemo.replace(/\<\%\- namespace \%\>/g, namespace);
 
   return buildDemo;
 };
 
-const getWatchDemoFile = (projectName) => {
+const getWatchDemoFile = (projectName, namespace) => {
   let watchDemo = fs.readFileSync(path.join(__dirname, '../resources/dynamic/demo/watch', `index.html`), 'utf8');
 
-  if (projectName) {
-    watchDemo = watchDemo.replace(/\<\%\- projectName \%\>/g, projectName);
-  }
+  watchDemo = watchDemo.replace(/\<\%\- projectName \%\>/g, projectName);
+  watchDemo = watchDemo.replace(/\<\%\- namespace \%\>/g, namespace);
 
   return watchDemo;
 };
 
 const getBaseConfig = (config, packageJson) => {
- return {
-   input: `${config.source}/${config.entry}`,
-   output: {
-     name: packageJson.name,
-     sourcemap: true
-   }
- };
+  return {
+    input: `${config.source}/${config.entry}`,
+    output: {
+      name: packageJson.name,
+      sourcemap: true
+    }
+  };
 };
 
 const makeDir = (name) => {
-  if (!fs.existsSync(name)){
+  if (!fs.existsSync(name)) {
     fs.mkdirSync(name);
   }
 };
@@ -175,7 +173,7 @@ const rollupStyleBuildPlugin = (config, packageJson, watch, minify) => {
     ],
     sourceMap: true,
     minimize: minify,
-    extract: path.join(process.cwd(), watch? config.watch.script:  config.dist.out, config.dist.styles, packageJson.name + (minify? '.min.css': '.css'))
+    extract: path.join(process.cwd(), watch ? config.watch.script : config.dist.out, config.dist.styles, packageJson.name + (minify ? '.min.css' : '.css'))
   });
 };
 
@@ -209,7 +207,7 @@ const buildPlugin = (esVersion, generateDefinition, watch, config) => {
     };
 
     if (generateDefinition) {
-      buildConf.tsconfigOverride  = {
+      buildConf.tsconfigOverride = {
         compilerOptions: {
           declaration: true,
           declarationDir: `${process.cwd()}/${config.dist.out}`
@@ -254,7 +252,7 @@ const postBundlePlugins = () => {
   return [
     rollupProgress(),
     rollupFilesize({
-      render : function (options, size, gzippedSize){
+      render: function (options, size, gzippedSize) {
         return chalk.yellow(`Bundle size: ${chalk.red(size)}, Gzipped size: ${chalk.red(gzippedSize)}`);
       }
     })
@@ -283,9 +281,9 @@ const bundleBuild = async (config, type) => {
 gulp.task('build:clean', () => {
   const config = readConfig();
   return gulp.src([`${process.cwd()}/.rpt2_cache`, `${process.cwd()}/${config.dist.out}`], {
-      read: false,
-      allowEmpty: true
-    })
+    read: false,
+    allowEmpty: true
+  })
     .pipe(clean());
 });
 
@@ -303,7 +301,7 @@ gulp.task('watch:clean', () => {
 gulp.task('lint:style', (done) => {
   console.log(chalk.blue('[Style Lint]'));
   const config = readConfig();
-  runShellCommand('stylelint', [ path.join(config.source, '**/*.{styl,scss,sass,less,css}') ], process.cwd()).then(() => {
+  runShellCommand('stylelint', [path.join(config.source, '**/*.{styl,scss,sass,less,css}')], process.cwd()).then(() => {
     done();
   });
 });
@@ -324,7 +322,7 @@ gulp.task('lint:script:es', (done) => {
 
   if (!config.tsProject) {
     console.log(chalk.blue('[ES Lint]'));
-    runShellCommand('eslint', [ path.join(config.source, '**/*.{js,mjs}') ], process.cwd()).then(() => {
+    runShellCommand('eslint', [path.join(config.source, '**/*.{js,mjs}')], process.cwd()).then(() => {
       done();
     });
   }
@@ -362,8 +360,8 @@ gulp.task('build:copy:essentials', () => {
 
   // copy the needed additional files in the 'dist' folder
   return gulp.src((config.copy || []).map((copyFile) => {
-      return `${process.cwd()}/${copyFile}`
-    }))
+    return `${process.cwd()}/${copyFile}`
+  }))
     .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)).on('error', (error) => {
       console.log(chalk.red(`${type} bundle build Failure`));
       console.error(error);
@@ -376,82 +374,84 @@ gulp.task('build:bundle', async () => {
   const packageJson = readPackageData();
   const baseConfig = getBaseConfig(config, packageJson);
 
-  // flat bundle.
-  const flatConfig = merge({}, baseConfig, {
-    output: {
-      name: config.namespace,
-      format: config.bundleFormat,
-      file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.js`),
-      globals: config.flatGlobals
-    },
-    external: Object.keys(config.flatGlobals),
-    plugins: [
-      rollupStyleBuildPlugin(config, packageJson, false, false),
-      ignoreImportPlugin,
-      ...preBundlePlugins(config),
-      ...resolvePlugins(config),
-      buildPlugin('es5', true, false, config),
-      ...postBundlePlugins()
-    ]
-  });
-
-  // minified flat bundle.
-  const minifiedFlatConfig = merge({}, baseConfig, {
-    output: {
-      name: config.namespace,
-      format: config.bundleFormat,
-      file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.min.js`),
-      globals: config.flatGlobals
-    },
-    external: Object.keys(config.flatGlobals),
-    plugins: [
-      rollupStyleBuildPlugin(config, packageJson, false, true),
-      ignoreImportPlugin,
-      ...preBundlePlugins(config),
-      ...resolvePlugins(config),
-      buildPlugin('es5', false, false, config),
-      uglify(),
-      ...postBundlePlugins()
-    ]
-  });
-
-  // FESM+ES5 flat module bundle.
-  const fesm5config = merge({}, baseConfig, {
-    output: {
-      format: 'es',
-      file: path.join(process.cwd(), config.dist.out, 'fesm5', `${packageJson.name}.es5.js`),
-    },
-    plugins: [
-      ignoreImportPlugin,
-      ...preBundlePlugins(config),
-      buildPlugin('es5', false, false, config),
-      ...postBundlePlugins()
-    ],
-    external: config.esmExternals
-  });
-
-  // FESM+ES2015 flat module bundle.
-  const fesm2015config = merge({}, baseConfig, {
-    output: {
-      format: 'es',
-      file: path.join(process.cwd(), config.dist.out, 'fesm2015', `${packageJson.name}.js`),
-    },
-
-    plugins: [
-      ignoreImportPlugin,
-      ...preBundlePlugins(config),
-      buildPlugin('es2015', false, false, config),
-      ...postBundlePlugins()
-    ],
-    external: config.esmExternals
-  });
-
   try {
+    // flat bundle.
+    const flatConfig = merge({}, baseConfig, {
+      output: {
+        name: config.namespace,
+        format: config.bundleFormat,
+        file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.js`),
+        globals: config.flatGlobals
+      },
+      external: Object.keys(config.flatGlobals),
+      plugins: [
+        rollupStyleBuildPlugin(config, packageJson, false, false),
+        ignoreImportPlugin,
+        ...preBundlePlugins(config),
+        ...resolvePlugins(config),
+        buildPlugin('es5', true, false, config),
+        ...postBundlePlugins()
+      ]
+    });
+
+    // minified flat bundle.
+    const minifiedFlatConfig = merge({}, baseConfig, {
+      output: {
+        name: config.namespace,
+        format: config.bundleFormat,
+        file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.min.js`),
+        globals: config.flatGlobals
+      },
+      external: Object.keys(config.flatGlobals),
+      plugins: [
+        rollupStyleBuildPlugin(config, packageJson, false, true),
+        ignoreImportPlugin,
+        ...preBundlePlugins(config),
+        ...resolvePlugins(config),
+        buildPlugin('es5', false, false, config),
+        uglify(),
+        ...postBundlePlugins()
+      ]
+    });
+
+    // FESM+ES5 flat module bundle.
+    const fesm5config = merge({}, baseConfig, {
+      output: {
+        format: 'es',
+        file: path.join(process.cwd(), config.dist.out, 'fesm5', `${packageJson.name}.es5.js`),
+      },
+      plugins: [
+        ignoreImportPlugin,
+        ...preBundlePlugins(config),
+        buildPlugin('es5', false, false, config),
+        ...postBundlePlugins()
+      ],
+      external: config.esmExternals
+    });
+
+    // FESM+ES2015 flat module bundle.
+    const fesm2015config = merge({}, baseConfig, {
+      output: {
+        format: 'es',
+        file: path.join(process.cwd(), config.dist.out, 'fesm2015', `${packageJson.name}.js`),
+      },
+
+      plugins: [
+        ignoreImportPlugin,
+        ...preBundlePlugins(config),
+        buildPlugin('es2015', false, false, config),
+        ...postBundlePlugins()
+      ],
+      external: config.esmExternals
+    });
+
     await bundleBuild(flatConfig, 'FLAT');
     await bundleBuild(minifiedFlatConfig, 'FLAT MIN');
     await bundleBuild(fesm5config, 'FESM5');
     await bundleBuild(fesm2015config, 'FESM2015');
-  } catch(error) {
+  } catch (e) {
+    console.log(chalk.red('[build:bundle] failure'));
+    console.error(e);
     return null;
   }
 });
@@ -490,7 +490,7 @@ gulp.task('build:watch', async () => {
     },
     external: Object.keys(config.flatGlobals),
     plugins: [
-      rollupStyleBuildPlugin(config, packageJson, false, false),
+      rollupStyleBuildPlugin(config, packageJson, true, false),
       ignoreImportPlugin,
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
@@ -523,7 +523,7 @@ gulp.task('build:watch', async () => {
           break;
       }
     });
-  } catch(error) {
+  } catch (error) {
     console.log(chalk.blue('[WATCH] ') + chalk.red('watch task failure'));
   }
 });
@@ -562,7 +562,7 @@ gulp.task('generate', (done) => {
       name: 'email',
       message: 'Author\'s email address (optional)?',
       validate: (value) => {
-        return !value || isEmail(value) ? true: 'Value must be a valid email address';
+        return !value || isEmail(value) ? true : 'Value must be a valid email address';
       }
     },
     {
@@ -570,7 +570,7 @@ gulp.task('generate', (done) => {
       name: 'website',
       message: 'Library homepage link (optional)?',
       validate: (value) => {
-        return !value || isUrl(value) ? true: 'Value must be a valid URL';
+        return !value || isUrl(value) ? true : 'Value must be a valid URL';
       }
     },
     {
@@ -579,8 +579,24 @@ gulp.task('generate', (done) => {
       name: 'tsProject'
     },
     {
+      type: 'list',
+      message: 'What\'s the style pre processor you want to use?',
+      name: 'stylePreprocessor',
+      default: 0,
+      choices: [
+        'SCSS',
+        'SASS',
+        'LESS',
+        'Stylus',
+        'None',
+      ],
+      validate: (value) => {
+        return !!value || 'Bundle format is required';
+      }
+    },
+    {
       type: 'confirm',
-      message: 'Do you want to inline bundle CSS styles in script?',
+      message: 'Do you want to inline bundle styles within script?',
       name: 'bundleStyles'
     },
     {
@@ -683,7 +699,7 @@ gulp.task('generate', (done) => {
 
     const projectDir = path.join(process.cwd(), packageName);
 
-    gulp.src([ path.join(__dirname, '../resources/static/{.**,**}') ])
+    gulp.src([path.join(__dirname, '../resources/static/{.**,**}')])
       .pipe(gulpFile('config.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
       .pipe(gulpFile('LICENSE', getLicenseFile(packageJson.license, options.year, options.author)))
@@ -695,7 +711,7 @@ gulp.task('generate', (done) => {
       .pipe(gulpFile('index.html', getBuildDemoFile(packageName)))
       .pipe(gulp.dest(path.join(projectDir, 'demo/build')))
       .on('end', () => {
-        runShellCommand(options.isYarn? 'yarn': 'npm', [ 'install' ], projectDir).then(() => {
+        runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
           done();
         })
       });
@@ -720,7 +736,7 @@ switch (args[0]) {
     break;
   case 'lint': {
     if (args.length > 1) {
-      switch(args[1]) {
+      switch (args[1]) {
         case '--style':
           gulp.series('lint:style')();
           break;

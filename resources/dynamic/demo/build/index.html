@@ -9,7 +9,7 @@
     <div class="container"></div>
     <script src="../../dist/bundles/<%- projectName %>.umd.js"></script>
     <script type="application/javascript">
-      let main = new window.ts.lib.Main("Aloha, ");
+      let main = new window.<%- namespace %>.Main("Aloha, ");
       main.greet();
     </script>
 </body>
