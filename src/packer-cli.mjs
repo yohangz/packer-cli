@@ -39,7 +39,7 @@ import chalk from 'chalk';
 
 const args = process.argv.splice(2);
 
-const configResource = require('../resources/dynamic/config.json');
+const configResource = require('../resources/dynamic/.packerrc.json');
 const packageResource = require('../resources/dynamic/package.json');
 
 const isWindows = process.platform === 'win32';
@@ -47,7 +47,7 @@ const isWindows = process.platform === 'win32';
 // Build utils
 
 const readConfig = () => {
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'config.json'), 'utf8'));
+  return JSON.parse(fs.readFileSync(path.join(process.cwd(), '.packerrc.json'), 'utf8'));
 };
 
 const readPackageData = () => {
@@ -700,7 +700,7 @@ gulp.task('generate', (done) => {
     const projectDir = path.join(process.cwd(), packageName);
 
     gulp.src([path.join(__dirname, '../resources/static/{.**,**}')])
-      .pipe(gulpFile('config.json', JSON.stringify(packageConfig, null, 2)))
+      .pipe(gulpFile('.packerrc.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
       .pipe(gulpFile('LICENSE', getLicenseFile(packageJson.license, options.year, options.author)))
       .pipe(gulp.dest(projectDir))
