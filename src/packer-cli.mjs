@@ -463,49 +463,49 @@ gulp.task('build', gulp.series('build:clean', 'build:copy:essentials', 'build:bu
 // Watch tasks
 
 gulp.task('build:watch', async () => {
-  const config = readConfig();
-  const packageJson = readPackageData();
-  const baseConfig = getBaseConfig(config, packageJson);
-
-  makeDir(config.watch.script);
-
-  let rollupServePlugins = [];
-  if (config.watch.serve && config.bundle.format !== 'cjs') {
-    rollupServePlugins = [
-      rollupServe({
-        contentBase: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`],
-        port: config.watch.port,
-        open: config.watch.open,
-      }),
-      rollupLivereload({
-        watch: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`]
-      })
-    ]
-  }
-
-  const watchConfig = merge({}, baseConfig, {
-    output: {
-      name: config.namespace,
-      format: config.bundle.format,
-      file: path.join(process.cwd(), config.watch.script, `${packageJson.name}.${config.bundle.format}.js`),
-      globals: config.flatGlobals
-    },
-    external: Object.keys(config.flatGlobals),
-    plugins: [
-      rollupStyleBuildPlugin(config, packageJson, true, false),
-      ignoreImportPlugin,
-      ...preBundlePlugins(config),
-      ...resolvePlugins(config),
-      buildPlugin('es5', false, true, config),
-      ...rollupServePlugins,
-      rollupProgress()
-    ],
-    watch: {
-      exclude: ['node_modules/**']
-    }
-  });
-
   try {
+    const config = readConfig();
+    const packageJson = readPackageData();
+    const baseConfig = getBaseConfig(config, packageJson);
+
+    makeDir(config.watch.script);
+
+    let rollupServePlugins = [];
+    if (config.watch.serve && config.bundle.format !== 'cjs') {
+      rollupServePlugins = [
+        rollupServe({
+          contentBase: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`],
+          port: config.watch.port,
+          open: config.watch.open,
+        }),
+        rollupLivereload({
+          watch: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`]
+        })
+      ]
+    }
+
+    const watchConfig = merge({}, baseConfig, {
+      output: {
+        name: config.namespace,
+        format: config.bundle.format,
+        file: path.join(process.cwd(), config.watch.script, `${packageJson.name}.${config.bundle.format}.js`),
+        globals: config.flatGlobals
+      },
+      external: Object.keys(config.flatGlobals),
+      plugins: [
+        rollupStyleBuildPlugin(config, packageJson, true, false),
+        ignoreImportPlugin,
+        ...preBundlePlugins(config),
+        ...resolvePlugins(config),
+        buildPlugin('es5', false, true, config),
+        ...rollupServePlugins,
+        rollupProgress()
+      ],
+      watch: {
+        exclude: ['node_modules/**']
+      }
+    });
+
     const watcher = await watch(watchConfig);
     watcher.on('event', event => {
       switch (event.code) {
@@ -527,6 +527,7 @@ gulp.task('build:watch', async () => {
     });
   } catch (error) {
     console.log(chalk.blue('[WATCH] ') + chalk.red('watch task failure'));
+    console.error(error);
   }
 });
 
