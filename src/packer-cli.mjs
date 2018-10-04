@@ -589,10 +589,7 @@ gulp.task('generate', (done) => {
         'LESS',
         'Stylus',
         'None',
-      ],
-      validate: (value) => {
-        return !!value || 'Bundle format is required';
-      }
+      ]
     },
     {
       type: 'confirm',
@@ -615,6 +612,24 @@ gulp.task('generate', (done) => {
       validate: (value) => {
         return !!value || 'Bundle format is required';
       }
+    },
+    {
+      type: 'confirm',
+      message: 'Browser compliant module?',
+      name: 'browseCompliant'
+    },
+    {
+      type: 'list',
+      message: 'Which test framework do you want to use?',
+      name: 'testFramework',
+      default: 0,
+      choices: [
+        'Jasmine',
+        'Mocha'
+      ],
+      when: (answers) => {
+        return !answers.browseCompliant;
+      },
     },
     {
       type: 'input',
