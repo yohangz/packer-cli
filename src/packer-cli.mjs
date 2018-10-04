@@ -470,7 +470,7 @@ gulp.task('build:watch', async () => {
   makeDir(config.watch.script);
 
   let rollupServePlugins = [];
-  if (config.watch.serve) {
+  if (config.watch.serve && config.bundle.format !== 'cjs') {
     rollupServePlugins = [
       rollupServe({
         contentBase: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`],
