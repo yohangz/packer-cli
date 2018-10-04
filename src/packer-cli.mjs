@@ -166,14 +166,14 @@ const rollupStyleBuildPlugin = (config, packageJson, watch, minify) => {
   return rollupPostCss({
     plugins: [
       postCssImageInline({
-        maxFileSize: config.imageInlineLimit,
+        maxFileSize: config.bundle.imageInlineLimit,
         assetPaths: config.assetPaths
       }),
       postCssAutoPrefix
     ],
     sourceMap: true,
     minimize: minify,
-    extract: path.join(process.cwd(), watch ? config.watch.script : config.dist.out, config.dist.styles, packageJson.name + (minify ? '.min.css' : '.css'))
+    extract: config.bundle.inlineStyle? false: path.join(process.cwd(), watch ? config.watch.script : config.dist.out, config.dist.styles, packageJson.name + (minify ? '.min.css' : '.css'))
   });
 };
 
@@ -242,7 +242,7 @@ const preBundlePlugins = (config) => {
     rollupHandlebars(),
     rollupImage({
       extensions: /\.(png|jpg|jpeg|gif|svg)$/,
-      limit: config.imageInlineLimit,
+      limit: config.bundle.imageInlineLimit,
       exclude: 'node_modules/**'
     })
   ];
@@ -341,7 +341,7 @@ gulp.task('build:copy:essentials', () => {
   let fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
 
   let targetPackage = {
-    main: `bundles/${packageJson.name}.${config.bundleFormat}.js`,
+    main: `bundles/${packageJson.name}.${config.bundle.format}.js`,
     module: `fesm5/${packageJson.name}.js`,
     es2015: `fesm2015/${packageJson.name}.js`,
     fesm5: `fesm5/${packageJson.name}.js`,
@@ -379,9 +379,10 @@ gulp.task('build:bundle', async () => {
     const flatConfig = merge({}, baseConfig, {
       output: {
         name: config.namespace,
-        format: config.bundleFormat,
-        file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.js`),
-        globals: config.flatGlobals
+        format: config.bundle.format,
+        file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundle.format}.js`),
+        globals: config.flatGlobals,
+        amd: config.bundle.amd
       },
       external: Object.keys(config.flatGlobals),
       plugins: [
@@ -398,9 +399,10 @@ gulp.task('build:bundle', async () => {
     const minifiedFlatConfig = merge({}, baseConfig, {
       output: {
         name: config.namespace,
-        format: config.bundleFormat,
-        file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundleFormat}.min.js`),
-        globals: config.flatGlobals
+        format: config.bundle.format,
+        file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundle.format}.min.js`),
+        globals: config.flatGlobals,
+        amd: config.bundle.amd
       },
       external: Object.keys(config.flatGlobals),
       plugins: [
@@ -484,8 +486,8 @@ gulp.task('build:watch', async () => {
   const watchConfig = merge({}, baseConfig, {
     output: {
       name: config.namespace,
-      format: config.bundleFormat,
-      file: path.join(process.cwd(), config.watch.script, `${packageJson.name}.${config.bundleFormat}.js`),
+      format: config.bundle.format,
+      file: path.join(process.cwd(), config.watch.script, `${packageJson.name}.${config.bundle.format}.js`),
       globals: config.flatGlobals
     },
     external: Object.keys(config.flatGlobals),
@@ -606,30 +608,11 @@ gulp.task('generate', (done) => {
         'amd',
         'iife',
         'system',
-        'esm',
         'cjs'
       ],
       validate: (value) => {
         return !!value || 'Bundle format is required';
       }
-    },
-    {
-      type: 'confirm',
-      message: 'Browser compliant module?',
-      name: 'browseCompliant'
-    },
-    {
-      type: 'list',
-      message: 'Which test framework do you want to use?',
-      name: 'testFramework',
-      default: 0,
-      choices: [
-        'Jasmine',
-        'Mocha'
-      ],
-      when: (answers) => {
-        return !answers.browseCompliant;
-      },
     },
     {
       type: 'input',
@@ -639,9 +622,31 @@ gulp.task('generate', (done) => {
         return answers.bundleFormat === 'umd' || answers.bundleFormat === 'iife' || answers.bundleFormat === 'system';
       },
       validate: (value) => {
-        const matches = value.match(/^[a-zA-Z\.]+$/);
+        const matches = value.match(/^[a-zA-Z][a-zA-Z\.]+[a-zA-Z]$/);
         return !!matches || 'Namespace should be an object path, i.e: \'ys.nml.lib\'';
       }
+    },
+    {
+      type: 'input',
+      name: 'amdId',
+      message: 'What\'s the AMD id you want to use? (optional)',
+      when: (answers) => {
+        return answers.bundleFormat === 'umd' || answers.bundleFormat === 'amd';
+      },
+      validate: (value) => {
+        const matches = value.match(/^[a-zA-Z][a-zA-Z\-]+[[a-zA-Z]$/);
+        return !!matches || 'AMD id should only contain alphabetic characters, i.e: \'my-bundle\'';
+      }
+    },
+    {
+      type: 'list',
+      message: 'Which test framework do you want to use?',
+      name: 'testFramework',
+      default: 0,
+      choices: [
+        'Jasmine',
+        'Mocha'
+      ]
     },
     {
       type: 'input',
@@ -695,8 +700,10 @@ gulp.task('generate', (done) => {
 
   inquirer.prompt(questions).then(options => {
     let packageConfig = configResource;
-    packageConfig.bundleStyle = options.bundleStyles;
-    packageConfig.bundleFormat = options.bundleFormat;
+    packageConfig.bundle.inlineStyle = options.bundleStyles;
+    packageConfig.bundle.format = options.bundleFormat;
+    packageConfig.bundle.amd.id = options.amdId;
+    packageConfig.testFramework = options.testFramework;
     packageConfig.tsProject = options.tsProject;
     packageConfig.namespace = options.namespace;
 

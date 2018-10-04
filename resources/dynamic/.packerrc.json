@@ -29,10 +29,17 @@
     }
   ],
   "ignore": [],
-  "imageInlineLimit": 1000000,
   "assetPaths": [
     "src/assets"
   ],
-  "bundleStyle": false,
-  "bundleFormat": "umd"
+  "testFramework": "jasmine",
+  "bundle": {
+    "amd": {
+      "define": "",
+      "id": ""
+    },
+    "format": "umd",
+    "imageInlineLimit": 1000000,
+    "inlineStyle": ""
+  }
 }
