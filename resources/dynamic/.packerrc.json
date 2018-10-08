@@ -1,12 +1,13 @@
 {
   "namespace": "",
   "entry": "index.ts",
-  "source": "src/ts",
+  "source": "src",
   "dist": {
     "out": "dist",
     "styles": "styles"
   },
   "tsProject": true,
+  "stylePreprocessor": "scss",
   "watch": {
     "script": ".tmp",
     "demo": "demo/watch",
@@ -24,8 +25,8 @@
   ],
   "pathReplacePatterns": [
     {
-      "test": "./conf/conf1",
-      "replace": "./conf/conf2"
+      "test": "./config/base-config",
+      "replace": "./config/replace-config"
     }
   ],
   "ignore": [],
