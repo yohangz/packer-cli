@@ -22,6 +22,7 @@ import rollupPostCss from 'rollup-plugin-postcss';
 
 import {Server} from 'karma';
 
+import handlebars from 'handlebars';
 import inquirer from 'inquirer';
 import npmValidate from 'validate-npm-package-name';
 import isUrl from 'validator/lib/isURL';
@@ -115,35 +116,33 @@ const parseLicense = (license) => {
 };
 
 const getLicenseFile = (license, year, author) => {
-  let licenseContent = fs.readFileSync(path.join(__dirname, '../resources/license', `${license}.tmpl`), 'utf8');
+  const licenseContent = fs.readFileSync(path.join(__dirname, '../resources/license', `${license}.hbs`), 'utf8');
+  const template = handlebars.compile(licenseContent);
 
-  if (year) {
-    licenseContent = licenseContent.replace(/\<\%\- year \%\>/g, year);
-  }
-
-  if (author) {
-    licenseContent = licenseContent.replace(/\<\%\- author \%\>/g, author);
-  }
-
-  return licenseContent;
+  return template({
+    year,
+    author
+  });
 };
 
-const getBuildDemoFile = (projectName, namespace) => {
-  let buildDemo = fs.readFileSync(path.join(__dirname, '../resources/dynamic/demo/build', `index.html`), 'utf8');
+const getKarmaConfFile = (testFramework) => {
+  const karmaConfContent = fs.readFileSync(path.join(__dirname, '../resources/dynamic/karma.conf.js.hbs'), 'utf8');
+  const template = handlebars.compile(karmaConfContent);
 
-  buildDemo = buildDemo.replace(/\<\%\- projectName \%\>/g, projectName);
-  buildDemo = buildDemo.replace(/\<\%\- namespace \%\>/g, namespace);
-
-  return buildDemo;
+  return template({
+    isJasmine: testFramework === 'jasmine'
+  });
 };
 
-const getWatchDemoFile = (projectName, namespace) => {
-  let watchDemo = fs.readFileSync(path.join(__dirname, '../resources/dynamic/demo/watch', `index.html`), 'utf8');
+const getDemoFile = (projectName, namespace, inlineStyle, demoDir) => {
+  const watchDemo = fs.readFileSync(path.join(__dirname, '../resources/dynamic/demo', demoDir, `index.html.hbs`), 'utf8');
+  const template = handlebars.compile(watchDemo);
 
-  watchDemo = watchDemo.replace(/\<\%\- projectName \%\>/g, projectName);
-  watchDemo = watchDemo.replace(/\<\%\- namespace \%\>/g, namespace);
-
-  return watchDemo;
+  return template({
+    projectName,
+    inlineStyle,
+    namespace
+  });
 };
 
 const getBaseConfig = (config, packageJson) => {
@@ -162,7 +161,16 @@ const makeDir = (name) => {
   }
 };
 
-const rollupStyleBuildPlugin = (config, packageJson, watch, minify) => {
+const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main) => {
+  const styleDir = watch ? config.watch.script : config.dist.out;
+  const styleDist = path.join(process.cwd(), styleDir, config.dist.styles, packageJson.name + (minify ? '.min.css' : '.css'));
+
+  if (!main && !config.bundle.inlineStyle) {
+    return  rollupIgnoreImport({
+      extensions: ['.scss']
+    });
+  }
+
   return rollupPostCss({
     plugins: [
       postCssImageInline({
@@ -173,7 +181,7 @@ const rollupStyleBuildPlugin = (config, packageJson, watch, minify) => {
     ],
     sourceMap: true,
     minimize: minify,
-    extract: config.bundle.inlineStyle? false: path.join(process.cwd(), watch ? config.watch.script : config.dist.out, config.dist.styles, packageJson.name + (minify ? '.min.css' : '.css'))
+    extract: config.bundle.inlineStyle? false: styleDist
   });
 };
 
@@ -258,10 +266,6 @@ const postBundlePlugins = () => {
     })
   ];
 };
-
-const ignoreImportPlugin = rollupIgnoreImport({
-  extensions: ['.scss']
-});
 
 const bundleBuild = async (config, type) => {
   try {
@@ -386,8 +390,7 @@ gulp.task('build:bundle', async () => {
       },
       external: Object.keys(config.flatGlobals),
       plugins: [
-        rollupStyleBuildPlugin(config, packageJson, false, false),
-        ignoreImportPlugin,
+        rollupStyleBuildPlugin(config, packageJson, false, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
         buildPlugin('es5', true, false, config),
@@ -406,8 +409,7 @@ gulp.task('build:bundle', async () => {
       },
       external: Object.keys(config.flatGlobals),
       plugins: [
-        rollupStyleBuildPlugin(config, packageJson, false, true),
-        ignoreImportPlugin,
+        rollupStyleBuildPlugin(config, packageJson, false, true, false),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
         buildPlugin('es5', false, false, config),
@@ -423,7 +425,7 @@ gulp.task('build:bundle', async () => {
         file: path.join(process.cwd(), config.dist.out, 'fesm5', `${packageJson.name}.es5.js`),
       },
       plugins: [
-        ignoreImportPlugin,
+        rollupStyleBuildPlugin(config, packageJson, false, true, false),
         ...preBundlePlugins(config),
         buildPlugin('es5', false, false, config),
         ...postBundlePlugins()
@@ -439,7 +441,7 @@ gulp.task('build:bundle', async () => {
       },
 
       plugins: [
-        ignoreImportPlugin,
+        rollupStyleBuildPlugin(config, packageJson, false, true, false),
         ...preBundlePlugins(config),
         buildPlugin('es2015', false, false, config),
         ...postBundlePlugins()
@@ -493,8 +495,7 @@ gulp.task('build:watch', async () => {
       },
       external: Object.keys(config.flatGlobals),
       plugins: [
-        rollupStyleBuildPlugin(config, packageJson, true, false),
-        ignoreImportPlugin,
+        rollupStyleBuildPlugin(config, packageJson, true, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
         buildPlugin('es5', false, true, config),
@@ -597,7 +598,8 @@ gulp.task('generate', (done) => {
     {
       type: 'confirm',
       message: 'Do you want to inline bundle styles within script?',
-      name: 'bundleStyles'
+      name: 'bundleStyles',
+      default: false
     },
     {
       type: 'list',
@@ -623,7 +625,7 @@ gulp.task('generate', (done) => {
         return answers.bundleFormat === 'umd' || answers.bundleFormat === 'iife' || answers.bundleFormat === 'system';
       },
       validate: (value) => {
-        const matches = value.match(/^[a-zA-Z][a-zA-Z\.]+[a-zA-Z]$/);
+        const matches = value.match(/^(?:[a-z]\d*(?:\.[a-z])?)+$/i);
         return !!matches || 'Namespace should be an object path, i.e: \'ys.nml.lib\'';
       }
     },
@@ -635,8 +637,8 @@ gulp.task('generate', (done) => {
         return answers.bundleFormat === 'umd' || answers.bundleFormat === 'amd';
       },
       validate: (value) => {
-        const matches = value.match(/^[a-zA-Z][a-zA-Z\-]+[[a-zA-Z]$/);
-        return !!matches || 'AMD id should only contain alphabetic characters, i.e: \'my-bundle\'';
+        const matches = value.match(/^(?:[a-z]\d*(?:\-[a-z])?)*$/i);
+        return value === '' || !!matches || 'AMD id should only contain alphabetic characters, i.e: \'my-bundle\'';
       }
     },
     {
@@ -726,12 +728,13 @@ gulp.task('generate', (done) => {
       .pipe(gulpFile('.packerrc.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
       .pipe(gulpFile('LICENSE', getLicenseFile(packageJson.license, options.year, options.author)))
+      .pipe(gulpFile('karma.conf.js', getKarmaConfFile(options.testFramework)))
       .pipe(gulp.dest(projectDir))
       .pipe(gulpFilter('*'))
-      .pipe(gulpFile('index.html', getWatchDemoFile(packageName)))
+      .pipe(gulpFile('index.html', getDemoFile(packageName, packageConfig.namespace, packageConfig.bundle.inlineStyle, 'watch')))
       .pipe(gulp.dest(path.join(projectDir, 'demo/watch')))
       .pipe(gulpFilter('*'))
-      .pipe(gulpFile('index.html', getBuildDemoFile(packageName)))
+      .pipe(gulpFile('index.html', getDemoFile(packageName, packageConfig.namespace, packageConfig.bundle.inlineStyle, 'build')))
       .pipe(gulp.dest(path.join(projectDir, 'demo/build')))
       .on('end', () => {
         runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
