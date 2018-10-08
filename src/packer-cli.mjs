@@ -76,6 +76,25 @@ const runShellCommand = (command, args, dir) => {
   });
 };
 
+const parseStylePreprocessorExtention = (preprocessor) => {
+  switch (preprocessor) {
+    case 'scss':
+      return 'scss';
+    case 'sass':
+      return 'sass';
+    case 'less':
+      return 'less';
+    case 'stylus':
+      return 'styl';
+    case 'css':
+      return 'css';
+    case 'none':
+      return 'none';
+    default:
+      return 'none';
+  }
+};
+
 const parseLicense = (license) => {
   let licenseFileName = '';
 
@@ -167,7 +186,7 @@ const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main) => {
 
   if (!main && !config.bundle.inlineStyle) {
     return  rollupIgnoreImport({
-      extensions: ['.scss']
+      extensions: ['.scss', '.sass', '.styl', '.css', '.less']
     });
   }
 
@@ -588,11 +607,12 @@ gulp.task('generate', (done) => {
       name: 'stylePreprocessor',
       default: 0,
       choices: [
-        'SCSS',
-        'SASS',
-        'LESS',
-        'Stylus',
-        'None',
+        'scss',
+        'sass',
+        'less',
+        'stylus',
+        'css',
+        'none',
       ]
     },
     {
@@ -600,6 +620,12 @@ gulp.task('generate', (done) => {
       message: 'Do you want to inline bundle styles within script?',
       name: 'bundleStyles',
       default: false
+    },
+    {
+      type: 'confirm',
+      message: 'Are you building a browser compliant library?',
+      name: 'clientCompliant',
+      default: true
     },
     {
       type: 'list',
@@ -610,9 +636,11 @@ gulp.task('generate', (done) => {
         'umd',
         'amd',
         'iife',
-        'system',
-        'cjs'
+        'system'
       ],
+      when: (answers) => {
+        return answers.clientCompliant;
+      },
       validate: (value) => {
         return !!value || 'Bundle format is required';
       }
@@ -703,12 +731,19 @@ gulp.task('generate', (done) => {
 
   inquirer.prompt(questions).then(options => {
     let packageConfig = configResource;
+
+    if (!options.clientCompliant) {
+      packageConfig.bundle.format = 'cjs';
+    } else {
+      packageConfig.bundle.format = options.bundleFormat;
+    }
+
     packageConfig.bundle.inlineStyle = options.bundleStyles;
-    packageConfig.bundle.format = options.bundleFormat;
     packageConfig.bundle.amd.id = options.amdId;
     packageConfig.testFramework = options.testFramework;
     packageConfig.tsProject = options.tsProject;
     packageConfig.namespace = options.namespace;
+    packageConfig.stylePreprocessor = options.stylePreprocessor;
 
     let packageJson = packageResource;
     packageJson.name = packageName;
@@ -723,8 +758,18 @@ gulp.task('generate', (done) => {
     }
 
     const projectDir = path.join(process.cwd(), packageName);
+    const srcPath = path.join(__dirname, '../resources/dynamic', packageConfig.tsProject? 'ts': 'js','{.**,**}');
+    const stylePath = path.join(__dirname, '../resources/dynamic/common', `**/*.${parseStylePreprocessorExtention(packageConfig.stylePreprocessor)}`);
+    const templatePath = path.join(__dirname, '../resources/dynamic/common/**.*.hbs');
+    const imagePath = path.join(__dirname, '../resources/dynamic/common/**.*.png');
 
-    gulp.src([path.join(__dirname, '../resources/static/{.**,**}')])
+    gulp.src([
+      path.join(__dirname, '../resources/static/{.**,**}'),
+      srcPath,
+      stylePath,
+      templatePath,
+      imagePath
+    ])
       .pipe(gulpFile('.packerrc.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
       .pipe(gulpFile('LICENSE', getLicenseFile(packageJson.license, options.year, options.author)))
