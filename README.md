@@ -73,7 +73,7 @@ Do you want to use typescript? (Y/n) Yes
 # Inline bundle style sheets within bundled script files.
 Do you want to inline bundle CSS styles in script? (Y/n) Yes
 
-# You can close from the bundel formats options list.
+# You can chose from the bundel formats options list.
 What's the build bundle format you want to use? umd
 - umd
 - amd
@@ -81,6 +81,14 @@ What's the build bundle format you want to use? umd
 - system
 - esm
 - cjs
+
+# 
+Do you want this module to be browser compliant module? (Y/n) Yes
+
+# Jesmine test framework is used if browser complient, otherwise Jasmine and Mocha test frameworks are available.
+Which test framework do you want to use?
+- Jasmine
+- Mocha
 
 # Library namespace will be used when exposing the libray via global scope.
 What's the library namespace you want to use? my.lib
