@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Build Demo</title>
-    <link href="../../dist/styles/<%- projectName %>.css">
+{{#if inlineStyle}}
+    <link href="../../dist/styles/{{projectName}}.css">
+{{/if}}
 </head>
 <body>
     <div class="container"></div>
-    <script src="../../dist/bundles/<%- projectName %>.umd.js"></script>
+    <script src="../../dist/bundles/{{projectName}}.umd.js"></script>
     <script type="application/javascript">
-      let main = new window.<%- namespace %>.Main("Aloha, ");
+      let main = new window.{{namespace}}.Main("Aloha, ");
       main.greet();
     </script>
 </body>
