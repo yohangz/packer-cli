@@ -11,7 +11,7 @@ import rollupPreprocessor from 'karma-rollup-preprocessor';
 
 const typescript = require('typescript');
 
-const config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', 'utf8'));
+const config = JSON.parse(fs.readFileSync(process.cwd() + '/.packerrc.json', 'utf8'));
 
 const testGlob = config.source + '/**/*.spec' + (config.tsProject ? '.ts' : '.js');
 console.log(testGlob);
@@ -54,7 +54,7 @@ const nmlPlugin = {
     }),
     buildPlugin,
     rollupIstanbul({
-      exclude: [testGlob]
+      exclude: [ testGlob, 'node_modules/**' ]
     })
   ],
   output: {
