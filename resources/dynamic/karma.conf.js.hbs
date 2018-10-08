@@ -6,7 +6,7 @@ module.exports = function(config) {
   config.set({
     basePath: '',
 
-    frameworks: ['jasmine'],
+    frameworks: [ {{#if isJasmine}}'jasmine'{{else}}'mocha'{{/if}} ],
 
     browsers: [ process.env.CI? 'ChromeHeadless': 'Chrome' ],
 
@@ -18,7 +18,7 @@ module.exports = function(config) {
 
     logLevel: config.LOG_INFO,
 
-    reporters: ['progress', 'kjhtml', 'coverage'],
+    reporters: ['progress', {{#if isJasmine}}'kjhtml', {{/if}}'coverage'],
 
     files: [
       /**
@@ -31,9 +31,15 @@ module.exports = function(config) {
     preprocessors: karmaNml.nmlPreprocess,
 
     plugins: [
+{{#if isJasmine}}
       require('karma-jasmine'),
+{{else}}
+      require('karma-mocha'),
+{{/if}}
       require('karma-chrome-launcher'),
+{{#if isJasmine}}
       require('karma-jasmine-html-reporter'),
+{{/if}}
       require('karma-coverage'),
       karmaNml.rollupPreprocessor
     ],
@@ -43,7 +49,14 @@ module.exports = function(config) {
     },
 
     client:{
-      clearContext: false // leave Jasmine Spec Runner output visible in browser
+{{#if isJasmine}}
+      clearContext: false, // leave Jasmine Spec Runner output visible in browser
+{{else}}
+      mocha: {
+        // change Karma's debug.html to the mocha web reporter
+        reporter: 'html',
+      }
+{{/if}}
     },
 
     rollupPreprocessor: karmaNml.nmlPlugin
