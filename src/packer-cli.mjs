@@ -731,25 +731,33 @@ gulp.task('generate', (done) => {
       }
 
       const projectDir = path.join(process.cwd(), packageName);
+      const styleExt = parseStylePreprocessorExtention(packageConfig.stylePreprocessor);
+      const isJasmine = options.testFramework === 'jasmine';
 
       const styleCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${parseStylePreprocessorExtention(packageConfig.stylePreprocessor)}`)
+        path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${styleExt}`)
       ])
         .pipe(gulp.dest(path.join(projectDir, 'src/style')));
 
       const templateCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example/common/**/*')
+        path.join(__dirname, '../resources/dynamic/example/common/templates/**/*')
       ])
         .pipe(gulp.dest(path.join(projectDir, 'src/templates')));
 
       const assetCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example/common/**/*')
+        path.join(__dirname, '../resources/dynamic/example/common/assets/**/*')
       ])
         .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
 
       const sourceCopy = gulp.src([
         path.join(__dirname, '../resources/dynamic/example', packageConfig.tsProject? 'ts': 'js','{.**,**}')
       ])
+        .pipe(gulpHbsRuntime({
+          stylePreprocessor: styleExt,
+          isJasmine: isJasmine
+        }, {
+          replaceExt: ''
+        }))
         .pipe(gulp.dest(path.join(projectDir, 'src')));
 
       const licenseCopy = gulp.src([
@@ -767,7 +775,7 @@ gulp.task('generate', (done) => {
         path.join(__dirname, '../resources/dynamic/karma.conf.js.hbs')
       ])
         .pipe(gulpHbsRuntime({
-          isJasmine: options.testFramework === 'jasmine'
+          isJasmine: isJasmine
         }, {
           replaceExt: ''
         }))
