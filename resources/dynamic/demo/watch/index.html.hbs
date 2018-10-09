@@ -9,10 +9,10 @@
 </head>
 <body>
     <div class="container"></div>
-    <script src="{{projectName}}.umd.js"></script>
+    <script src="{{projectName}}.{{moduleFormat}}.js"></script>
     <script type="application/javascript">
-      let main = new window.{{namespace}}.Main();
-      main.greet();
+      var main = new window.{{namespace}}.Main();
+      main.render();
     </script>
 </body>
 </html>

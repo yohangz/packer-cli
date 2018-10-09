@@ -1,8 +1,9 @@
 import gulp from 'gulp';
 import gulpFile from 'gulp-file';
 import clean from 'gulp-clean';
-import mergeStream from 'merge-stream';
+import gulpFilter from 'gulp-filter';
 import gulpHbsRuntime from  './gulp-hbs-runtime';
+import mergeStream from 'merge-stream';
 
 import {rollup, watch} from 'rollup';
 import rollupTypescript from 'rollup-plugin-typescript2';
@@ -782,10 +783,13 @@ gulp.task('generate', (done) => {
       const demoCopy = gulp.src([
         path.join(__dirname, '../resources/dynamic/demo/**/*.hbs')
       ])
+        .pipe(gulpFilter('**/*' + (options.clientCompliant? '.html.hbs': '.js.hbs')))
         .pipe(gulpHbsRuntime({
           projectName: packageName,
           inlineStyle: packageConfig.bundle.inlineStyle,
           namespace: packageConfig.namespace,
+          moduleFormat: packageConfig.bundle.format,
+          watchDir: packageConfig.watch.script
         }, {
           replaceExt: ''
         }))
@@ -797,9 +801,9 @@ gulp.task('generate', (done) => {
         .pipe(gulpFile('.packerrc.json', JSON.stringify(packageConfig, null, 2)))
         .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
         .on('end', () => {
-          // runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
-          //   done();
-          // })
+          runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
+            done();
+          })
         })
         .pipe(gulp.dest(projectDir));
 
