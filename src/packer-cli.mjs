@@ -806,6 +806,7 @@ gulp.task('generate', (done) => {
           namespace: packageConfig.namespace,
           moduleFormat: packageConfig.bundle.format,
           watchDir: packageConfig.watch.script,
+          distDir: packageConfig.dist.out,
           require: isAmd,
           iife: isIife,
           system: isSystem

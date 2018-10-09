@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Build Demo</title>
 {{#unless inlineStyle}}
-    <link href="../../dist/styles/{{projectName}}.css" rel="stylesheet"/>
+    <link href="../../{{distDir}}/styles/{{projectName}}.css" rel="stylesheet"/>
 {{/unless}}
 </head>
 <body>
@@ -12,14 +12,14 @@
 {{#if require}}
   <script src="../helper/require.js"></script>
   <script>
-    require(['../../dist/bundles/{{projectName}}.{{moduleFormat}}.js'], function (lib) {
+    require(['../../{{distDir}}/bundles/{{projectName}}.{{moduleFormat}}.js'], function (lib) {
       var main = new lib.Main();
       main.render('.container');
     });
   </script>
 {{/if}}
 {{#if iife}}
-  <script src="../../dist/bundles/{{projectName}}.{{moduleFormat}}.js"></script>
+  <script src="../../{{distDir}}/bundles/{{projectName}}.{{moduleFormat}}.js"></script>
   <script type="application/javascript">
     var main = new window.{{namespace}}.Main();
     main.render('.container');
@@ -30,7 +30,7 @@
   <script>
     window.System.config({
       bundles: {
-        '../../dist/bundles/{{projectName}}.{{moduleFormat}}.js': ['{{namespace}}']
+        '../../{{distDir}}/bundles/{{projectName}}.{{moduleFormat}}.js': ['{{namespace}}']
       }
     });
 
