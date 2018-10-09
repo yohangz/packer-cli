@@ -1,23 +1,26 @@
 import { conf } from './replace-config';
+{{#unless isJasmine}}
+import assert from 'assert';
+{{/unless}}
 
 {{#if isJasmine}}
-describe('Base configuration test suite', () => {
-  it('Title is required', () => {
+describe('replace configuration test suite', () => {
+  it('title is required', () => {
     expect(conf.title).toBe('Packer CLI');
   });
 
-  it('Config type should be BASE', () => {
+  it('config type should be replace', () => {
     expect(conf.configType).toBe('BASE');
   });
 });
 {{else}}
-describe('Base configuration test suite', () => {
-  it('Title is required', () => {
-    expect(conf.title).toBe('Packer CLI');
+describe('replace configuration test suite', () => {
+  it('title is required', () => {
+    assert.equal(conf.title, 'Packer CLI');
   });
 
-  it('Config type should be BASE', () => {
-    expect(conf.configType).toBe('BASE');
+  it('config type should be replace', () => {
+    assert.equal(conf.configType, 'BASE');
   });
 });
 {{/if}}
