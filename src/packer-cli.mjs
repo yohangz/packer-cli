@@ -1,7 +1,6 @@
 import gulp from 'gulp';
 import gulpFile from 'gulp-file';
 import clean from 'gulp-clean';
-import gulpFilter from 'gulp-filter';
 import mergeStream from 'merge-stream';
 import gulpHbsRuntime from  './gulp-hbs-runtime';
 
@@ -24,7 +23,6 @@ import rollupPostCss from 'rollup-plugin-postcss';
 
 import {Server} from 'karma';
 
-import handlebars from 'handlebars';
 import inquirer from 'inquirer';
 import npmValidate from 'validate-npm-package-name';
 import isUrl from 'validator/lib/isURL';
