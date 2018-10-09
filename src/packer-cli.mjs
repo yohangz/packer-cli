@@ -136,25 +136,6 @@ const parseLicense = (license) => {
   return licenseFileName;
 };
 
-const getLicenseFile = (license, year, author) => {
-  const licenseContent = fs.readFileSync(path.join(__dirname, '../resources/license', `${license}.hbs`), 'utf8');
-  const template = handlebars.compile(licenseContent);
-
-  return template({
-    year,
-    author
-  });
-};
-
-const getKarmaConfFile = (testFramework) => {
-  const karmaConfContent = fs.readFileSync(path.join(__dirname, '../resources/dynamic/karma.conf.js.hbs'), 'utf8');
-  const template = handlebars.compile(karmaConfContent);
-
-  return template({
-    isJasmine: testFramework === 'jasmine'
-  });
-};
-
 const getBaseConfig = (config, packageJson) => {
   return {
     input: `${config.source}/${config.entry}`,
