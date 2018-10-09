@@ -758,10 +758,10 @@ gulp.task('generate', (done) => {
     }
 
     const projectDir = path.join(process.cwd(), packageName);
-    const srcPath = path.join(__dirname, '../resources/dynamic', packageConfig.tsProject? 'ts': 'js','{.**,**}');
-    const stylePath = path.join(__dirname, '../resources/dynamic/common', `**/*.${parseStylePreprocessorExtention(packageConfig.stylePreprocessor)}`);
-    const templatePath = path.join(__dirname, '../resources/dynamic/common/**.*.hbs');
-    const imagePath = path.join(__dirname, '../resources/dynamic/common/**.*.png');
+    const srcPath = path.join(__dirname, '../resources/dynamic/example', packageConfig.tsProject? 'ts': 'js','{.**,**}');
+    const stylePath = path.join(__dirname, '../resources/dynamic/example/common', `**/*.${parseStylePreprocessorExtention(packageConfig.stylePreprocessor)}`);
+    const templatePath = path.join(__dirname, '../resources/dynamic/example/common/**.*.hbs');
+    const imagePath = path.join(__dirname, '../resources/dynamic/example/common/**.*.png');
 
     gulp.src([
       path.join(__dirname, '../resources/static/{.**,**}'),
