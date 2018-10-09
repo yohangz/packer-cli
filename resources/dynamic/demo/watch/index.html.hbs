@@ -3,16 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Watch Demo</title>
-{{#if inlineStyle}}
-    <link rel="stylesheet" href="styles/{{projectName}}.css">
-{{/if}}
+{{#unless inlineStyle}}
+    <link rel="stylesheet" href="styles/{{projectName}}.css" rel="stylesheet"/>
+{{/unless}}
 </head>
 <body>
-    <div class="container"></div>
-    <script src="{{projectName}}.{{moduleFormat}}.js"></script>
-    <script type="application/javascript">
-      var main = new window.{{namespace}}.Main();
-      main.render();
-    </script>
+  <div class="container"></div>
+{{#if require}}
+  <script src="require.js"></script>
+  <script>
+    require(['{{projectName}}.{{moduleFormat}}.js'], function(lib) {
+      var main = new lib.Main();
+      main.render('.container');
+    });
+  </script>
+{{/if}}
+{{#if iife}}
+  <script src="{{projectName}}.{{moduleFormat}}.js"></script>
+  <script type="application/javascript">
+    var main = new window.{{namespace}}.Main();
+    main.render('.container');
+  </script>
+{{/if}}
+{{#if system}}
+  <script src="system.js"></script>
+  <script>
+    window.System.config({
+      bundles: {
+        '{{projectName}}.{{moduleFormat}}.js': ['{{namespace}}']
+      }
+    });
+
+    window.System.import('{{namespace}}')
+      .then(function (lib) {
+        var main = new lib.Main();
+        main.render('.container');
+      }, function (e) {
+        console.error(e)
+      });
+  </script>
+{{/if}}
 </body>
 </html>

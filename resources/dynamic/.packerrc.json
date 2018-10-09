@@ -9,8 +9,9 @@
   "tsProject": true,
   "stylePreprocessor": "scss",
   "watch": {
-    "script": ".tmp",
-    "demo": "demo/watch",
+    "scriptDir": ".tmp",
+    "helperDir": "demo/helper",
+    "demoDir": "demo/watch",
     "serve": true,
     "port": 4000,
     "open": true

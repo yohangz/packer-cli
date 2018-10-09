@@ -466,12 +466,19 @@ gulp.task('build:watch', async () => {
     if (config.watch.serve && config.bundle.format !== 'cjs') {
       rollupServePlugins = [
         rollupServe({
-          contentBase: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`],
+          contentBase: [
+            path.join(process.cwd(), config.watch.scriptDir),
+            path.join(process.cwd(), config.watch.demoDir),
+            path.join(process.cwd(), config.watch.helperDir)
+          ],
           port: config.watch.port,
           open: config.watch.open,
         }),
         rollupLivereload({
-          watch: [`${process.cwd()}/${config.watch.script}`, `${process.cwd()}/${config.watch.demo}`]
+          watch: [
+            path.join(process.cwd(), config.watch.scriptDir),
+            path.join(process.cwd(), config.watch.demoDir)
+          ]
         })
       ]
     }
@@ -780,6 +787,15 @@ gulp.task('generate', (done) => {
         }))
         .pipe(gulp.dest(projectDir));
 
+      const isAmd = packageConfig.bundle.format === 'amd';
+      const isIife = packageConfig.bundle.format === 'umd' || packageConfig.bundle.format === 'iife';
+      const isSystem = packageConfig.bundle.format === 'system';
+
+      const demoHelperScriptCopy = gulp.src([
+        path.join(__dirname, '../resources/dynamic/demo/helper/**/*')
+      ])
+        .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
+
       const demoCopy = gulp.src([
         path.join(__dirname, '../resources/dynamic/demo/**/*.hbs')
       ])
@@ -789,7 +805,10 @@ gulp.task('generate', (done) => {
           inlineStyle: packageConfig.bundle.inlineStyle,
           namespace: packageConfig.namespace,
           moduleFormat: packageConfig.bundle.format,
-          watchDir: packageConfig.watch.script
+          watchDir: packageConfig.watch.script,
+          require: isAmd,
+          iife: isIife,
+          system: isSystem
         }, {
           replaceExt: ''
         }))
@@ -808,7 +827,7 @@ gulp.task('generate', (done) => {
         .pipe(gulp.dest(projectDir));
 
       const merged = mergeStream(styleCopy, templateCopy);
-      merged.add([assetCopy, sourceCopy, demoCopy, licenseCopy, karmaConfCopy, configCopy]);
+      merged.add([assetCopy, sourceCopy, demoCopy, demoHelperScriptCopy, licenseCopy, karmaConfCopy, configCopy]);
     });
   } catch (error) {
     console.log(error);
