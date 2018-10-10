@@ -146,7 +146,7 @@ const makeDir = (name) => {
 };
 
 const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main) => {
-  const styleDir = watch ? config.watch.script : config.dist.outDir;
+  const styleDir = watch ? config.watch.scriptDir : config.dist.outDir;
   const styleDist = path.join(process.cwd(), styleDir, config.dist.stylesDir, packageJson.name + (minify ? '.min.css' : '.css'));
 
   if (!main && !config.bundle.inlineStyle) {
@@ -277,7 +277,7 @@ gulp.task('build:clean', () => {
 
 gulp.task('watch:clean', () => {
   const config = readConfig();
-  return gulp.src([ path.join(process.cwd(), '.rpt2_cache'), path.join(process.cwd(), config.watch.script)], {
+  return gulp.src([ path.join(process.cwd(), '.rpt2_cache'), path.join(process.cwd(), config.watch.scriptDir)], {
     read: false,
     allowEmpty: true
   })
@@ -472,7 +472,7 @@ gulp.task('build:watch', async () => {
     const packageJson = readPackageData();
     const baseConfig = getBaseConfig(config, packageJson);
 
-    makeDir(config.watch.script);
+    makeDir(config.watch.scriptDir);
 
     let rollupServePlugins = [];
     if (config.watch.serve && config.bundle.format !== 'cjs') {
@@ -499,7 +499,7 @@ gulp.task('build:watch', async () => {
       output: {
         name: config.namespace,
         format: config.bundle.format,
-        file: path.join(process.cwd(), config.watch.script, `${packageJson.name}.${config.bundle.format}.js`),
+        file: path.join(process.cwd(), config.watch.scriptDir, `${packageJson.name}.${config.bundle.format}.js`),
         globals: config.flatGlobals
       },
       external: Object.keys(config.flatGlobals),
@@ -829,7 +829,7 @@ gulp.task('generate', (done) => {
           inlineStyle: packageConfig.bundle.inlineStyle,
           namespace: packageConfig.namespace,
           moduleFormat: packageConfig.bundle.format,
-          watchDir: packageConfig.watch.script,
+          watchDir: packageConfig.watch.scriptDir,
           distDir: packageConfig.dist.outDir,
           require: isAmd,
           iife: isIife,
