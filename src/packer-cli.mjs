@@ -77,7 +77,7 @@ const runShellCommand = (command, args, dir) => {
   });
 };
 
-const parseStylePreprocessorExtention = (preprocessor) => {
+const parseStylePreprocessorExtension = (preprocessor) => {
   switch (preprocessor) {
     case 'scss':
       return 'scss';
@@ -87,12 +87,6 @@ const parseStylePreprocessorExtention = (preprocessor) => {
       return 'less';
     case 'stylus':
       return 'styl';
-    case 'css':
-      return 'css';
-    case 'none':
-      return 'none';
-    default:
-      return 'none';
   }
 };
 
@@ -596,7 +590,14 @@ gulp.task('generate', (done) => {
       {
         type: 'confirm',
         message: 'Do you want to use typescript?',
-        name: 'tsProject'
+        name: 'tsProject',
+        default: true
+      },
+      {
+        type: 'confirm',
+        message: 'Do you want to use style sheets?',
+        name: 'styleSupport',
+        default: true
       },
       {
         type: 'list',
@@ -607,16 +608,20 @@ gulp.task('generate', (done) => {
           'scss',
           'sass',
           'less',
-          'stylus',
-          'css',
-          'none',
-        ]
+          'stylus'
+        ],
+        when: (answers) => {
+          return answers.styleSupport;
+        }
       },
       {
         type: 'confirm',
         message: 'Do you want to inline bundle styles within script?',
         name: 'bundleStyles',
-        default: false
+        default: false,
+        when: (answers) => {
+          return answers.styleSupport;
+        }
       },
       {
         type: 'confirm',
@@ -755,7 +760,7 @@ gulp.task('generate', (done) => {
       }
 
       const projectDir = path.join(process.cwd(), packageName);
-      const styleExt = parseStylePreprocessorExtention(packageConfig.stylePreprocessor);
+      const styleExt = parseStylePreprocessorExtension(packageConfig.stylePreprocessor);
       const isJasmine = options.testFramework === 'jasmine';
 
       const styleCopy = gulp.src([
@@ -778,7 +783,8 @@ gulp.task('generate', (done) => {
       ])
         .pipe(gulpHbsRuntime({
           stylePreprocessor: styleExt,
-          isJasmine: isJasmine
+          isJasmine: isJasmine,
+          styleSupport: options.styleSupport
         }, {
           replaceExt: ''
         }))
@@ -845,8 +851,13 @@ gulp.task('generate', (done) => {
         })
         .pipe(gulp.dest(projectDir));
 
-      const merged = mergeStream(styleCopy, templateCopy);
-      merged.add([assetCopy, sourceCopy, demoCopy, demoHelperScriptCopy, licenseCopy, karmaConfCopy, configCopy]);
+      const merged = mergeStream(assetCopy, templateCopy);
+
+      if (options.styleSupport) {
+        merged.add(styleCopy)
+      }
+
+      merged.add([sourceCopy, demoCopy, demoHelperScriptCopy, licenseCopy, karmaConfCopy, configCopy]);
     });
   } catch (error) {
     console.log(error);
