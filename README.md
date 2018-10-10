@@ -183,17 +183,22 @@ Build configuration can be changed depending on your preference.
 
 ```json
 {
-  "namespace": "ts.lib",
+  "namespace": "my.lib",
   "entry": "index.ts",
-  "source": "src/ts",
+  "source": "src",
   "dist": {
-    "out": "dist",
-    "styles": "styles"
+    "outDir": "dist",
+    "stylesDir": "styles",
+    "generateFESM5": true,
+    "generateFESM2015": true,
+    "generateMin": true
   },
   "tsProject": true,
+  "stylePreprocessor": "scss",
   "watch": {
-    "script": ".tmp",
-    "demo": "demo/watch",
+    "scriptDir": ".tmp",
+    "helperDir": "demo/helper",
+    "demoDir": "demo/watch",
     "serve": true,
     "port": 4000,
     "open": true
@@ -208,17 +213,24 @@ Build configuration can be changed depending on your preference.
   ],
   "pathReplacePatterns": [
     {
-      "test": "./conf/conf1",
-      "replace": "./conf/conf2"
+      "test": "./config/base-config",
+      "replace": "./config/replace-config"
     }
   ],
   "ignore": [],
-  "imageInlineLimit": 1000000,
   "assetPaths": [
-    "src/ts/assets"
+    "src/assets"
   ],
-  "bundleStyle": false,
-  "bundleFormat": "umd"
+  "testFramework": "jasmine",
+  "bundle": {
+    "amd": {
+      "define": "",
+      "id": "myLib"
+    },
+    "format": "umd",
+    "imageInlineLimit": 1000000,
+    "inlineStyle": false
+  }
 }
 ```
 

@@ -45,6 +45,6 @@
     },
     "format": "umd",
     "imageInlineLimit": 1000000,
-    "inlineStyle": ""
+    "inlineStyle": false
   }
 }
