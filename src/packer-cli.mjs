@@ -137,7 +137,7 @@ const parseLicense = (license) => {
 
 const getBaseConfig = (config, packageJson) => {
   return {
-    input: `${config.source}/${config.entry}`,
+    input: path.join(config.source, config.entry),
     output: {
       name: packageJson.name,
       sourcemap: true
