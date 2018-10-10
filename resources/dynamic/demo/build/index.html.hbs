@@ -12,7 +12,14 @@
 {{#if require}}
   <script src="../helper/require.js"></script>
   <script>
-    require(['../../{{distDir}}/bundles/{{projectName}}.{{moduleFormat}}.js'], function (lib) {
+    require.config({
+      baseUrl: '../../{{distDir}}/bundles',
+      paths: {
+        '{{amdModule}}': '{{projectName}}.{{moduleFormat}}'
+      }
+    });
+
+    require(['{{amdModule}}'], function (lib) {
       var main = new lib.Main();
       main.render('.container');
     });

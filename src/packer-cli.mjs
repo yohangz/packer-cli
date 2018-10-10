@@ -833,7 +833,8 @@ gulp.task('generate', (done) => {
           distDir: packageConfig.dist.outDir,
           require: isAmd,
           iife: isIife,
-          system: isSystem
+          system: isSystem,
+          amdModule: packageConfig.bundle.amd.id
         }, {
           replaceExt: ''
         }))

@@ -12,10 +12,17 @@
 {{#if require}}
   <script src="require.js"></script>
   <script>
-    require(['{{projectName}}.{{moduleFormat}}.js'], function(lib) {
+    require.config({
+      baseUrl: '.',
+      paths: {
+        '{{amdModule}}': '{{projectName}}.{{moduleFormat}}'
+      }
+    });
+
+    require(['{{amdModule}}'], function (lib) {
       var main = new lib.Main();
       main.render('.container');
-    });
+    })
   </script>
 {{/if}}
 {{#if iife}}
