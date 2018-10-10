@@ -337,12 +337,12 @@ gulp.task('build:copy:essentials', () => {
     targetPackage.typings = 'index.d.ts';
   }
 
-  if (config.generateFESM5) {
+  if (config.dist.generateFESM5) {
     targetPackage.module = `fesm5/${packageJson.name}.js`;
     targetPackage.fesm5 = `fesm5/${packageJson.name}.js`;
   }
 
-  if (config.generateFESM2015) {
+  if (config.dist.generateFESM2015) {
     targetPackage.es2015 = `fesm2015/${packageJson.name}.js`;
     targetPackage.fesm2015 = `fesm2015/${packageJson.name}.js`;
   }
@@ -393,7 +393,7 @@ gulp.task('build:bundle', async () => {
 
     await bundleBuild(flatConfig, 'FLAT');
 
-    if (config.generateMin) {
+    if (config.dist.generateMin) {
       // minified flat bundle.
       const minifiedFlatConfig = merge({}, baseConfig, {
         output: {
@@ -405,7 +405,7 @@ gulp.task('build:bundle', async () => {
         },
         external: Object.keys(config.flatGlobals),
         plugins: [
-          rollupStyleBuildPlugin(config, packageJson, false, true, false),
+          rollupStyleBuildPlugin(config, packageJson, false, true, true),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           buildPlugin('es5', false, false, config),
@@ -417,7 +417,7 @@ gulp.task('build:bundle', async () => {
       await bundleBuild(minifiedFlatConfig, 'FLAT MIN');
     }
 
-    if (config.generateFESM5) {
+    if (config.dist.generateFESM5) {
       // FESM+ES5 flat module bundle.
       const fesm5config = merge({}, baseConfig, {
         output: {
@@ -436,7 +436,7 @@ gulp.task('build:bundle', async () => {
       await bundleBuild(fesm5config, 'FESM5');
     }
 
-    if (config.generateFESM2015) {
+    if (config.dist.generateFESM2015) {
       // FESM+ES2015 flat module bundle.
       const fesm2015config = merge({}, baseConfig, {
         output: {
