@@ -3,8 +3,8 @@
   "entry": "index.ts",
   "source": "src",
   "dist": {
-    "out": "dist",
-    "styles": "styles"
+    "outDir": "dist",
+    "stylesDir": "styles"
   },
   "tsProject": true,
   "stylePreprocessor": "scss",

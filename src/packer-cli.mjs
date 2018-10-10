@@ -152,8 +152,8 @@ const makeDir = (name) => {
 };
 
 const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main) => {
-  const styleDir = watch ? config.watch.script : config.dist.out;
-  const styleDist = path.join(process.cwd(), styleDir, config.dist.styles, packageJson.name + (minify ? '.min.css' : '.css'));
+  const styleDir = watch ? config.watch.script : config.dist.outDir;
+  const styleDist = path.join(process.cwd(), styleDir, config.dist.stylesDir, packageJson.name + (minify ? '.min.css' : '.css'));
 
   if (!main && !config.bundle.inlineStyle) {
     return  rollupIgnoreImport({
@@ -208,7 +208,7 @@ const buildPlugin = (esVersion, generateDefinition, watch, config) => {
       buildConf.tsconfigOverride = {
         compilerOptions: {
           declaration: true,
-          declarationDir: `${process.cwd()}/${config.dist.out}`
+          declarationDir: path.join(process.cwd(), config.dist.outDir)
         }
       };
 
@@ -274,7 +274,7 @@ const bundleBuild = async (config, type) => {
 
 gulp.task('build:clean', () => {
   const config = readConfig();
-  return gulp.src([`${process.cwd()}/.rpt2_cache`, `${process.cwd()}/${config.dist.out}`], {
+  return gulp.src([ path.join(process.cwd(), '.rpt2_cache'), path.join(process.cwd(), config.dist.outDir) ], {
     read: false,
     allowEmpty: true
   })
@@ -283,7 +283,7 @@ gulp.task('build:clean', () => {
 
 gulp.task('watch:clean', () => {
   const config = readConfig();
-  return gulp.src([`${process.cwd()}/.rpt2_cache`, `${process.cwd()}/${config.watch.script}`], {
+  return gulp.src([ path.join(process.cwd(), '.rpt2_cache'), path.join(process.cwd(), config.watch.script)], {
     read: false,
     allowEmpty: true
   })
@@ -295,7 +295,7 @@ gulp.task('watch:clean', () => {
 gulp.task('lint:style', (done) => {
   console.log(chalk.blue('[Style Lint]'));
   const config = readConfig();
-  runShellCommand('stylelint', [path.join(config.source, '**/*.{styl,scss,sass,less,css}')], process.cwd()).then(() => {
+  runShellCommand('stylelint', [ path.join(config.source, '**/*.{styl,scss,sass,less,css}') ], process.cwd()).then(() => {
     done();
   });
 });
@@ -340,9 +340,12 @@ gulp.task('build:copy:essentials', () => {
     es2015: `fesm2015/${packageJson.name}.js`,
     fesm5: `fesm5/${packageJson.name}.js`,
     fesm2015: `fesm2015/${packageJson.name}.js`,
-    typings: 'index.d.ts',
     peerDependencies: {}
   };
+
+  if (config.tsProject) {
+    targetPackage.typings = 'index.d.ts';
+  }
 
   //only copy needed properties from project's package json
   fieldsToCopy.forEach((field) => targetPackage[field] = packageJson[field]);
@@ -354,13 +357,13 @@ gulp.task('build:copy:essentials', () => {
 
   // copy the needed additional files in the 'dist' folder
   return gulp.src((config.copy || []).map((copyFile) => {
-    return `${process.cwd()}/${copyFile}`
+    return path.join(process.cwd(), copyFile);
   }))
     .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)).on('error', (error) => {
       console.log(chalk.red(`${type} bundle build Failure`));
       console.error(error);
     }))
-    .pipe(gulp.dest(path.join(process.cwd(), config.dist.out)));
+    .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir)));
 });
 
 gulp.task('build:bundle', async () => {
@@ -374,7 +377,7 @@ gulp.task('build:bundle', async () => {
       output: {
         name: config.namespace,
         format: config.bundle.format,
-        file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundle.format}.js`),
+        file: path.join(process.cwd(), config.dist.outDir, 'bundles', `${packageJson.name}.${config.bundle.format}.js`),
         globals: config.flatGlobals,
         amd: config.bundle.amd
       },
@@ -393,7 +396,7 @@ gulp.task('build:bundle', async () => {
       output: {
         name: config.namespace,
         format: config.bundle.format,
-        file: path.join(process.cwd(), config.dist.out, 'bundles', `${packageJson.name}.${config.bundle.format}.min.js`),
+        file: path.join(process.cwd(), config.dist.outDir, 'bundles', `${packageJson.name}.${config.bundle.format}.min.js`),
         globals: config.flatGlobals,
         amd: config.bundle.amd
       },
@@ -412,7 +415,7 @@ gulp.task('build:bundle', async () => {
     const fesm5config = merge({}, baseConfig, {
       output: {
         format: 'es',
-        file: path.join(process.cwd(), config.dist.out, 'fesm5', `${packageJson.name}.es5.js`),
+        file: path.join(process.cwd(), config.dist.outDir, 'fesm5', `${packageJson.name}.es5.js`),
       },
       plugins: [
         rollupStyleBuildPlugin(config, packageJson, false, true, false),
@@ -427,7 +430,7 @@ gulp.task('build:bundle', async () => {
     const fesm2015config = merge({}, baseConfig, {
       output: {
         format: 'es',
-        file: path.join(process.cwd(), config.dist.out, 'fesm2015', `${packageJson.name}.js`),
+        file: path.join(process.cwd(), config.dist.outDir, 'fesm2015', `${packageJson.name}.js`),
       },
 
       plugins: [
@@ -533,7 +536,7 @@ gulp.task('watch', gulp.series('watch:clean', 'build:watch'));
 
 gulp.task('test', async (done) => {
   const server = new Server({
-    configFile: `${process.cwd()}/karma.conf.js`,
+    configFile: path.join(process.cwd(), 'karma.conf.js'),
     port: 9876
   }, (exitCode) => {
     console.log(chalk.blue(`Karma has exited with ${exitCode}`));
@@ -806,7 +809,7 @@ gulp.task('generate', (done) => {
           namespace: packageConfig.namespace,
           moduleFormat: packageConfig.bundle.format,
           watchDir: packageConfig.watch.script,
-          distDir: packageConfig.dist.out,
+          distDir: packageConfig.dist.outDir,
           require: isAmd,
           iife: isIife,
           system: isSystem
