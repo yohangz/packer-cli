@@ -4,7 +4,10 @@
   "source": "src",
   "dist": {
     "outDir": "dist",
-    "stylesDir": "styles"
+    "stylesDir": "styles",
+    "generateFESM5": true,
+    "generateFESM2015": true,
+    "generateMin": true
   },
   "tsProject": true,
   "stylePreprocessor": "scss",
