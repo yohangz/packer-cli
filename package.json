@@ -29,6 +29,9 @@
   "license": "MIT",
   "peerDependencies": {
     "@types/jasmine": "^2.8.8",
+    "@types/assert": "^1.4.0",
+    "@types/mocha": "^5.2.5",
+    "assert": "^1.4.1",
     "eslint": ">=5.0.0",
     "eslint-config-standard": "*",
     "eslint-plugin-import": ">=2.13.0",

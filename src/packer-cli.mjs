@@ -761,7 +761,7 @@ gulp.task('generate', (done) => {
 
       const projectDir = path.join(process.cwd(), packageName);
       const styleExt = parseStylePreprocessorExtension(packageConfig.stylePreprocessor);
-      const isJasmine = options.testFramework === 'jasmine';
+      const isJasmine = options.testFramework === 'Jasmine';
 
       const styleCopy = gulp.src([
         path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${styleExt}`)
