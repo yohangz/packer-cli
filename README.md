@@ -148,6 +148,8 @@ npm run release
 
 ```
 .
+├── /.rpt2_cache/               # TypeScript build cache directory
+├── /.tmp/                      # Watch build tempary artifact directory
 ├── /demo/                      # Demo source content (applicable if serve mode is enabled in config)
 │   ├── /build/                 # Build demo page and assets
 │   └── /watch/                 # Watch demo page and assets
@@ -164,9 +166,9 @@ npm run release
 ├── .editorconfig               # Define and maintain consistent coding styles between different editors and IDEs.
 ├── .eslintrc.yml               # ES Lint configuration.
 ├── .gitignore                  # Contains files to be ignored when pushing to git.
+├── .packerrc.json              # This file contains library build configuration options.
 ├── .stylelintrc.json           # Style lint configuration.
 ├── .travis.yml                 # Travis CI configuration file.
-├── .packerrc.json              # This file contains library build configuration options.
 ├── karma.conf.js               # This file contains karma unit test runner configuration.
 ├── LICENSE                     # License agreement file
 ├── package.json                # NPM configuration and medata.
