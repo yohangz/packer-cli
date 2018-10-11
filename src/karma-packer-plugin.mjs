@@ -64,10 +64,13 @@ const nmlPlugin = {
   }
 };
 
+const testFramework = String(config.testFramework).toLowerCase();
+
 export {
   testGlob,
   nmlPlugin,
   nmlPreprocess,
-  rollupPreprocessor
+  rollupPreprocessor,
+  testFramework
 }
 

@@ -745,7 +745,7 @@ gulp.task('generate', (done) => {
 
       packageConfig.bundle.inlineStyle = options.bundleStyles;
       packageConfig.bundle.amd.id = options.amdId;
-      packageConfig.testFramework = options.testFramework;
+      packageConfig.testFramework = options.testFramework.toLowerCase();
       packageConfig.tsProject = options.tsProject;
       packageConfig.namespace = options.namespace;
       packageConfig.stylePreprocessor = options.stylePreprocessor;
@@ -764,7 +764,7 @@ gulp.task('generate', (done) => {
 
       const projectDir = path.join(process.cwd(), packageName);
       const styleExt = parseStylePreprocessorExtension(packageConfig.stylePreprocessor);
-      const isJasmine = options.testFramework === 'Jasmine';
+      const isJasmine = packageConfig.testFramework === 'jasmine';
 
       const styleCopy = gulp.src([
         path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${styleExt}`)
@@ -801,16 +801,6 @@ gulp.task('generate', (done) => {
           author: options.author
         }, {
           rename: 'LICENSE'
-        }))
-        .pipe(gulp.dest(projectDir));
-
-      const karmaConfCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/karma.conf.js.hbs')
-      ])
-        .pipe(gulpHbsRuntime({
-          isJasmine: isJasmine
-        }, {
-          replaceExt: ''
         }))
         .pipe(gulp.dest(projectDir));
 
@@ -861,7 +851,7 @@ gulp.task('generate', (done) => {
         merged.add(styleCopy)
       }
 
-      merged.add([sourceCopy, demoCopy, demoHelperScriptCopy, licenseCopy, karmaConfCopy, configCopy]);
+      merged.add([sourceCopy, demoCopy, demoHelperScriptCopy, licenseCopy, configCopy]);
     });
   } catch (error) {
     console.log(error);
