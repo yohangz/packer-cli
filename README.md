@@ -179,7 +179,7 @@ npm run release
 
 # Build Configuration
 
-Build configuration can be changed depending on your preference. 
+Build configuration can be updated after project generation via ``.packerrc.json``. 
 
 ```json
 {
@@ -239,12 +239,17 @@ Build configuration can be changed depending on your preference.
 | namespace                   	| string           	| application namespace to be used                                                 	|
 | entry                       	| string           	| entry typescript file                                                            	|
 | source                      	| string           	| source directory                                                                 	|
-| dist.out                      | string           	| build artifact output directory                                                   |
-| dist.styles                   | string           	| build associated stylesheet output directory within out dir                       |
+| dist.outDir                   | string           	| build artifact output directory                                                   |
+| dist.stylesDir                | string           	| build associated stylesheet output directory within out dir                       |
+| generateFESM5                 | boolean           | Generate flat ESM5 module build artifacts                                         |
+| generateFESM2015              | boolean           | Generate flat ESM2015 module build artifacts                                      |
+| generateMin                   | boolean           | Generate flat bundle build minified artifact                                      |
 | tsProject                     | boolean           | Set true if library source is in Typescript                                       |
+| stylePreprocessor             | string           	| Style preprocessor can be "scss", "sass", "stylus", "less"                        |    
 | watch                       	| object           	| watch mode configuration object                                                  	|
-| watch.script                	| string           	| watch build temp directory                                                       	|
-| watch.demo                  	| string           	| watch demo page dir                                                              	|
+| watch.scriptDir               | string           	| watch build temp directory                                                       	|
+| watch.helperDir               | string           	| watch build helper library directory                                              |
+| watch.demoDir                 | string           	| watch demo page dir                                                              	|
 | watch.port                  	| number           	| watch server port                                                                	|
 | watch.serve                  	| boolean          	| Serve project via browser on watch mode                                           |
 | watch.open                  	| boolean          	| open browser automatically                                                       	|
@@ -255,10 +260,16 @@ Build configuration can be changed depending on your preference.
 | pathReplacePatterns.test    	| string           	| Path to find                                                                     	|
 | pathReplacePatterns.replace 	| string           	| Path to replace                                                                  	|
 | ignore                      	| array of strings 	| Import paths to ignore with noop implementation                                  	|
-| imageInlineLimit            	| number           	| Inline image if image size is less than specified limit                          	|
 | assetPaths                  	| array of strings 	| List of paths which contains static assets referenced in style sheets            	|
-| bundleStyle                 	| boolean          	| Inline bundle styles to build                                                    	|
-| bundleFormat                	| string           	| umd, amd, iife, system, es, cjs                                             	    |
+| testFramework                 | string            | "Jasmine" and "Karma" framework options are available                             |
+| imageInlineLimit            	| number           	| Inline image if image size is less than specified limit                          	|
+| bundle                        | object           	| Build bundle associated configuration                                             |
+| bundle.amd                 	  | object          	| AMD flat bundle configuration                                                    	|
+| bundle.amd.define             | string          	| AMD flat bundle define function name                                              |
+| bundle.amd.id                 | string          	| AMD flat bundle module identifier name                                            |
+| bundle.format                	| string           	| "umd", "amd", "iife" and "system" flat bundle options are available               |
+| bundle.imageInlineLimit       | number            | Size limit in bytes to inline compile images                                      |
+| bundle.inlineStyle            | boolean           | Inline bundle styles withing JS code if true                                      |
 
 # Contributions
 
