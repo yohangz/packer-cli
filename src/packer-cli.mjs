@@ -424,7 +424,7 @@ gulp.task('build:bundle', async () => {
       const fesm5config = merge({}, baseConfig, {
         output: {
           format: 'es',
-          file: path.join(process.cwd(), config.dist.outDir, 'fesm5', `${packageJson.name}.es5.js`),
+          file: path.join(process.cwd(), config.dist.outDir, 'fesm5', `${packageJson.name}.js`),
         },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
