@@ -785,7 +785,7 @@ gulp.task('generate', (done) => {
         path.join(__dirname, '../resources/dynamic/example', packageConfig.tsProject? 'ts': 'js','{.**,**}')
       ])
         .pipe(gulpHbsRuntime({
-          stylePreprocessor: styleExt,
+          styleExt: styleExt,
           isJasmine: isJasmine,
           styleSupport: options.styleSupport
         }, {
