@@ -27,7 +27,7 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 - [x] ES Lint based Javascript code analysis
 - [x] Style lint based style sheet code analysis
 - [x] Precompiled handlebars templating
-- [x] Support SCSS, LESS and Stylus and vanilla CSS
+- [x] Support SCSS, SASS, LESS and Stylus and vanilla CSS
 - [x] Post CSS based image inline and auto prefixing
 - [x] Karma unit test runner
 - [x] Jasmine and Mocha unit test frameworks
