@@ -87,6 +87,8 @@ const parseStylePreprocessorExtension = (preprocessor) => {
       return 'less';
     case 'stylus':
       return 'styl';
+    case 'none':
+      return 'css';
   }
 };
 
@@ -608,7 +610,8 @@ gulp.task('generate', (done) => {
           'scss',
           'sass',
           'less',
-          'stylus'
+          'stylus',
+          'none'
         ],
         when: (answers) => {
           return answers.styleSupport;
