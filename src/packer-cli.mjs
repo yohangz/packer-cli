@@ -804,6 +804,17 @@ gulp.task('generate', (done) => {
         }))
         .pipe(gulp.dest(projectDir));
 
+      const readmeCopy = gulp.src([
+        path.join(__dirname, '../resources/dynamic/README.md.hbs')
+      ])
+        .pipe(gulpHbsRuntime({
+          packageName: packageJson.name,
+          packageDescription: packageJson.description
+        }, {
+          rename: 'LICENSE'
+        }))
+        .pipe(gulp.dest(projectDir));
+
       const isAmd = packageConfig.bundle.format === 'amd';
       const isIife = packageConfig.bundle.format === 'umd' || packageConfig.bundle.format === 'iife';
       const isSystem = packageConfig.bundle.format === 'system';
@@ -851,7 +862,7 @@ gulp.task('generate', (done) => {
         merged.add(styleCopy)
       }
 
-      merged.add([sourceCopy, demoCopy, demoHelperScriptCopy, licenseCopy, configCopy]);
+      merged.add([sourceCopy, demoCopy, demoHelperScriptCopy, licenseCopy, readmeCopy, configCopy]);
     });
   } catch (error) {
     console.log(error);
