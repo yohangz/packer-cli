@@ -67,31 +67,43 @@ Author's email address (optional)? yohan.gz@gmail.com
 # Web home page of the library. This must be a valid URL.
 Library homepage link (optional)? http://www.my-project.com
 
-# Use typescript transpiler if Yes.
+# Use typescript transpiler if yes.
 Do you want to use typescript? (Y/n) Yes
 
-# Inline bundle style sheets within bundled script files.
-Do you want to inline bundle CSS styles in script? (Y/n) Yes
+# Support CSS bundling if yes.  
+Do you want style sheet support? (Y/n) Yes
 
-# You can chose from the bundel formats options list.
+# Style proprocessor to be used. Select none if not required.
+What's the style pre processor you want to use?
+- scss
+- sass
+- less
+- stylus
+- none
+
+# Inline bundle style sheets within bundled script files.
+Do you want to inline bundle styles within script? (Y/n) Yes
+
+# Target build process to support browser compliant bundling if yes
+Are you building a browser compliant library? Yes
+
+# You can chose from the browser compliant flat bundel formats options list.
 What's the build bundle format you want to use? umd
 - umd
 - amd
 - iife
 - system
-- esm
-- cjs
 
-# 
-Do you want this module to be browser compliant module? (Y/n) Yes
-
-# Jesmine test framework is used if browser complient, otherwise Jasmine and Mocha test frameworks are available.
-Which test framework do you want to use?
-- Jasmine
-- Mocha
+# Custom AMD id can be provided if flat bundle format is UMD or AMD.
+What's the AMD id you want to use? (optional) my-lib
 
 # Library namespace will be used when exposing the libray via global scope.
 What's the library namespace you want to use? my.lib
+
+# You can chose either Jasmine or Mocha unit test framework.
+Which unit test framework do you want to use?
+- Jasmine
+- Mocha
 
 # Library copyright year will be included in license file.
 What is the library copyright year (optional)? 2018

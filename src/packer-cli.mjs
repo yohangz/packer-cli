@@ -595,7 +595,7 @@ gulp.task('generate', (done) => {
       },
       {
         type: 'confirm',
-        message: 'Do you want to use style sheets?',
+        message: 'Do you want style sheet support?',
         name: 'styleSupport',
         default: true
       },
@@ -649,18 +649,6 @@ gulp.task('generate', (done) => {
       },
       {
         type: 'input',
-        name: 'namespace',
-        message: 'What\'s the library namespace you want to use?',
-        when: (answers) => {
-          return answers.bundleFormat === 'umd' || answers.bundleFormat === 'iife' || answers.bundleFormat === 'system';
-        },
-        validate: (value) => {
-          const matches = value.match(/^(?:[a-z]\d*(?:\.[a-z])?)+$/i);
-          return !!matches || 'Namespace should be an object path, i.e: \'ys.nml.lib\'';
-        }
-      },
-      {
-        type: 'input',
         name: 'amdId',
         message: 'What\'s the AMD id you want to use? (optional)',
         when: (answers) => {
@@ -672,8 +660,20 @@ gulp.task('generate', (done) => {
         }
       },
       {
+        type: 'input',
+        name: 'namespace',
+        message: 'What\'s the library namespace you want to use?',
+        when: (answers) => {
+          return answers.bundleFormat === 'umd' || answers.bundleFormat === 'iife' || answers.bundleFormat === 'system';
+        },
+        validate: (value) => {
+          const matches = value.match(/^(?:[a-z]\d*(?:\.[a-z])?)+$/i);
+          return !!matches || 'Namespace should be an object path, i.e: \'ys.nml.lib\'';
+        }
+      },
+      {
         type: 'list',
-        message: 'Which test framework do you want to use?',
+        message: 'Which unit test framework do you want to use?',
         name: 'testFramework',
         default: 0,
         choices: [
