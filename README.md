@@ -18,6 +18,28 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 
 # Features
 
+
+[![NPM](https://image.ibb.co/m2HMtp/npm.png)]()
+[![YARN](https://image.ibb.co/g1aVm9/yarn.png)]()
+[![Travis CI](https://image.ibb.co/fGqKeU/travis-ci.png)]()
+[![Stylus](https://image.ibb.co/jteZDp/stylus.png)]()
+[![Style Lint](https://image.ibb.co/hqySYp/stylelint.png)]()
+[![Rollup](https://image.ibb.co/djqwR9/rollup.png)]()
+[![Postcss](https://image.ibb.co/bSSbR9/postcss.png)]()
+[![Mocha](https://image.ibb.co/nn2XzU/mocha.png)]()
+[![LESS](https://image.ibb.co/mXSXzU/less.png)]()
+[![Istanbul](https://image.ibb.co/fOsbR9/istanbul.png)]()
+[![Handlebars](https://image.ibb.co/g2Di69/handlebars.png)]()
+[![Gulp](https://image.ibb.co/j8A7Yp/gulp.png)]()
+[![ES Lint](https://image.ibb.co/iGhzeU/eslint.png)]()
+[![Babel](https://image.ibb.co/hNSXzU/babel.png)]()
+[![SPDX](https://image.ibb.co/jSgEDp/spdx.png)]()
+[![TS Lint](https://image.ibb.co/ddVVm9/ts-lint.png)]()
+[![Jasmine](https://image.ibb.co/jrGEDp/jasmine.png)]()
+[![Karma](https://image.ibb.co/hq8i69/karma.png)]()
+[![SASS](https://image.ibb.co/jBLwR9/sass.png)]()
+[![Typescript](https://image.ibb.co/fjR369/typescript.png)]()
+
 - [x] Managed build configuration
 - [x] Encapsulated build process
 - [x] Both NPM and Yarn support
