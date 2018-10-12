@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://image.ibb.co/g1heu9/packer_cli.png" alt="Packer CLI"/>
+  <img src="https://image.ibb.co/c8GjeU/packer.png" alt="Packer CLI"/>
   
   <a href="https://travis-ci.org/yohangz/packer-cli">
     <img src="https://travis-ci.org/yohangz/packer-cli.svg?branch=master" alt="travis build" height="18">
