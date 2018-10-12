@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://image.ibb.co/c8GjeU/packer.png" alt="Packer CLI"/>
+  <img src="https://image.ibb.co/kezsYp/packer.png" alt="Packer CLI"/>
   
   <a href="https://travis-ci.org/yohangz/packer-cli">
     <img src="https://travis-ci.org/yohangz/packer-cli.svg?branch=master" alt="travis build" height="18">
@@ -17,7 +17,6 @@
 This project is inspired by [Angular CLI](https://cli.angular.io/)
 
 # Features
-
 
 [![NPM](https://image.ibb.co/m2HMtp/npm.png)](https://www.npmjs.com/)
 [![YARN](https://image.ibb.co/g1aVm9/yarn.png)](https://yarnpkg.com/)
