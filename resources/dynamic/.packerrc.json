@@ -1,6 +1,6 @@
 {
   "namespace": "",
-  "entry": "index.ts",
+  "entry": "",
   "source": "src",
   "dist": {
     "outDir": "dist",
@@ -9,8 +9,9 @@
     "generateFESM2015": true,
     "generateMin": true
   },
-  "tsProject": true,
+  "typescript": true,
   "stylePreprocessor": "scss",
+  "cliProject": false,
   "watch": {
     "scriptDir": ".tmp",
     "helperDir": "demo/helper",
@@ -46,5 +47,12 @@
     "format": "umd",
     "imageInlineLimit": 1000000,
     "inlineStyle": false
+  },
+  "license": {
+    "banner": true,
+    "thirdParty": {
+      "includePrivate": false,
+      "fileName": "dependencies.txt"
+    }
   }
 }

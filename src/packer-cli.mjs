@@ -38,6 +38,7 @@ import path from 'path';
 import fs from 'fs';
 import {spawn} from 'child_process';
 import chalk from 'chalk';
+import handlebars from 'handlebars';
 
 const args = process.argv.splice(2);
 
@@ -131,12 +132,23 @@ const parseLicense = (license) => {
   return licenseFileName;
 };
 
-const getBaseConfig = (config, packageJson) => {
+const getBanner = (config, packageJson) => {
+  if (config.license.banner) {
+    const bannerTemplate = fs.readFileSync(path.join(process.cwd(), '.banner.hbs'), 'utf8');
+    return handlebars.compile(bannerTemplate)({
+      config: config,
+      pkg: packageJson
+    })
+  }
+};
+
+const getBaseConfig = (config, packageJson, banner) => {
   return {
     input: path.join(config.source, config.entry),
     output: {
       name: packageJson.name,
-      sourcemap: true
+      sourcemap: true,
+      banner: banner
     }
   };
 };
@@ -193,7 +205,7 @@ const resolvePlugins = (config) => {
 };
 
 const buildPlugin = (esVersion, generateDefinition, watch, config) => {
-  if (config.tsProject) {
+  if (config.typescript) {
     let buildConf = {
       tsconfig: `tsconfig.${esVersion}.json`,
       typescript: typescript,
@@ -299,7 +311,7 @@ gulp.task('lint:style', (done) => {
 gulp.task('lint:script:ts', (done) => {
   const config = readConfig();
 
-  if (config.tsProject) {
+  if (config.typescript) {
     console.log(chalk.blue('[TS Lint]'));
     runShellCommand('tslint', [path.join(config.source, '**/*.{ts,tsx}')], process.cwd()).then(() => {
       done();
@@ -310,7 +322,7 @@ gulp.task('lint:script:ts', (done) => {
 gulp.task('lint:script:es', (done) => {
   const config = readConfig();
 
-  if (!config.tsProject) {
+  if (!config.typescript) {
     console.log(chalk.blue('[ES Lint]'));
     runShellCommand('eslint', [path.join(config.source, '**/*.{js,mjs}')], process.cwd()).then(() => {
       done();
@@ -331,22 +343,26 @@ gulp.task('build:copy:essentials', () => {
   let fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
 
   let targetPackage = {
-    main: `bundles/${packageJson.name}.${config.bundle.format}.js`,
+    main: path.join('bundles', `${packageJson.name}.${config.bundle.format}.js`),
     peerDependencies: {}
   };
 
-  if (config.tsProject) {
+  if (config.cliProject) {
+    targetPackage.bin = packageJson.bin;
+  }
+
+  if (config.typescript) {
     targetPackage.typings = 'index.d.ts';
   }
 
   if (config.dist.generateFESM5) {
-    targetPackage.module = `fesm5/${packageJson.name}.js`;
-    targetPackage.fesm5 = `fesm5/${packageJson.name}.js`;
+    targetPackage.module = path.join('fesm5',`${packageJson.name}.js`);
+    targetPackage.fesm5 = path.join('fesm5',`${packageJson.name}.js`);
   }
 
   if (config.dist.generateFESM2015) {
-    targetPackage.es2015 = `fesm2015/${packageJson.name}.js`;
-    targetPackage.fesm2015 = `fesm2015/${packageJson.name}.js`;
+    targetPackage.es2015 = path.join('fesm2015',`${packageJson.name}.js`);
+    targetPackage.fesm2015 = path.join('fesm2015',`${packageJson.name}.js`);
   }
 
   //only copy needed properties from project's package json
@@ -360,7 +376,9 @@ gulp.task('build:copy:essentials', () => {
   // copy the needed additional files in the 'dist' folder
   return gulp.src((config.copy || []).map((copyFile) => {
     return path.join(process.cwd(), copyFile);
-  }))
+  }), {
+    allowEmpty: true
+  })
     .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)).on('error', (error) => {
       console.log(chalk.red(`${type} bundle build Failure`));
       console.error(error);
@@ -371,7 +389,8 @@ gulp.task('build:copy:essentials', () => {
 gulp.task('build:bundle', async () => {
   const config = readConfig();
   const packageJson = readPackageData();
-  const baseConfig = getBaseConfig(config, packageJson);
+  const banner = getBanner(config, packageJson);
+  const baseConfig = getBaseConfig(config, packageJson, banner);
 
   try {
     // flat bundle.
@@ -411,7 +430,17 @@ gulp.task('build:bundle', async () => {
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           buildPlugin('es5', false, false, config),
-          uglify(),
+          uglify({
+            output: {
+              comments: function(node, comment) {
+                if (comment.type === "comment2") {
+                  // multiline comment
+                  return /@preserve|@license/i.test(comment.value);
+                }
+                return false;
+              }
+            }
+          }),
           ...postBundlePlugins()
         ]
       });
@@ -472,7 +501,8 @@ gulp.task('build:watch', async () => {
   try {
     const config = readConfig();
     const packageJson = readPackageData();
-    const baseConfig = getBaseConfig(config, packageJson);
+    const banner = getBanner(config, packageJson);
+    const baseConfig = getBaseConfig(config, packageJson, banner);
 
     makeDir(config.watch.scriptDir);
 
@@ -570,6 +600,11 @@ gulp.task('generate', (done) => {
       },
       {
         type: 'input',
+        name: 'keywords',
+        message: 'Give us a set of comma separated package keywords (optional)?'
+      },
+      {
+        type: 'input',
         name: 'author',
         message: 'Author\'s name (optional)?'
       },
@@ -592,7 +627,7 @@ gulp.task('generate', (done) => {
       {
         type: 'confirm',
         message: 'Do you want to use typescript?',
-        name: 'tsProject',
+        name: 'typescript',
         default: true
       },
       {
@@ -631,6 +666,15 @@ gulp.task('generate', (done) => {
         message: 'Are you building a browser compliant library?',
         name: 'clientCompliant',
         default: true
+      },
+      {
+        type: 'confirm',
+        message: 'Are you building a node CLI project?',
+        name: 'cliProject',
+        default: false,
+        when: (answers) => {
+          return !answers.clientCompliant;
+        },
       },
       {
         type: 'list',
@@ -746,9 +790,11 @@ gulp.task('generate', (done) => {
       packageConfig.bundle.inlineStyle = options.bundleStyles;
       packageConfig.bundle.amd.id = options.amdId;
       packageConfig.testFramework = options.testFramework.toLowerCase();
-      packageConfig.tsProject = options.tsProject;
+      packageConfig.typescript = options.typescript;
       packageConfig.namespace = options.namespace;
       packageConfig.stylePreprocessor = options.stylePreprocessor;
+      packageConfig.cliProject = options.cliProject;
+      packageConfig.entry = 'index' + (options.typescript? '.ts': '.js');
 
       let packageJson = packageResource;
       packageJson.name = packageName;
@@ -756,6 +802,13 @@ gulp.task('generate', (done) => {
       packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
       packageJson.homepage = options.homepage;
       packageJson.license = parseLicense(options.license);
+      packageJson.keywords = String(options.keywords).split(',');
+
+      if (packageConfig.cliProject) {
+        packageJson.bin = {
+          [packageJson.name]: path.join(packageConfig.dist.outDir, 'bundles', `${packageJson.name}.${packageConfig.bundle.format}.js`)
+        }
+      }
 
       if (options.author && options.email) {
         packageJson.author = `${options.author} <${options.email}>`;
@@ -782,7 +835,7 @@ gulp.task('generate', (done) => {
         .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
 
       const sourceCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example', packageConfig.tsProject? 'ts': 'js','{.**,**}')
+        path.join(__dirname, '../resources/dynamic/example', packageConfig.typescript? 'ts': 'js','{.**,**}')
       ])
         .pipe(gulpHbsRuntime({
           styleExt: styleExt,
@@ -811,7 +864,7 @@ gulp.task('generate', (done) => {
           packageName: packageJson.name,
           packageDescription: packageJson.description
         }, {
-          rename: 'LICENSE'
+          replaceExt: ''
         }))
         .pipe(gulp.dest(projectDir));
 

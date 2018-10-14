@@ -2,6 +2,7 @@
   "name": "",
   "version": "1.0.0",
   "description": "",
+  "keywords": [],
   "scripts": {
     "lint": "packer lint",
     "lint:style": "packer lint --style",

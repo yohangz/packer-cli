@@ -63,6 +63,9 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 - [x] Bundle peer dependencies
 - [x] Ignore imports
 - [x] Copy static assets to build dir
+- [x] Library summary banner generation
+- [x] Library dependency license extraction
+- [x] Node CLI project support
 
 # Usage
 
