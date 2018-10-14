@@ -1,11 +1,11 @@
-import gulp from "gulp";
-import path from "path";
-import chalk from "chalk";
-import gulpFile from "gulp-file";
-import merge from "lodash/merge";
-import {uglify} from "rollup-plugin-uglify";
+import gulp from 'gulp';
+import path from 'path';
+import chalk from 'chalk';
+import gulpFile from 'gulp-file';
+import merge from 'lodash/merge';
+import {uglify} from 'rollup-plugin-uglify';
 
-import {readConfig, readPackageData} from "./meta";
+import {readConfig, readPackageData} from './meta';
 import {
   buildPlugin,
   bundleBuild,
@@ -15,7 +15,7 @@ import {
   preBundlePlugins,
   resolvePlugins,
   rollupStyleBuildPlugin
-} from "./build-util";
+} from './build-util';
 
 
 gulp.task('build:copy:essentials', () => {
@@ -115,7 +115,7 @@ gulp.task('build:bundle', async () => {
           uglify({
             output: {
               comments: function(node, comment) {
-                if (comment.type === "comment2") {
+                if (comment.type === 'comment2') {
                   // multiline comment
                   return /@preserve|@license/i.test(comment.value);
                 }

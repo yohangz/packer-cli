@@ -1,21 +1,21 @@
-import gulp from "gulp";
-import isEmail from "validator/lib/isEmail";
-import isUrl from "validator/lib/isURL";
-import npmValidate from "validate-npm-package-name";
-import inquirer from "inquirer";
-import path from "path";
-import gulpHbsRuntime from "../gulp-hbs-runtime";
-import gulpFilter from "gulp-filter";
-import gulpFile from "gulp-file";
-import mergeStream from "merge-stream";
-import {runShellCommand} from "./util";
-import {parseLicenseType, parseStylePreprocessorExtension} from "./parser";
-import {readCLIPackageData} from "./meta";
+import gulp from 'gulp';
+import isEmail from 'validator/lib/isEmail';
+import isUrl from 'validator/lib/isURL';
+import npmValidate from 'validate-npm-package-name';
+import inquirer from 'inquirer';
+import path from 'path';
+import gulpHbsRuntime from '../gulp-hbs-runtime';
+import gulpFilter from 'gulp-filter';
+import gulpFile from 'gulp-file';
+import mergeStream from 'merge-stream';
+import {runShellCommand} from './util';
+import {parseLicenseType, parseStylePreprocessorExtension} from './parser';
+import {readCLIPackageData} from './meta';
 
 const configResource = require('../resources/dynamic/.packerrc.json');
 const packageResource = require('../resources/dynamic/package.json');
 
-import {args} from "./util";
+import {args} from './util';
 
 gulp.task('generate', (done) => {
   try {

@@ -1,11 +1,11 @@
-import gulp from "gulp";
-import rollupServe from "rollup-plugin-serve";
-import path from "path";
-import rollupLivereload from "rollup-plugin-livereload";
-import merge from "lodash/merge";
-import rollupProgress from "rollup-plugin-progress";
-import {watch} from "rollup";
-import chalk from "chalk";
+import gulp from 'gulp';
+import rollupServe from 'rollup-plugin-serve';
+import path from 'path';
+import rollupLivereload from 'rollup-plugin-livereload';
+import merge from 'lodash/merge';
+import rollupProgress from 'rollup-plugin-progress';
+import {watch} from 'rollup';
+import chalk from 'chalk';
 import {
   buildPlugin,
   getBanner,
@@ -13,10 +13,10 @@ import {
   preBundlePlugins,
   resolvePlugins,
   rollupStyleBuildPlugin
-} from "./build-util";
+} from './build-util';
 
-import {readConfig, readPackageData} from "./meta";
-import {makeDir} from "./util";
+import {readConfig, readPackageData} from './meta';
+import {makeDir} from './util';
 
 gulp.task('build:watch', async () => {
   try {

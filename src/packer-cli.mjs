@@ -8,7 +8,7 @@ import './tasks/lint';
 import './tasks/test';
 import './tasks/watch';
 
-import {args} from "./tasks/util";
+import {args} from './tasks/util';
 
 switch (args[0]) {
   case 'generate':

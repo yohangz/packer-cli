@@ -1,7 +1,7 @@
-import gulp from "gulp";
-import {Server} from "karma";
-import path from "path";
-import chalk from "chalk";
+import gulp from 'gulp';
+import {Server} from 'karma';
+import path from 'path';
+import chalk from 'chalk';
 
 gulp.task('test', async (done) => {
   const server = new Server({

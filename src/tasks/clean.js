@@ -1,6 +1,6 @@
-import gulp from "gulp";
-import path from "path";
-import clean from "gulp-clean";
+import gulp from 'gulp';
+import path from 'path';
+import clean from 'gulp-clean';
 
 import {readConfig} from "./meta";
 

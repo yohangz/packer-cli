@@ -1,25 +1,25 @@
-import fs from "fs";
-import path from "path";
-import handlebars from "handlebars";
-import rollupIgnoreImport from "rollup-plugin-ignore-import";
-import rollupPostCss from "rollup-plugin-postcss";
-import postCssImageInline from "postcss-image-inliner";
-import postCssAutoPrefix from "autoprefixer";
-import rollupReplace from "rollup-plugin-re";
-import rollupIgnore from "rollup-plugin-ignore";
-import rollupResolve from "rollup-plugin-node-resolve";
-import rollupCommonjs from "rollup-plugin-commonjs";
-import typescript from "typescript";
-import rollupTypescript from "rollup-plugin-typescript2";
-import rollupBabel from "rollup-plugin-babel";
-import rollupHandlebars from "rollup-plugin-hbs";
-import rollupImage from "rollup-plugin-img";
-import rollupProgress from "rollup-plugin-progress";
-import rollupFilesize from "rollup-plugin-filesize";
-import * as insert from 'rollup-plugin-insert';
+import fs from 'fs';
+import path from 'path';
+import handlebars from 'handlebars';
 
-import chalk from "chalk";
-import {rollup} from "rollup";
+import {rollup} from 'rollup';
+import rollupIgnoreImport from 'rollup-plugin-ignore-import';
+import rollupPostCss from 'rollup-plugin-postcss';
+import postCssImageInline from 'postcss-image-inliner';
+import postCssAutoPrefix from 'autoprefixer';
+import rollupReplace from 'rollup-plugin-re';
+import rollupIgnore from 'rollup-plugin-ignore';
+import rollupResolve from 'rollup-plugin-node-resolve';
+import rollupCommonjs from 'rollup-plugin-commonjs';
+import typescript from 'typescript';
+import rollupTypescript from 'rollup-plugin-typescript2';
+import rollupBabel from 'rollup-plugin-babel';
+import rollupHandlebars from 'rollup-plugin-hbs';
+import rollupImage from 'rollup-plugin-img';
+import rollupProgress from 'rollup-plugin-progress';
+import rollupFilesize from 'rollup-plugin-filesize';
+
+import chalk from 'chalk';
 
 export const getBanner = (config, packageJson) => {
   if (config.license.banner) {
