@@ -802,7 +802,7 @@ gulp.task('generate', (done) => {
       packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
       packageJson.homepage = options.homepage;
       packageJson.license = parseLicense(options.license);
-      packageJson.keywords = String(options.keywords).split(',');
+      packageJson.keywords = String(options.keywords || '').split(',');
 
       if (packageConfig.cliProject) {
         packageJson.bin = {
