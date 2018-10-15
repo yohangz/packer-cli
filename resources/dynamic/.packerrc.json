@@ -12,6 +12,7 @@
   "typescript": true,
   "stylePreprocessor": "scss",
   "cliProject": false,
+  "styleSupport": false,
   "watch": {
     "scriptDir": ".tmp",
     "helperDir": "demo/helper",

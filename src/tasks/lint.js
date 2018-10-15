@@ -6,11 +6,15 @@ import {readConfig} from './meta';
 import {runShellCommand} from './util';
 
 gulp.task('lint:style', (done) => {
-  console.log(chalk.blue('[Style Lint]'));
   const config = readConfig();
-  runShellCommand('stylelint', [ path.join(config.source, '**/*.{styl,scss,sass,less,css}') ], process.cwd()).then(() => {
-    done();
-  });
+
+  if (config.styleSupport) {
+    console.log(chalk.blue('[Style Lint]'));
+    const config = readConfig();
+    runShellCommand('stylelint', [ path.join(config.source, '**/*.{styl,scss,sass,less,css}') ], process.cwd()).then(() => {
+      done();
+    });
+  }
 });
 
 gulp.task('lint:script:ts', (done) => {
@@ -37,4 +41,4 @@ gulp.task('lint:script:es', (done) => {
 
 gulp.task('lint:script', gulp.series('lint:script:ts', 'lint:script:es'));
 
-gulp.task('lint', gulp.series('lint:style', 'lint:script:ts', 'lint:script:es'));
+gulp.task('lint', gulp.series('lint:style', 'lint:script'));

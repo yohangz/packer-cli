@@ -224,6 +224,7 @@ gulp.task('generate', (done) => {
       packageConfig.stylePreprocessor = options.stylePreprocessor;
       packageConfig.cliProject = options.cliProject;
       packageConfig.entry = 'index' + (options.typescript? '.ts': '.js');
+      packageConfig.styleSupport = options.styleSupport;
 
       let packageJson = packageResource;
       packageJson.name = packageName;
@@ -269,7 +270,7 @@ gulp.task('generate', (done) => {
         .pipe(gulpHbsRuntime({
           styleExt: styleExt,
           isJasmine: isJasmine,
-          styleSupport: options.styleSupport,
+          styleSupport: packageConfig.styleSupport,
           cliProject: options.cliProject
         }, {
           replaceExt: ''
@@ -341,11 +342,15 @@ gulp.task('generate', (done) => {
 
       const merged = mergeStream(assetCopy, templateCopy);
 
-      if (options.styleSupport) {
+      if (packageConfig.styleSupport) {
         merged.add(styleCopy)
       }
 
-      merged.add([sourceCopy, demoCopy, demoHelperScriptCopy, licenseCopy, readmeCopy, configCopy]);
+      if (packageConfig.cliProject) {
+        merged.add(demoCopy);
+      }
+
+      merged.add([sourceCopy, demoHelperScriptCopy, licenseCopy, readmeCopy, configCopy]);
     });
   } catch (error) {
     console.log(error);

@@ -48,3 +48,6 @@ switch (args[0]) {
     console.log(chalk.red('Invalid task name argument'));
     break;
 }
+
+import karmaPackerPlugin from './karma-packer-plugin';
+export default karmaPackerPlugin;

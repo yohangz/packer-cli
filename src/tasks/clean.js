@@ -21,3 +21,5 @@ gulp.task('build:clean', () => {
   })
     .pipe(clean());
 });
+
+gulp.task('clean', gulp.series('watch:clean', 'build:clean'));

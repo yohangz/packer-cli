@@ -25,7 +25,7 @@ gulp.task('build:copy:essentials', () => {
   let fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
 
   let targetPackage = {
-    main: path.join('bundles', `${packageJson.name}.${config.bundle.format}.js`),
+    main: path.join('bundles', packageJson.main || `${packageJson.name}.${config.bundle.format}.js`),
     peerDependencies: {}
   };
 

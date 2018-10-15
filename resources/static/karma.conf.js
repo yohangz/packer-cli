@@ -1,4 +1,4 @@
-var karmaPacker = require('packer-cli/lib/karma-packer-plugin');
+var karmaPacker = require('packer-cli')();
 var karmaJasmine = require('karma-jasmine');
 var karmaMocha = require('karma-mocha');
 var karmaChromeLauncher = require('karma-chrome-launcher');
@@ -59,7 +59,7 @@ module.exports = function(config) {
       { pattern: karmaPacker.testGlob, watched: false }
     ],
 
-    preprocessors: karmaPacker.nmlPreprocess,
+    preprocessors: karmaPacker.packerPreprocess,
 
     plugins: plugins,
 
@@ -69,7 +69,7 @@ module.exports = function(config) {
 
     client: client,
 
-    rollupPreprocessor: karmaPacker.nmlPlugin
+    rollupPreprocessor: karmaPacker.packerPlugin
   })
 };
 
