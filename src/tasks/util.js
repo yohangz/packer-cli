@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {spawn} from 'child_process';
+import { spawn } from 'child_process';
 
 const isWindows = process.platform === 'win32';
 

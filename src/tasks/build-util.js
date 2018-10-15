@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
 
-import {rollup} from 'rollup';
+import { rollup } from 'rollup';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupPostCss from 'rollup-plugin-postcss';
 import postCssImageInline from 'postcss-image-inliner';
@@ -27,7 +27,7 @@ export const getBanner = (config, packageJson) => {
     return handlebars.compile(bannerTemplate)({
       config: config,
       pkg: packageJson
-    })
+    });
   }
 };
 
@@ -42,14 +42,12 @@ export const getBaseConfig = (config, packageJson, banner) => {
   };
 };
 
-
-
 export const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main) => {
   const styleDir = watch ? config.watch.scriptDir : config.dist.outDir;
   const styleDist = path.join(process.cwd(), styleDir, config.dist.stylesDir, packageJson.name + (minify ? '.min.css' : '.css'));
 
   if (!main && !config.bundle.inlineStyle) {
-    return  rollupIgnoreImport({
+    return rollupIgnoreImport({
       extensions: ['.scss', '.sass', '.styl', '.css', '.less']
     });
   }
@@ -64,7 +62,7 @@ export const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main)
     ],
     sourceMap: true,
     minimize: minify,
-    extract: config.bundle.inlineStyle? false: styleDist
+    extract: config.bundle.inlineStyle ? false : styleDist
   });
 };
 

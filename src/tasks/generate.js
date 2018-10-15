@@ -4,18 +4,17 @@ import isUrl from 'validator/lib/isURL';
 import npmValidate from 'validate-npm-package-name';
 import inquirer from 'inquirer';
 import path from 'path';
-import gulpHbsRuntime from '../gulp-hbs-runtime';
 import gulpFilter from 'gulp-filter';
 import gulpFile from 'gulp-file';
 import mergeStream from 'merge-stream';
-import {runShellCommand} from './util';
-import {parseLicenseType, parseStylePreprocessorExtension} from './parser';
-import {readCLIPackageData} from './meta';
+
+import gulpHbsRuntime from '../gulp-hbs-runtime';
+import { runShellCommand, args } from './util';
+import { parseLicenseType, parseStylePreprocessorExtension } from './parser';
+import { readCLIPackageData } from './meta';
 
 const configResource = require('../resources/dynamic/.packerrc.json');
 const packageResource = require('../resources/dynamic/package.json');
-
-import {args} from './util';
 
 gulp.task('generate', (done) => {
   try {
@@ -103,7 +102,7 @@ gulp.task('generate', (done) => {
         default: false,
         when: (answers) => {
           return !answers.clientCompliant;
-        },
+        }
       },
       {
         type: 'list',
@@ -131,7 +130,7 @@ gulp.task('generate', (done) => {
           return answers.bundleFormat === 'umd' || answers.bundleFormat === 'amd';
         },
         validate: (value) => {
-          const matches = value.match(/^(?:[a-z]\d*(?:\-[a-z])?)*$/i);
+          const matches = value.match(/^(?:[a-z]\d*(?:-[a-z])?)*$/i);
           return value === '' || !!matches || 'AMD id should only contain alphabetic characters, i.e: \'my-bundle\'';
         }
       },
@@ -161,7 +160,7 @@ gulp.task('generate', (done) => {
         type: 'input',
         name: 'year',
         message: 'What is the library copyright year (optional)?',
-        default: (new Date()).getFullYear(),
+        default: (new Date()).getFullYear()
       },
       {
         type: 'list',
@@ -189,7 +188,7 @@ gulp.task('generate', (done) => {
         message: 'Do you want to use yarn as package manager?',
         name: 'isYarn',
         default: false
-      },
+      }
     ];
 
     if (args.length !== 2) {
@@ -202,7 +201,7 @@ gulp.task('generate', (done) => {
     const packageName = args[1];
     const packageNameValidity = npmValidate(packageName);
     if (!packageNameValidity.validForNewPackages) {
-      console.log(state.errors.join('\n'));
+      console.log(packageNameValidity.errors.join('\n'));
       done();
       return;
     }
@@ -223,7 +222,7 @@ gulp.task('generate', (done) => {
       packageConfig.namespace = options.namespace;
       packageConfig.stylePreprocessor = options.stylePreprocessor;
       packageConfig.cliProject = options.cliProject;
-      packageConfig.entry = 'index' + (options.typescript? '.ts': '.js');
+      packageConfig.entry = 'index' + (options.typescript ? '.ts' : '.js');
       packageConfig.styleSupport = options.styleSupport;
 
       let packageJson = packageResource;
@@ -237,7 +236,7 @@ gulp.task('generate', (done) => {
       if (packageConfig.cliProject) {
         packageJson.bin = {
           [packageJson.name]: path.join(packageConfig.dist.outDir, 'bundles', `${packageJson.name}.${packageConfig.bundle.format}.js`)
-        }
+        };
       }
 
       if (options.author && options.email) {
@@ -265,7 +264,7 @@ gulp.task('generate', (done) => {
         .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
 
       const sourceCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example', packageConfig.typescript? 'ts': 'js','{.**,**}')
+        path.join(__dirname, '../resources/dynamic/example', packageConfig.typescript ? 'ts' : 'js', '{.**,**}')
       ])
         .pipe(gulpHbsRuntime({
           styleExt: styleExt,
@@ -311,7 +310,7 @@ gulp.task('generate', (done) => {
       const demoCopy = gulp.src([
         path.join(__dirname, '../resources/dynamic/demo/**/*.hbs')
       ])
-        .pipe(gulpFilter('**/*' + (options.clientCompliant? '.html.hbs': '.js.hbs')))
+        .pipe(gulpFilter('**/*' + (options.clientCompliant ? '.html.hbs' : '.js.hbs')))
         .pipe(gulpHbsRuntime({
           projectName: packageName,
           inlineStyle: packageConfig.bundle.inlineStyle,
@@ -336,14 +335,14 @@ gulp.task('generate', (done) => {
         .on('end', () => {
           runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
             done();
-          })
+          });
         })
         .pipe(gulp.dest(projectDir));
 
       const merged = mergeStream(assetCopy, templateCopy);
 
       if (packageConfig.styleSupport) {
-        merged.add(styleCopy)
+        merged.add(styleCopy);
       }
 
       if (packageConfig.cliProject) {

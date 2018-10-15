@@ -3,8 +3,7 @@ import PluginError from 'plugin-error';
 import handlebars from 'handlebars';
 import path from 'path';
 
-export default function gulpHbsRuntime(data, options) {
-
+export default function gulpHbsRuntime (data, options) {
   return through.obj((file, enc, cb) => {
     try {
       if (file.isNull() || file.extname !== '.hbs') {
@@ -15,7 +14,7 @@ export default function gulpHbsRuntime(data, options) {
       const renderedTemplate = template(data);
 
       if (file.isBuffer()) {
-        file.contents = new Buffer(renderedTemplate);
+        file.contents = Buffer.from(renderedTemplate);
       }
 
       if (file.isStream()) {

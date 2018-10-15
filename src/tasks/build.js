@@ -3,9 +3,9 @@ import path from 'path';
 import chalk from 'chalk';
 import gulpFile from 'gulp-file';
 import merge from 'lodash/merge';
-import {uglify} from 'rollup-plugin-uglify';
+import { uglify } from 'rollup-plugin-uglify';
 
-import {readConfig, readPackageData} from './meta';
+import { readConfig, readPackageData } from './meta';
 import {
   buildPlugin,
   bundleBuild,
@@ -16,7 +16,6 @@ import {
   resolvePlugins,
   rollupStyleBuildPlugin
 } from './build-util';
-
 
 gulp.task('build:copy:essentials', () => {
   const packageJson = readPackageData();
@@ -38,17 +37,19 @@ gulp.task('build:copy:essentials', () => {
   }
 
   if (config.dist.generateFESM5) {
-    targetPackage.module = path.join('fesm5',`${packageJson.name}.js`);
-    targetPackage.fesm5 = path.join('fesm5',`${packageJson.name}.js`);
+    targetPackage.module = path.join('fesm5', `${packageJson.name}.js`);
+    targetPackage.fesm5 = path.join('fesm5', `${packageJson.name}.js`);
   }
 
   if (config.dist.generateFESM2015) {
-    targetPackage.es2015 = path.join('fesm2015',`${packageJson.name}.js`);
-    targetPackage.fesm2015 = path.join('fesm2015',`${packageJson.name}.js`);
+    targetPackage.es2015 = path.join('fesm2015', `${packageJson.name}.js`);
+    targetPackage.fesm2015 = path.join('fesm2015', `${packageJson.name}.js`);
   }
 
-  //only copy needed properties from project's package json
-  fieldsToCopy.forEach((field) => targetPackage[field] = packageJson[field]);
+  // only copy needed properties from project's package json
+  fieldsToCopy.forEach((field) => {
+    targetPackage[field] = packageJson[field];
+  });
 
   // defines project's dependencies as 'peerDependencies' for final users
   Object.keys(packageJson.dependencies).forEach((dependency) => {
@@ -62,7 +63,7 @@ gulp.task('build:copy:essentials', () => {
     allowEmpty: true
   })
     .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)).on('error', (error) => {
-      console.log(chalk.red(`${type} bundle build Failure`));
+      console.log(chalk.red(`Bundle build Failure`));
       console.error(error);
     }))
     .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir)));
@@ -114,7 +115,7 @@ gulp.task('build:bundle', async () => {
           buildPlugin('es5', false, false, config),
           uglify({
             output: {
-              comments: function(node, comment) {
+              comments: function (node, comment) {
                 if (comment.type === 'comment2') {
                   // multiline comment
                   return /@preserve|@license/i.test(comment.value);
@@ -135,7 +136,7 @@ gulp.task('build:bundle', async () => {
       const fesm5config = merge({}, baseConfig, {
         output: {
           format: 'es',
-          file: path.join(process.cwd(), config.dist.outDir, 'fesm5', `${packageJson.name}.js`),
+          file: path.join(process.cwd(), config.dist.outDir, 'fesm5', `${packageJson.name}.js`)
         },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
@@ -154,7 +155,7 @@ gulp.task('build:bundle', async () => {
       const fesm2015config = merge({}, baseConfig, {
         output: {
           format: 'es',
-          file: path.join(process.cwd(), config.dist.outDir, 'fesm2015', `${packageJson.name}.js`),
+          file: path.join(process.cwd(), config.dist.outDir, 'fesm2015', `${packageJson.name}.js`)
         },
 
         plugins: [

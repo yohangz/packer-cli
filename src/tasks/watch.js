@@ -4,7 +4,7 @@ import path from 'path';
 import rollupLivereload from 'rollup-plugin-livereload';
 import merge from 'lodash/merge';
 import rollupProgress from 'rollup-plugin-progress';
-import {watch} from 'rollup';
+import { watch } from 'rollup';
 import chalk from 'chalk';
 import {
   buildPlugin,
@@ -15,8 +15,8 @@ import {
   rollupStyleBuildPlugin
 } from './build-util';
 
-import {readConfig, readPackageData} from './meta';
-import {makeDir} from './util';
+import { readConfig, readPackageData } from './meta';
+import { makeDir } from './util';
 
 gulp.task('build:watch', async () => {
   try {
@@ -37,7 +37,7 @@ gulp.task('build:watch', async () => {
             path.join(process.cwd(), config.watch.helperDir)
           ],
           port: config.watch.port,
-          open: config.watch.open,
+          open: config.watch.open
         }),
         rollupLivereload({
           watch: [
@@ -45,7 +45,7 @@ gulp.task('build:watch', async () => {
             path.join(process.cwd(), config.watch.demoDir)
           ]
         })
-      ]
+      ];
     }
 
     const watchConfig = merge({}, baseConfig, {

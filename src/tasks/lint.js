@@ -2,8 +2,8 @@ import gulp from 'gulp';
 import chalk from 'chalk';
 import path from 'path';
 
-import {readConfig} from './meta';
-import {runShellCommand} from './util';
+import { readConfig } from './meta';
+import { runShellCommand } from './util';
 
 gulp.task('lint:style', (done) => {
   const config = readConfig();

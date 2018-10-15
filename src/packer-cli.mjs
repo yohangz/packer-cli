@@ -8,9 +8,11 @@ import './tasks/lint';
 import './tasks/test';
 import './tasks/watch';
 
-import {args} from './tasks/util';
+import { args } from './tasks/util';
 
-switch (args[0]) {
+import karmaPackerPlugin from './karma-packer-plugin';
+
+switch ('generate') {
   case 'generate':
     gulp.series('generate')();
     break;
@@ -49,5 +51,4 @@ switch (args[0]) {
     break;
 }
 
-import karmaPackerPlugin from './karma-packer-plugin';
 export default karmaPackerPlugin;
