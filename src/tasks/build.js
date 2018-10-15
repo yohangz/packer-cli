@@ -24,7 +24,7 @@ gulp.task('build:copy:essentials', () => {
   let fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
 
   let targetPackage = {
-    main: path.join('bundles', packageJson.main || `${packageJson.name}.${config.bundle.format}.js`),
+    main: path.join('bundles', `${packageJson.name}.js`),
     peerDependencies: {}
   };
 
@@ -81,7 +81,7 @@ gulp.task('build:bundle', async () => {
       output: {
         name: config.namespace,
         format: config.bundle.format,
-        file: path.join(process.cwd(), config.dist.outDir, 'bundles', `${packageJson.name}.${config.bundle.format}.js`),
+        file: path.join(process.cwd(), config.dist.outDir, 'bundles', `${packageJson.name}.js`),
         globals: config.flatGlobals,
         amd: config.bundle.amd
       },
@@ -103,7 +103,7 @@ gulp.task('build:bundle', async () => {
         output: {
           name: config.namespace,
           format: config.bundle.format,
-          file: path.join(process.cwd(), config.dist.outDir, 'bundles', `${packageJson.name}.${config.bundle.format}.min.js`),
+          file: path.join(process.cwd(), config.dist.outDir, 'bundles', `${packageJson.name}.min.js`),
           globals: config.flatGlobals,
           amd: config.bundle.amd
         },

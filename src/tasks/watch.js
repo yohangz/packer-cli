@@ -52,7 +52,7 @@ gulp.task('build:watch', async () => {
       output: {
         name: config.namespace,
         format: config.bundle.format,
-        file: path.join(process.cwd(), config.watch.scriptDir, `${packageJson.name}.${config.bundle.format}.js`),
+        file: path.join(process.cwd(), config.watch.scriptDir, `${packageJson.name}.js`),
         globals: config.flatGlobals
       },
       external: Object.keys(config.flatGlobals),

@@ -235,7 +235,7 @@ gulp.task('generate', (done) => {
 
       if (packageConfig.cliProject) {
         packageJson.bin = {
-          [packageJson.name]: path.join(packageConfig.dist.outDir, 'bundles', `${packageJson.name}.${packageConfig.bundle.format}.js`)
+          [packageJson.name]: path.join(packageConfig.dist.outDir, 'bundles', `${packageJson.name}.js`)
         };
       }
 
@@ -315,7 +315,6 @@ gulp.task('generate', (done) => {
           projectName: packageName,
           inlineStyle: packageConfig.bundle.inlineStyle,
           namespace: packageConfig.namespace,
-          moduleFormat: packageConfig.bundle.format,
           watchDir: packageConfig.watch.scriptDir,
           distDir: packageConfig.dist.outDir,
           require: isAmd,
