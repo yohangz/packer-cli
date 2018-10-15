@@ -283,8 +283,10 @@ Build configuration can be updated after project generation via ``.packerrc.json
 | generateFESM5                 | boolean           | Generate flat ESM5 module build artifacts                                         |
 | generateFESM2015              | boolean           | Generate flat ESM2015 module build artifacts                                      |
 | generateMin                   | boolean           | Generate flat bundle build minified artifact                                      |
-| tsProject                     | boolean           | Set true if library source is in Typescript                                       |
+| typescript                    | boolean           | Set true if library source is in Typescript                                       |
 | stylePreprocessor             | string           	| Style preprocessor can be "scss", "sass", "stylus", "less"                        |    
+| cliProject                    | boolean           | Append node environment hash bang for CLI projects if true                        |
+| styleSupport                  | boolean           | Support style preprocessing and linting                                           |
 | watch                       	| object           	| watch mode configuration object                                                  	|
 | watch.scriptDir               | string           	| watch build temp directory                                                       	|
 | watch.helperDir               | string           	| watch build helper library directory                                              |
