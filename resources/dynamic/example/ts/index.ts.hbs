@@ -4,3 +4,7 @@ import './style/dark.theme.{{styleExt}}';
 
 {{/if}}
 export { Main } from './logic/main';
+{{#if cliProject}}
+
+(new Main()).getTemplate();
+{{/if}}
