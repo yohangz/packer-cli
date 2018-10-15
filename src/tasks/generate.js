@@ -269,7 +269,8 @@ gulp.task('generate', (done) => {
         .pipe(gulpHbsRuntime({
           styleExt: styleExt,
           isJasmine: isJasmine,
-          styleSupport: options.styleSupport
+          styleSupport: options.styleSupport,
+          cliProject: options.cliProject
         }, {
           replaceExt: ''
         }))
