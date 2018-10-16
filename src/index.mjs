@@ -12,7 +12,7 @@ import { args } from './tasks/util';
 
 import karmaPackerPlugin from './plugins/karma-packer-plugin';
 
-switch ('generate') {
+switch (args[0]) {
   case 'generate':
     gulp.series('generate')();
     break;
