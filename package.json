@@ -13,8 +13,8 @@
     "Lib CLI"
   ],
   "scripts": {
-    "build:cli": "rollup src/packer-cli.mjs -o dist/lib/packer-cli.js -f cjs",
-    "build:karma-plugin": "rollup src/karma-packer-plugin.mjs -o dist/lib/karma-packer-plugin.js -f cjs",
+    "build:cli": "rollup src/index.mjs -o dist/lib/packer-cli.js -f cjs",
+    "build:karma-plugin": "rollup src/plugins/karma-packer-plugin.mjs -o dist/lib/karma-packer-plugin.js -f cjs",
     "build:copy:static": "cp -R LICENSE README.md bin resources dist/",
     "build:copy:package": "node package-build.js",
     "build:clean": "rm -rf dist",
