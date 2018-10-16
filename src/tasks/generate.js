@@ -344,7 +344,7 @@ gulp.task('generate', (done) => {
         merged.add(styleCopy);
       }
 
-      if (packageConfig.cliProject) {
+      if (!packageConfig.cliProject) {
         merged.add(demoCopy);
       }
 
