@@ -76,6 +76,9 @@ gulp.task('build:bundle', async () => {
   const baseConfig = getBaseConfig(config, packageJson, banner);
 
   try {
+    const globalKeys = Object.keys(config.flatGlobals);
+    const flatBundleExternals = globalKeys.length ? globalKeys : config.esmExternals;
+
     // flat bundle.
     const flatConfig = merge({}, baseConfig, {
       output: {
@@ -85,7 +88,7 @@ gulp.task('build:bundle', async () => {
         globals: config.flatGlobals,
         amd: config.bundle.amd
       },
-      external: Object.keys(config.flatGlobals),
+      external: flatBundleExternals,
       plugins: [
         rollupStyleBuildPlugin(config, packageJson, false, false, true),
         ...preBundlePlugins(config),
@@ -107,7 +110,7 @@ gulp.task('build:bundle', async () => {
           globals: config.flatGlobals,
           amd: config.bundle.amd
         },
-        external: Object.keys(config.flatGlobals),
+        external: flatBundleExternals,
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, true),
           ...preBundlePlugins(config),
