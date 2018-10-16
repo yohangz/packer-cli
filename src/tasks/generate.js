@@ -346,9 +346,10 @@ gulp.task('generate', (done) => {
 
       if (!packageConfig.cliProject) {
         merged.add(demoCopy);
+        merged.add(demoHelperScriptCopy);
       }
 
-      merged.add([sourceCopy, demoHelperScriptCopy, licenseCopy, readmeCopy, configCopy]);
+      merged.add([sourceCopy, licenseCopy, readmeCopy, configCopy]);
     });
   } catch (error) {
     console.log(error);
