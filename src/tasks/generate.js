@@ -327,7 +327,7 @@ gulp.task('generate', (done) => {
         .pipe(gulp.dest(path.join(projectDir, 'demo')));
 
       const configCopy = gulp.src([
-        path.join(__dirname, '../resources/static/{.**,**}')
+        path.join(__dirname, '../resources/static/{.*,*}')
       ])
         .pipe(gulpFile('.packerrc.json', JSON.stringify(packageConfig, null, 2)))
         .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
