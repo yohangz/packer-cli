@@ -10,7 +10,7 @@ import './tasks/watch';
 
 import { args } from './tasks/util';
 
-import karmaPackerPlugin from './karma-packer-plugin';
+import karmaPackerPlugin from './plugins/karma-packer-plugin';
 
 switch ('generate') {
   case 'generate':

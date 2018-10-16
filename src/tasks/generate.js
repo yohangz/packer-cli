@@ -8,7 +8,7 @@ import gulpFilter from 'gulp-filter';
 import gulpFile from 'gulp-file';
 import mergeStream from 'merge-stream';
 
-import gulpHbsRuntime from '../gulp-hbs-runtime';
+import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 import { runShellCommand, args } from './util';
 import { parseLicenseType, parseStylePreprocessorExtension } from './parser';
 import { readCLIPackageData } from './meta';
