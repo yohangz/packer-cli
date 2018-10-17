@@ -1,6 +1,6 @@
 {
   "name": "packer-cli",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Full-fledged CLI tool to generate and package library Node modules compliant with Browser and NodeJS. Packer CLI support all modern style, unit test and script transpiler tools.",
   "keywords": [
     "Library CLI",
