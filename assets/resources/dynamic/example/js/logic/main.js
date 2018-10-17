@@ -4,11 +4,11 @@ import '../templates/_badges.hbs';
 import HomeTemplate from '../templates/home.hbs';
 
 export class Main {
-  getTemplate() {
+  getTemplate () {
     return HomeTemplate(conf);
   }
 
-  render(selector) {
+  render (selector) {
     const template = this.getTemplate();
     const container = document.querySelectorAll(selector)[0];
     container.innerHTML = template;

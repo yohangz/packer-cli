@@ -25,6 +25,10 @@
     "tslib": "^1.9.3"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.1.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
     "@types/jasmine": "^2.8.8",
     "@types/assert": "^1.4.0",
     "@types/mocha": "^5.2.5",

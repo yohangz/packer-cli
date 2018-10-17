@@ -1,0 +1,92 @@
+{
+  "entry": "index.mjs",
+  "source": "src",
+  "dist": {
+    "outDir": "dist",
+    "stylesDir": "styles",
+    "generateFESM5": true,
+    "generateFESM2015": true,
+    "generateMin": true
+  },
+  "typescript": false,
+  "cliProject": true,
+  "styleSupport": false,
+  "watch": {
+    "scriptDir": ".tmp",
+    "helperDir": "demo/helper",
+    "demoDir": "demo/watch",
+    "serve": true,
+    "port": 4000,
+    "open": true
+  },
+  "copy": [
+    "README.md",
+    "LICENSE",
+    "assets/**/{.*,*}"
+  ],
+  "flatGlobals": {},
+  "esmExternals": [
+    "handlebars/runtime",
+    "path",
+    "handlebars",
+    "plugin-error",
+    "through2",
+    "chalk",
+    "rollup-plugin-filesize",
+    "rollup-plugin-progress",
+    "rollup-plugin-img",
+    "rollup-plugin-hbs",
+    "rollup-plugin-babel",
+    "rollup-plugin-typescript2",
+    "typescript",
+    "rollup-plugin-commonjs",
+    "rollup-plugin-node-resolve",
+    "rollup-plugin-ignore",
+    "rollup-plugin-re",
+    "autoprefixer",
+    "postcss-image-inliner",
+    "rollup-plugin-postcss",
+    "rollup-plugin-ignore-import",
+    "rollup",
+    "fs",
+    "gulp",
+    "merge-stream",
+    "gulp-file",
+    "gulp-filter",
+    "inquirer",
+    "validate-npm-package-name",
+    "validator/lib/isURL",
+    "validator/lib/isEmail",
+    "rollup-plugin-uglify",
+    "lodash/merge",
+    "gulp-clean",
+    "karma-rollup-preprocessor",
+    "rollup-plugin-istanbul",
+    "child_process",
+    "rollup-plugin-livereload",
+    "rollup-plugin-serve",
+    "karma",
+    "gulp-chmod",
+    "rollup-plugin-uglify-es"
+  ],
+  "pathReplacePatterns": [],
+  "ignore": [],
+  "assetPaths": [
+    "src/assets"
+  ],
+  "testFramework": "jasmine",
+  "bundle": {
+    "amd": {
+      "define": ""
+    },
+    "format": "cjs",
+    "imageInlineLimit": 1000000
+  },
+  "license": {
+    "banner": true,
+    "thirdParty": {
+      "includePrivate": false,
+      "fileName": "dependencies.txt"
+    }
+  }
+}

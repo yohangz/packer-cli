@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
 
@@ -20,10 +19,11 @@ import rollupProgress from 'rollup-plugin-progress';
 import rollupFilesize from 'rollup-plugin-filesize';
 
 import chalk from 'chalk';
+import { readBabelConfig, readBannerTemplate } from './meta';
 
 export const getBanner = (config, packageJson) => {
   if (config.license.banner) {
-    const bannerTemplate = fs.readFileSync(path.join(process.cwd(), '.banner.hbs'), 'utf8');
+    const bannerTemplate = readBannerTemplate();
     return handlebars.compile(bannerTemplate)({
       config: config,
       pkg: packageJson
@@ -109,19 +109,13 @@ export const buildPlugin = (esVersion, generateDefinition, watch, config) => {
     return rollupTypescript(buildConf);
   }
 
+  const babelConfig = readBabelConfig(esVersion);
   return rollupBabel({
     babelrc: false,
     exclude: 'node_modules/**',
-    presets: [
-      [
-        '@babel/preset-env',
-        {
-          'targets': {
-            'esmodules': esVersion === 'es2015'
-          }
-        }
-      ]
-    ]
+    presets: babelConfig.presets,
+    plugins: babelConfig.plugins,
+    runtimeHelpers: true
   });
 };
 

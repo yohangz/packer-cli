@@ -2,6 +2,8 @@
 
 # compiled output
 dist/
+.tmp/
+.rpt2_cache/
 
 # Runtime data
 pids

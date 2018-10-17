@@ -3,7 +3,9 @@ import path from 'path';
 import chalk from 'chalk';
 import gulpFile from 'gulp-file';
 import merge from 'lodash/merge';
-import { uglify } from 'rollup-plugin-uglify';
+import rollupUglify from 'rollup-plugin-uglify-es';
+import mergeStream from 'merge-stream';
+import chmod from 'gulp-chmod';
 
 import { readConfig, readPackageData } from './meta';
 import {
@@ -17,6 +19,8 @@ import {
   rollupStyleBuildPlugin
 } from './build-util';
 
+import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
+
 gulp.task('build:copy:essentials', () => {
   const packageJson = readPackageData();
   const config = readConfig();
@@ -24,7 +28,7 @@ gulp.task('build:copy:essentials', () => {
   let fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
 
   let targetPackage = {
-    main: path.join('bundles', `${packageJson.name}.js`),
+    main: path.join('bundle', `${packageJson.name}.js`),
     peerDependencies: {}
   };
 
@@ -57,7 +61,7 @@ gulp.task('build:copy:essentials', () => {
   });
 
   // copy the needed additional files in the 'dist' folder
-  return gulp.src((config.copy || []).map((copyFile) => {
+  const packageFlatEssentials = gulp.src((config.copy || []).map((copyFile) => {
     return path.join(process.cwd(), copyFile);
   }), {
     allowEmpty: true
@@ -67,6 +71,35 @@ gulp.task('build:copy:essentials', () => {
       console.error(error);
     }))
     .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir)));
+
+  if (!config.cliProject) {
+    return packageFlatEssentials;
+  }
+
+  const packageBin = gulp.src([ path.join(process.cwd(), 'templates/.bin.hbs') ])
+    .pipe(gulpHbsRuntime({
+      packageName: packageJson.name
+    }, {
+      rename: `${packageJson.name}.js`
+    }))
+    .pipe(chmod({
+      owner: {
+        read: true,
+        write: true,
+        execute: true
+      },
+      group: {
+        read: true,
+        execute: true
+      },
+      others: {
+        read: true,
+        execute: true
+      }
+    })) // Grand read and execute permission.
+    .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir, 'bin')));
+
+  return mergeStream(packageFlatEssentials, packageBin);
 });
 
 gulp.task('build:bundle', async () => {
@@ -78,13 +111,14 @@ gulp.task('build:bundle', async () => {
   try {
     const globalKeys = Object.keys(config.flatGlobals);
     const flatBundleExternals = globalKeys.length ? globalKeys : config.esmExternals;
+    const flatBundleTarget = config.browserCompliant ? 'es5' : 'es2015';
 
     // flat bundle.
     const flatConfig = merge({}, baseConfig, {
       output: {
         name: config.namespace,
         format: config.bundle.format,
-        file: path.join(process.cwd(), config.dist.outDir, 'bundles', `${packageJson.name}.js`),
+        file: path.join(process.cwd(), config.dist.outDir, 'bundle', `${packageJson.name}.js`),
         globals: config.flatGlobals,
         amd: config.bundle.amd
       },
@@ -93,7 +127,7 @@ gulp.task('build:bundle', async () => {
         rollupStyleBuildPlugin(config, packageJson, false, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        buildPlugin('es5', true, false, config),
+        buildPlugin(flatBundleTarget, true, false, config),
         ...postBundlePlugins()
       ]
     });
@@ -106,7 +140,7 @@ gulp.task('build:bundle', async () => {
         output: {
           name: config.namespace,
           format: config.bundle.format,
-          file: path.join(process.cwd(), config.dist.outDir, 'bundles', `${packageJson.name}.min.js`),
+          file: path.join(process.cwd(), config.dist.outDir, 'bundle', `${packageJson.name}.min.js`),
           globals: config.flatGlobals,
           amd: config.bundle.amd
         },
@@ -115,16 +149,10 @@ gulp.task('build:bundle', async () => {
           rollupStyleBuildPlugin(config, packageJson, false, true, true),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
-          buildPlugin('es5', false, false, config),
-          uglify({
+          buildPlugin(flatBundleTarget, false, false, config),
+          rollupUglify({
             output: {
-              comments: function (node, comment) {
-                if (comment.type === 'comment2') {
-                  // multiline comment
-                  return /@preserve|@license/i.test(comment.value);
-                }
-                return false;
-              }
+              comments: /@preserve|@license/
             }
           }),
           ...postBundlePlugins()

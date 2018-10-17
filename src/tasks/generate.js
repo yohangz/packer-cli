@@ -13,13 +13,172 @@ import { runShellCommand, args } from './util';
 import { parseLicenseType, parseStylePreprocessorExtension } from './parser';
 import { readCLIPackageData } from './meta';
 
-const configResource = require('../resources/dynamic/.packerrc.json');
-const packageResource = require('../resources/dynamic/package.json');
+const configResource = require('../../assets/resources/dynamic/.packerrc.json');
+const packageResource = require('../../assets/resources/dynamic/package.json');
+
+const getPackerConfig = (options) => {
+  let packerConfig = configResource;
+
+  packerConfig.browserCompliant = options.browserCompliant;
+  if (!packerConfig.browserCompliant) {
+    packerConfig.bundle.format = 'cjs';
+  } else {
+    packerConfig.bundle.format = options.bundleFormat;
+  }
+
+  packerConfig.bundle.inlineStyle = options.bundleStyles;
+  packerConfig.bundle.amd.id = options.amdId;
+  packerConfig.testFramework = options.testFramework.toLowerCase();
+  packerConfig.typescript = options.typescript;
+  packerConfig.namespace = options.namespace;
+  packerConfig.stylePreprocessor = options.stylePreprocessor;
+  packerConfig.cliProject = options.cliProject;
+  packerConfig.entry = 'index' + (options.typescript ? '.ts' : '.js');
+  packerConfig.styleSupport = options.styleSupport;
+
+  return packerConfig;
+};
+
+const getPackageConfig = (options, packageName) => {
+  const cliPackageData = readCLIPackageData();
+
+  let packageJson = packageResource;
+  packageJson.name = packageName;
+  packageJson.description = options.description;
+  packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
+  packageJson.homepage = options.homepage;
+  packageJson.license = parseLicenseType(options.license);
+  packageJson.keywords = String(options.keywords || '').split(',');
+
+  if (options.cliProject) {
+    packageJson.bin = {
+      [packageJson.name]: path.join('bin', `${packageJson.name}.js`)
+    };
+  }
+
+  if (options.author && options.email) {
+    packageJson.author = `${options.author} <${options.email}>`;
+  }
+
+  if (options.githubUsername) {
+    packageJson.repository = `https://github.com/${options.githubUsername}/${packageName}.git`;
+  }
+
+  return packageJson;
+};
+
+const styleCopy = (styleExt, projectDir) => {
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${styleExt}`)
+  ])
+    .pipe(gulp.dest(path.join(projectDir, 'src/style')));
+};
+
+const templateCopy = (projectDir) => {
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/example/common/templates/**/*')
+  ])
+    .pipe(gulp.dest(path.join(projectDir, 'src/templates')));
+};
+
+const assetCopy = (projectDir) => {
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/example/common/assets/**/*')
+  ])
+    .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
+};
+
+const sourceCopy = (packerConfig, styleExt, projectDir) => {
+  const isJasmine = packerConfig.testFramework === 'jasmine';
+
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/example', packerConfig.typescript ? 'ts' : 'js', '**/*')
+  ])
+    .pipe(gulpHbsRuntime({
+      styleExt: styleExt,
+      isJasmine: isJasmine,
+      styleSupport: packerConfig.styleSupport,
+      cliProject: packerConfig.cliProject
+    }, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(path.join(projectDir, 'src')));
+};
+
+const licenseCopy = (packerConfig, packageConfig, projectDir) => {
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/license', `${packageConfig.license}.hbs`)
+  ])
+    .pipe(gulpHbsRuntime({
+      year: packerConfig.year,
+      author: packerConfig.author
+    }, {
+      rename: 'LICENSE'
+    }))
+    .pipe(gulp.dest(projectDir));
+};
+
+const readmeCopy = (packageConfig, projectDir) => {
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/README.md.hbs')
+  ])
+    .pipe(gulpHbsRuntime({
+      packageName: packageConfig.name,
+      packageDescription: packageConfig.description
+    }, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(projectDir));
+};
+
+const demoHelperScriptCopy = (projectDir) => {
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/demo/helper/**/*')
+  ])
+    .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
+};
+
+const demoCopy = (packerConfig, packageName, projectDir) => {
+  const isAmd = packerConfig.bundle.format === 'amd';
+  const isIife = packerConfig.bundle.format === 'umd' || packerConfig.bundle.format === 'iife';
+  const isSystem = packerConfig.bundle.format === 'system';
+
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/demo/**/*.hbs')
+  ])
+    .pipe(gulpFilter('**/*' + (packerConfig.browserCompliant ? '.html.hbs' : '.js.hbs')))
+    .pipe(gulpHbsRuntime({
+      projectName: packageName,
+      inlineStyle: packerConfig.bundle.inlineStyle,
+      namespace: packerConfig.namespace,
+      watchDir: packerConfig.watch.scriptDir,
+      distDir: packerConfig.dist.outDir,
+      require: isAmd,
+      iife: isIife,
+      system: isSystem,
+      amdModule: packerConfig.bundle.amd.id
+    }, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(path.join(projectDir, 'demo')));
+};
+
+const configCopy = (packageConfig, packerConfig, projectDir) => {
+  return gulp.src([
+    path.join(__dirname, '../resources/static/**/{.*,*}')
+  ])
+    .pipe(gulpFile('.packerrc.json', JSON.stringify(packerConfig, null, 2)))
+    .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
+    .on('end', () => {
+      runShellCommand(packerConfig.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
+        console.log('--done--');
+      });
+    })
+    .pipe(gulp.dest(projectDir));
+};
 
 gulp.task('generate', (done) => {
   try {
-    const cliPackageData = readCLIPackageData();
-
     const questions = [
       {
         type: 'input',
@@ -42,6 +201,14 @@ gulp.task('generate', (done) => {
         message: 'Author\'s email address (optional)?',
         validate: (value) => {
           return !value || isEmail(value) ? true : 'Value must be a valid email address';
+        }
+      },
+      {
+        type: 'input',
+        name: 'githubUsername',
+        message: 'Author\'s github username (optional)?',
+        validate: (value) => {
+          return true; // todo: add GH username validation here
         }
       },
       {
@@ -92,7 +259,7 @@ gulp.task('generate', (done) => {
       {
         type: 'confirm',
         message: 'Are you building a browser compliant library?',
-        name: 'clientCompliant',
+        name: 'browserCompliant',
         default: true
       },
       {
@@ -101,7 +268,7 @@ gulp.task('generate', (done) => {
         name: 'cliProject',
         default: false,
         when: (answers) => {
-          return !answers.clientCompliant;
+          return !answers.browserCompliant;
         }
       },
       {
@@ -116,7 +283,7 @@ gulp.task('generate', (done) => {
           'system'
         ],
         when: (answers) => {
-          return answers.clientCompliant;
+          return answers.browserCompliant;
         },
         validate: (value) => {
           return !!value || 'Bundle format is required';
@@ -207,149 +374,32 @@ gulp.task('generate', (done) => {
     }
 
     inquirer.prompt(questions).then(options => {
-      let packageConfig = configResource;
-
-      if (!options.clientCompliant) {
-        packageConfig.bundle.format = 'cjs';
-      } else {
-        packageConfig.bundle.format = options.bundleFormat;
-      }
-
-      packageConfig.bundle.inlineStyle = options.bundleStyles;
-      packageConfig.bundle.amd.id = options.amdId;
-      packageConfig.testFramework = options.testFramework.toLowerCase();
-      packageConfig.typescript = options.typescript;
-      packageConfig.namespace = options.namespace;
-      packageConfig.stylePreprocessor = options.stylePreprocessor;
-      packageConfig.cliProject = options.cliProject;
-      packageConfig.entry = 'index' + (options.typescript ? '.ts' : '.js');
-      packageConfig.styleSupport = options.styleSupport;
-
-      let packageJson = packageResource;
-      packageJson.name = packageName;
-      packageJson.description = options.description;
-      packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
-      packageJson.homepage = options.homepage;
-      packageJson.license = parseLicenseType(options.license);
-      packageJson.keywords = String(options.keywords || '').split(',');
-
-      if (packageConfig.cliProject) {
-        packageJson.bin = {
-          [packageJson.name]: path.join(packageConfig.dist.outDir, 'bundles', `${packageJson.name}.js`)
-        };
-      }
-
-      if (options.author && options.email) {
-        packageJson.author = `${options.author} <${options.email}>`;
-        packageJson.repository = `https://github.com/${options.author}/${packageName}.git`;
-      }
-
+      const packerConfig = getPackerConfig(options);
+      const packageConfig = getPackageConfig(options, packageName);
       const projectDir = path.join(process.cwd(), packageName);
-      const styleExt = parseStylePreprocessorExtension(packageConfig.stylePreprocessor);
-      const isJasmine = packageConfig.testFramework === 'jasmine';
+      const styleExt = parseStylePreprocessorExtension(packerConfig.stylePreprocessor);
 
-      const styleCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${styleExt}`)
-      ])
-        .pipe(gulp.dest(path.join(projectDir, 'src/style')));
+      const merged = mergeStream(assetCopy(projectDir), templateCopy(projectDir));
 
-      const templateCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example/common/templates/**/*')
-      ])
-        .pipe(gulp.dest(path.join(projectDir, 'src/templates')));
-
-      const assetCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example/common/assets/**/*')
-      ])
-        .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
-
-      const sourceCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/example', packageConfig.typescript ? 'ts' : 'js', '{.**,**}')
-      ])
-        .pipe(gulpHbsRuntime({
-          styleExt: styleExt,
-          isJasmine: isJasmine,
-          styleSupport: packageConfig.styleSupport,
-          cliProject: options.cliProject
-        }, {
-          replaceExt: ''
-        }))
-        .pipe(gulp.dest(path.join(projectDir, 'src')));
-
-      const licenseCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/license', `${packageJson.license}.hbs`)
-      ])
-        .pipe(gulpHbsRuntime({
-          year: options.year,
-          author: options.author
-        }, {
-          rename: 'LICENSE'
-        }))
-        .pipe(gulp.dest(projectDir));
-
-      const readmeCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/README.md.hbs')
-      ])
-        .pipe(gulpHbsRuntime({
-          packageName: packageJson.name,
-          packageDescription: packageJson.description
-        }, {
-          replaceExt: ''
-        }))
-        .pipe(gulp.dest(projectDir));
-
-      const isAmd = packageConfig.bundle.format === 'amd';
-      const isIife = packageConfig.bundle.format === 'umd' || packageConfig.bundle.format === 'iife';
-      const isSystem = packageConfig.bundle.format === 'system';
-
-      const demoHelperScriptCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/demo/helper/**/*')
-      ])
-        .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
-
-      const demoCopy = gulp.src([
-        path.join(__dirname, '../resources/dynamic/demo/**/*.hbs')
-      ])
-        .pipe(gulpFilter('**/*' + (options.clientCompliant ? '.html.hbs' : '.js.hbs')))
-        .pipe(gulpHbsRuntime({
-          projectName: packageName,
-          inlineStyle: packageConfig.bundle.inlineStyle,
-          namespace: packageConfig.namespace,
-          watchDir: packageConfig.watch.scriptDir,
-          distDir: packageConfig.dist.outDir,
-          require: isAmd,
-          iife: isIife,
-          system: isSystem,
-          amdModule: packageConfig.bundle.amd.id
-        }, {
-          replaceExt: ''
-        }))
-        .pipe(gulp.dest(path.join(projectDir, 'demo')));
-
-      const configCopy = gulp.src([
-        path.join(__dirname, '../resources/static/{.*,*}')
-      ])
-        .pipe(gulpFile('.packerrc.json', JSON.stringify(packageConfig, null, 2)))
-        .pipe(gulpFile('package.json', JSON.stringify(packageJson, null, 2)))
-        .on('end', () => {
-          runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
-            done();
-          });
-        })
-        .pipe(gulp.dest(projectDir));
-
-      const merged = mergeStream(assetCopy, templateCopy);
-
-      if (packageConfig.styleSupport) {
-        merged.add(styleCopy);
+      if (packerConfig.styleSupport) {
+        merged.add(styleCopy(styleExt, projectDir));
       }
 
-      if (!packageConfig.cliProject) {
-        merged.add(demoCopy);
-        merged.add(demoHelperScriptCopy);
+      if (!packerConfig.cliProject) {
+        merged.add(demoCopy(packerConfig, packageName, projectDir));
+        merged.add(demoHelperScriptCopy(projectDir));
       }
 
-      merged.add([sourceCopy, licenseCopy, readmeCopy, configCopy]);
+      merged.add([
+        sourceCopy(packerConfig, styleExt, projectDir),
+        licenseCopy(packerConfig, packageConfig, projectDir),
+        readmeCopy(packageConfig, projectDir),
+        configCopy(packageConfig, packerConfig, projectDir)
+      ]);
+
+      merged.on('end', () => {
+        done();
+      });
     });
   } catch (error) {
     console.log(error);

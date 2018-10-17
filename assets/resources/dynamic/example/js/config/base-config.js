@@ -7,7 +7,7 @@ export let conf = {
   configType: 'BASE',
   githubUrl: 'https://github.com/yohangz/packer-cli',
   badges: {
-    buildStatus:{
+    buildStatus: {
       imageUrl: 'https://travis-ci.org/yohangz/packer-cli.svg?branch=master',
       title: 'Build Status',
       redirectUrl: 'https://travis-ci.org/yohangz/packer-cli',
@@ -21,6 +21,6 @@ export let conf = {
       imageUrl: 'https://badge.fury.io/js/packer-cli.svg',
       title: 'Package Version',
       redirectUrl: 'https://badge.fury.io/js/packer-cli'
-    },
+    }
   }
 };

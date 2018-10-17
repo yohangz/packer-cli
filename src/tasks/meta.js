@@ -1,14 +1,22 @@
-import fs from 'fs';
 import path from 'path';
+import fs from 'fs';
 
 export const readConfig = () => {
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), '.packerrc.json'), 'utf8'));
+  return require(path.join(process.cwd(), '.packerrc.json'));
 };
 
 export const readPackageData = () => {
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+  return require(path.join(process.cwd(), 'package.json'));
 };
 
 export const readCLIPackageData = () => {
-  return JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+  return require(path.join(__dirname, '../package.json'));
+};
+
+export const readBabelConfig = (esVersion) => {
+  return require(path.join(process.cwd(), `.babelrc.${esVersion}.js`));
+};
+
+export const readBannerTemplate = () => {
+  return fs.readFileSync(path.join(process.cwd(), 'templates/.banner.hbs'), 'utf8');
 };

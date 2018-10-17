@@ -24,6 +24,7 @@ gulp.task('build:watch', async () => {
     const packageJson = readPackageData();
     const banner = getBanner(config, packageJson);
     const baseConfig = getBaseConfig(config, packageJson, banner);
+    const flatBundleTarget = config.browserCompliant ? 'es5' : 'es2015';
 
     makeDir(config.watch.scriptDir);
 
@@ -60,7 +61,7 @@ gulp.task('build:watch', async () => {
         rollupStyleBuildPlugin(config, packageJson, true, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        buildPlugin('es5', false, true, config),
+        buildPlugin(flatBundleTarget, false, true, config),
         ...rollupServePlugins,
         rollupProgress()
       ],

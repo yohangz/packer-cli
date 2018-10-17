@@ -7,11 +7,12 @@ import rollupIstanbul from 'rollup-plugin-istanbul';
 import rollupBabel from 'rollup-plugin-babel';
 import rollupPreprocessor from 'karma-rollup-preprocessor';
 
-import fs from 'fs';
+import path from 'path';
 import typescript from 'typescript';
 
-export default function karmaPackerPlugin() {
-  const config = JSON.parse(fs.readFileSync(process.cwd() + '/.packerrc.json', 'utf8'));
+export default function karmaPackerPlugin () {
+  const config = require(path.join(process.cwd(), '.packerrc.json'));
+  const babelConfig = require(path.join(process.cwd(), '.babelrc.es2015.js'));
 
   const testGlob = config.source + '/**/*.spec' + (config.tsProject ? '.ts' : '.js');
   console.log(testGlob);
@@ -19,17 +20,22 @@ export default function karmaPackerPlugin() {
   const packerPreprocess = {};
   packerPreprocess[testGlob] = ['rollup'];
 
-  const buildPlugin = config.tsProject ?
-    rollupTypescript({
+  let buildPlugin;
+  if (config.tsProject) {
+    buildPlugin = rollupTypescript({
       tsconfig: 'tsconfig.es5.json',
       typescript: typescript,
       check: !!process.env.CI
-    }) :
-    rollupBabel({
+    });
+  } else {
+    buildPlugin = rollupBabel({
       babelrc: false,
       exclude: 'node_modules/**',
-      presets: ['@babel/preset-env'],
+      presets: babelConfig.presets,
+      plugins: babelConfig.plugins,
+      runtimeHelpers: true
     });
+  }
 
   const packerPlugin = {
     /**

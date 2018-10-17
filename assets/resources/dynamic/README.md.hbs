@@ -56,6 +56,7 @@ npm run release
 │   ├── /LICENSE                # Project license agreement file.
 │   ├── /package.json           # Package.json file with publish artifact specific configuration.
 │   └── /README.md              # Package documentation markup file.
+├── .banner.hbs                 # Bundle banner template.
 ├── .editorconfig               # Define and maintain consistent coding styles between different editors and IDEs.
 ├── .eslintrc.yml               # ES Lint configuration.
 ├── .gitignore                  # Contains files to be ignored when pushing to git.
@@ -74,7 +75,7 @@ npm run release
 
 # Build Configuration
 
-Build configuration can be updated via ``.packerrc.json``. 
+Build configuration can be updated via ``.packerrc.json``.
 
 ```json
 {
@@ -88,7 +89,9 @@ Build configuration can be updated via ``.packerrc.json``.
     "generateFESM2015": true,
     "generateMin": true
   },
-  "tsProject": true,
+  "typescript": true,
+  "cliProject": false,
+  "styleSupport": true,
   "stylePreprocessor": "scss",
   "watch": {
     "scriptDir": ".tmp",
@@ -125,6 +128,13 @@ Build configuration can be updated via ``.packerrc.json``.
     "format": "umd",
     "imageInlineLimit": 1000000,
     "inlineStyle": false
+  },
+  "license": {
+    "banner": true,
+    "thirdParty": {
+      "includePrivate": false,
+      "fileName": "dependencies.txt"
+    }
   }
 }
 ```
@@ -139,8 +149,10 @@ Build configuration can be updated via ``.packerrc.json``.
 | generateFESM5                 | boolean           | Generate flat ESM5 module build artifacts                                         |
 | generateFESM2015              | boolean           | Generate flat ESM2015 module build artifacts                                      |
 | generateMin                   | boolean           | Generate flat bundle build minified artifact                                      |
-| tsProject                     | boolean           | Set true if library source is in Typescript                                       |
-| stylePreprocessor             | string           	| Style preprocessor can be "scss", "sass", "stylus", "less"                        |    
+| typescript                    | boolean           | Set true if library source is in Typescript                                       |
+| stylePreprocessor             | string           	| Style preprocessor can be "scss", "sass", "stylus", "less"                        |
+| cliProject                    | boolean           | Append node environment hash bang for CLI projects if true                        |
+| styleSupport                  | boolean           | Support style preprocessing and linting                                           |
 | watch                       	| object           	| watch mode configuration object                                                  	|
 | watch.scriptDir               | string           	| watch build temp directory                                                       	|
 | watch.helperDir               | string           	| watch build helper library directory                                              |
@@ -165,6 +177,8 @@ Build configuration can be updated via ``.packerrc.json``.
 | bundle.format                	| string           	| "umd", "amd", "iife" and "system" flat bundle options are available               |
 | bundle.imageInlineLimit       | number            | Size limit in bytes to inline compile images                                      |
 | bundle.inlineStyle            | boolean           | Inline bundle styles withing JS code if true                                      |
+| license                       | object            | Bundle license configuration                                                      |
+| license.banner                | boolean           | Include inline header banner passed via ``.banner.hbs`` template                  |
 
 # Contributions
 

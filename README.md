@@ -112,6 +112,9 @@ Do you want to inline bundle styles within script? (Y/n) Yes
 # Target build process to support browser compliant bundling if yes
 Are you building a browser compliant library? Yes
 
+# This options will generate a NodeJS CLI tool project.
+Are you building a node CLI project? No
+
 # You can chose from the browser compliant flat bundel formats options list.
 What's the build bundle format you want to use? umd
 - umd
@@ -200,6 +203,7 @@ npm run release
 │   ├── /LICENSE                # Project license agreement file.
 │   ├── /package.json           # Package.json file with publish artifact specific configuration.
 │   └── /README.md              # Package documentation markup file.
+├── .banner.hbs                 # Bundle banner template.
 ├── .editorconfig               # Define and maintain consistent coding styles between different editors and IDEs.
 ├── .eslintrc.yml               # ES Lint configuration.
 ├── .gitignore                  # Contains files to be ignored when pushing to git.
@@ -232,7 +236,9 @@ Build configuration can be updated after project generation via ``.packerrc.json
     "generateFESM2015": true,
     "generateMin": true
   },
-  "tsProject": true,
+  "typescript": true,
+  "cliProject": false,
+  "styleSupport": true,
   "stylePreprocessor": "scss",
   "watch": {
     "scriptDir": ".tmp",
@@ -269,6 +275,13 @@ Build configuration can be updated after project generation via ``.packerrc.json
     "format": "umd",
     "imageInlineLimit": 1000000,
     "inlineStyle": false
+  },
+  "license": {
+    "banner": true,
+    "thirdParty": {
+      "includePrivate": false,
+      "fileName": "dependencies.txt"
+    }
   }
 }
 ```
@@ -311,6 +324,8 @@ Build configuration can be updated after project generation via ``.packerrc.json
 | bundle.format                	| string           	| "umd", "amd", "iife" and "system" flat bundle options are available               |
 | bundle.imageInlineLimit       | number            | Size limit in bytes to inline compile images                                      |
 | bundle.inlineStyle            | boolean           | Inline bundle styles withing JS code if true                                      |
+| license                       | object            | Bundle license configuration                                                      |
+| license.banner                | boolean           | Include inline header banner passed via ``.banner.hbs`` template                  |
 
 # Contributions
 
