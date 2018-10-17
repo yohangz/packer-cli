@@ -19,22 +19,26 @@ const packageResource = require('../../assets/resources/dynamic/package.json');
 const getPackerConfig = (options) => {
   let packerConfig = configResource;
 
-  packerConfig.browserCompliant = options.browserCompliant;
-  if (!packerConfig.browserCompliant) {
-    packerConfig.bundle.format = 'cjs';
+  packerConfig.browserCompliant = Boolean(options.browserCompliant);
+  if (packerConfig.browserCompliant) {
+    packerConfig.bundle.format = String(options.bundleFormat || '').toLowerCase();
   } else {
-    packerConfig.bundle.format = options.bundleFormat;
+    packerConfig.bundle.format = 'cjs';
   }
 
-  packerConfig.bundle.inlineStyle = options.bundleStyles;
-  packerConfig.bundle.amd.id = options.amdId;
-  packerConfig.testFramework = options.testFramework.toLowerCase();
-  packerConfig.typescript = options.typescript;
+  packerConfig.cliProject = Boolean(options.cliProject);
+  if (packerConfig.cliProject) {
+    packerConfig.bundle.dependencyMapMode = 'mapDependency';
+  }
+
+  packerConfig.bundle.inlineStyle = Boolean(options.bundleStyles);
+  packerConfig.bundle.amd.id = options.amdId || '';
+  packerConfig.testFramework = String(options.testFramework || '').toLowerCase();
+  packerConfig.typescript = Boolean(options.typescript);
   packerConfig.namespace = options.namespace;
-  packerConfig.stylePreprocessor = options.stylePreprocessor;
-  packerConfig.cliProject = options.cliProject;
-  packerConfig.entry = 'index' + (options.typescript ? '.ts' : '.js');
-  packerConfig.styleSupport = options.styleSupport;
+  packerConfig.stylePreprocessor = (options.stylePreprocessor || '').toLowerCase();
+  packerConfig.entry = 'index' + (packerConfig.typescript ? '.ts' : '.js');
+  packerConfig.styleSupport = Boolean(options.styleSupport);
 
   return packerConfig;
 };
@@ -44,17 +48,8 @@ const getPackageConfig = (options, packageName) => {
 
   let packageJson = packageResource;
   packageJson.name = packageName;
-  packageJson.description = options.description;
-  packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
-  packageJson.homepage = options.homepage;
-  packageJson.license = parseLicenseType(options.license);
+  packageJson.description = options.description || '';
   packageJson.keywords = String(options.keywords || '').split(',');
-
-  if (options.cliProject) {
-    packageJson.bin = {
-      [packageJson.name]: path.join('bin', `${packageJson.name}.js`)
-    };
-  }
 
   if (options.author && options.email) {
     packageJson.author = `${options.author} <${options.email}>`;
@@ -62,6 +57,16 @@ const getPackageConfig = (options, packageName) => {
 
   if (options.githubUsername) {
     packageJson.repository = `https://github.com/${options.githubUsername}/${packageName}.git`;
+  }
+
+  packageJson.homepage = options.homepage;
+  packageJson.license = parseLicenseType(options.license);
+  packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
+
+  if (options.cliProject) {
+    packageJson.bin = {
+      [packageJson.name]: path.join('bin', `${packageJson.name}.js`)
+    };
   }
 
   return packageJson;

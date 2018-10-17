@@ -25,16 +25,19 @@ gulp.task('build:copy:essentials', () => {
   const packageJson = readPackageData();
   const config = readConfig();
 
+  let targetPackage = {};
   let fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
 
-  let targetPackage = {
-    main: path.join('bundle', `${packageJson.name}.js`),
-    peerDependencies: {}
-  };
+  // only copy needed properties from project's package json
+  fieldsToCopy.forEach((field) => {
+    targetPackage[field] = packageJson[field];
+  });
 
   if (config.cliProject) {
     targetPackage.bin = packageJson.bin;
   }
+
+  targetPackage.main = path.join('bundle', `${packageJson.name}.js`);
 
   if (config.typescript) {
     targetPackage.typings = 'index.d.ts';
@@ -50,15 +53,25 @@ gulp.task('build:copy:essentials', () => {
     targetPackage.fesm2015 = path.join('fesm2015', `${packageJson.name}.js`);
   }
 
-  // only copy needed properties from project's package json
-  fieldsToCopy.forEach((field) => {
-    targetPackage[field] = packageJson[field];
-  });
-
-  // defines project's dependencies as 'peerDependencies' for final users
-  Object.keys(packageJson.dependencies).forEach((dependency) => {
-    targetPackage.peerDependencies[dependency] = `^${packageJson.dependencies[dependency].replace(/[\^~><=]/, '')}`;
-  });
+  // Map dependencies to target package file
+  switch (config.bundle.dependencyMapMode) {
+    case 'crossMapPeerDependency':
+      targetPackage.peerDependencies = packageJson.dependencies;
+      break;
+    case 'crossMapDependency':
+      targetPackage.dependencies = packageJson.peerDependencies;
+      break;
+    case 'mapDependency':
+      targetPackage.dependencies = packageJson.dependencies;
+      break;
+    case 'mapPeerDependency':
+      targetPackage.peerDependencies = packageJson.peerDependencies;
+      break;
+    case 'all':
+      targetPackage.peerDependencies = packageJson.peerDependencies;
+      targetPackage.dependencies = packageJson.dependencies;
+      break;
+  }
 
   // copy the needed additional files in the 'dist' folder
   const packageFlatEssentials = gulp.src((config.copy || []).map((copyFile) => {

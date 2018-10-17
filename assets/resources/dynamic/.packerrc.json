@@ -48,7 +48,8 @@
     },
     "format": "umd",
     "imageInlineLimit": 1000000,
-    "inlineStyle": false
+    "inlineStyle": false,
+    "dependencyMapMode": "crossMapPeerDependency"
   },
   "license": {
     "banner": true,

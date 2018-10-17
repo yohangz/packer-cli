@@ -80,7 +80,8 @@
       "define": ""
     },
     "format": "cjs",
-    "imageInlineLimit": 1000000
+    "imageInlineLimit": 1000000,
+    "dependencyMapMode": "mapDependency"
   },
   "license": {
     "banner": true,
