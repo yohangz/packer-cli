@@ -5147,9 +5147,9 @@ p-try@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-1.0.0.tgz#cbc79cdbaf8fd4228e13f621f2b1a237c1b207b3"
 
-packer-cli@^2.0.7:
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.0.7.tgz#d69858dcb3f6f833257c54770e4fcac4f401e52f"
+packer-cli@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.0.8.tgz#403e7183ad0a5c5018cf3017407363602db468b3"
   dependencies:
     "@babel/cli" "^7.1.0"
     "@babel/core" "^7.1.0"
