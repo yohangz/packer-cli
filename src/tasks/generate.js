@@ -13,63 +13,163 @@ import { runShellCommand, args } from './util';
 import { parseLicenseType, parseStylePreprocessorExtension } from './parser';
 import { readCLIPackageData } from './meta';
 
-const configResource = require('../../assets/resources/dynamic/.packerrc.json');
-const packageResource = require('../../assets/resources/dynamic/package.json');
-
 const getPackerConfig = (options) => {
-  let packerConfig = configResource;
+  const entry = 'index' + (options.typescript ? '.ts' : '.js');
 
-  packerConfig.browserCompliant = Boolean(options.browserCompliant);
-  if (packerConfig.browserCompliant) {
-    packerConfig.bundle.format = String(options.bundleFormat || '').toLowerCase();
+  let bundleFormat = '';
+  if (options.browserCompliant) {
+    bundleFormat = String(options.bundleFormat || 'umd').toLowerCase();
   } else {
-    packerConfig.bundle.format = 'cjs';
+    bundleFormat = 'cjs';
   }
 
-  packerConfig.cliProject = Boolean(options.cliProject);
-  if (packerConfig.cliProject) {
-    packerConfig.bundle.dependencyMapMode = 'mapDependency';
+  let dependencyMapMode = 'crossMapPeerDependency';
+  if (options.cliProject) {
+    dependencyMapMode = 'mapDependency';
   }
 
-  packerConfig.bundle.inlineStyle = Boolean(options.bundleStyles);
-  packerConfig.bundle.amd.id = options.amdId || '';
-  packerConfig.testFramework = String(options.testFramework || '').toLowerCase();
-  packerConfig.typescript = Boolean(options.typescript);
-  packerConfig.namespace = options.namespace;
-  packerConfig.stylePreprocessor = (options.stylePreprocessor || '').toLowerCase();
-  packerConfig.entry = 'index' + (packerConfig.typescript ? '.ts' : '.js');
-  packerConfig.styleSupport = Boolean(options.styleSupport);
-
-  return packerConfig;
+  return {
+    namespace: options.namespace,
+    entry: entry,
+    source: 'src',
+    dist: {
+      outDir: 'dist',
+      stylesDir: 'styles',
+      generateFESM5: true,
+      generateFESM2015: true,
+      generateMin: true
+    },
+    typescript: Boolean(options.typescript),
+    stylePreprocessor: (options.stylePreprocessor || 'scss').toLowerCase(),
+    cliProject: Boolean(options.cliProject),
+    styleSupport: Boolean(options.styleSupport),
+    browserCompliant: Boolean(options.browserCompliant),
+    watch: {
+      scriptDir: '.tmp',
+      helperDir: 'demo/helper',
+      demoDir: 'demo/watch',
+      serve: true,
+      port: 4000,
+      open: true
+    },
+    copy: [
+      'README.md',
+      'LICENSE'
+    ],
+    flatGlobals: {},
+    esmExternals: [
+      'handlebars/runtime'
+    ],
+    pathReplacePatterns: [
+      {
+        test: './config/base-config',
+        replace: './config/replace-config'
+      }
+    ],
+    ignore: [],
+    assetPaths: [
+      'src/assets'
+    ],
+    testFramework: (options.testFramework || 'jasmine').toLowerCase(),
+    bundle: {
+      amd: {
+        define: '',
+        id: (options.amdId || '')
+      },
+      format: bundleFormat,
+      imageInlineLimit: 1000000,
+      inlineStyle: Boolean(options.bundleStyles),
+      dependencyMapMode: dependencyMapMode
+    },
+    license: {
+      banner: true,
+      thirdParty: {
+        includePrivate: false,
+        fileName: 'dependencies.txt'
+      }
+    }
+  };
 };
 
 const getPackageConfig = (options, packageName) => {
   const cliPackageData = readCLIPackageData();
 
-  let packageJson = packageResource;
-  packageJson.name = packageName;
-  packageJson.description = options.description || '';
-  packageJson.keywords = String(options.keywords || '').split(',');
-
+  let author = '';
   if (options.author && options.email) {
-    packageJson.author = `${options.author} <${options.email}>`;
+    author = `${options.author} <${options.email}>`;
   }
 
+  let projectUrl = '';
+  let repository = '';
   if (options.githubUsername) {
-    packageJson.repository = `https://github.com/${options.githubUsername}/${packageName}.git`;
+    projectUrl = `https://github.com/${options.githubUsername}/${packageName}`;
+    repository = `${projectUrl}.git`;
   }
 
-  packageJson.homepage = options.homepage;
-  packageJson.license = parseLicenseType(options.license);
-  packageJson.devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
+  let packageConfig = {
+    name: packageName,
+    version: '1.0.0',
+    description: options.description || '',
+    keywords: String(options.keywords || '').split(','),
+    scripts: {
+      'lint': 'packer lint',
+      'lint:style': 'packer lint --style',
+      'lint:script': 'packer lint --script',
+      'build': 'packer build',
+      'watch': 'packer watch',
+      'test': 'packer test',
+      'test:ci': 'CI=true packer test',
+      'preversion': 'npm run build',
+      'postversion': 'git push && git push --tags',
+      'prerelease': 'npm run build',
+      'release': 'npm publish dist'
+    },
+    author: author,
+    repository: repository,
+    license: parseLicenseType(options.license),
+    homepage: options.homepage || projectUrl,
+    dependencies: {
+      'handlebars': '^4.0.11',
+      'tslib': '^1.9.3'
+    },
+    devDependencies: {
+      '@babel/preset-env': '^7.1.0',
+      '@babel/register': '^7.0.0',
+      '@babel/runtime': '^7.1.0',
+      '@babel/plugin-transform-runtime': '^7.1.0',
+      '@types/assert': '^1.4.0',
+      '@types/jasmine': '^2.8.8',
+      '@types/mocha': '^5.2.5',
+      'typescript': '^3.1.1',
+      'assert': '^1.4.1',
+      'eslint': '>=5.0.0',
+      'eslint-config-standard': '*',
+      'eslint-plugin-import': '>=2.13.0',
+      'eslint-plugin-node': '>=7.0.0',
+      'eslint-plugin-promise': '>=4.0.0',
+      'eslint-plugin-standard': '>=4.0.0',
+      'jasmine-core': '^3.1.0',
+      'karma': '^3.0.0',
+      'karma-chrome-launcher': '^2.2.0',
+      'karma-coverage': '^1.1.2',
+      'karma-jasmine': '^1.1.2',
+      'karma-jasmine-html-reporter': '^1.1.0',
+      'karma-mocha': '^1.3.0',
+      'mocha': '^5.2.0',
+      'puppeteer': '^1.5.0',
+      'stylelint-config-standard': '^18.2.0',
+      [cliPackageData.name]: `^${cliPackageData.version}`
+    },
+    private: false
+  };
 
   if (options.cliProject) {
-    packageJson.bin = {
-      [packageJson.name]: path.join('bin', `${packageJson.name}.js`)
+    packageConfig.bin = {
+      [packageName]: path.join('bin', `${packageConfig.name}.js`)
     };
   }
 
-  return packageJson;
+  return packageConfig;
 };
 
 const styleCopy = (styleExt, projectDir) => {
