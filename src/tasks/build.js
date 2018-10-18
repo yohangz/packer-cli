@@ -3,7 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import gulpFile from 'gulp-file';
 import merge from 'lodash/merge';
-import rollupUglify from 'rollup-plugin-uglify-es';
+import rollupUglify from '../plugins/rollup-plugin-uglify-es';
 import mergeStream from 'merge-stream';
 import chmod from 'gulp-chmod';
 

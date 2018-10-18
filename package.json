@@ -17,15 +17,19 @@
     "watch": "packer watch",
     "test": "packer test",
     "test:ci": "CI=true packer test",
+    "preversion": "npm run build",
     "postversion": "git push && git push --tags",
+    "prerelease": "npm run build",
     "release": "npm publish dist"
   },
   "author": "Yohan Gomez <yohan.gz@hotmail.com>",
   "repository": "https://github.com/yohangz/packer-cli.git",
   "license": "MIT",
+  "homepage": "https://github.com/yohangz/packer-cli",
   "dependencies": {
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
+    "@babel/polyfill": "^7.0.0",
     "autoprefixer": "^8.6.3",
     "chalk": "^2.4.1",
     "gulp": "^4.0.0",
@@ -60,24 +64,23 @@
     "rollup-plugin-re": "^1.0.7",
     "rollup-plugin-serve": "^0.4.2",
     "rollup-plugin-typescript2": "^0.15.1",
-    "rollup-plugin-uglify-es": "^0.0.1",
     "stylelint": "^9.5.0",
     "stylus": "^0.54.5",
     "through2": "^2.0.3",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0",
+    "uglify-es": "^3.3.9",
     "validate-npm-package-name": "^3.0.0",
     "validator": "^10.7.1"
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.1.0",
-    "@babel/plugin-transform-runtime": "^7.1.0",
     "@types/assert": "^1.4.0",
     "@types/jasmine": "^2.8.8",
     "@types/mocha": "^5.2.5",
-    "typescript": "^3.1.1",
     "assert": "^1.4.1",
     "eslint": ">=5.0.0",
     "eslint-config-standard": "*",
@@ -93,12 +96,13 @@
     "karma-jasmine-html-reporter": "^1.1.0",
     "karma-mocha": "^1.3.0",
     "mocha": "^5.2.0",
-    "packer-cli": "^2.0.1",
+    "packer-cli": "^2.0.6",
     "puppeteer": "^1.5.0",
-    "stylelint-config-standard": "^18.2.0"
+    "stylelint-config-standard": "^18.2.0",
+    "typescript": "^3.1.1"
   },
   "private": false,
   "bin": {
-    "packer": "dist/bin/packer-cli.js"
+    "packer": "bin/packer-cli.js"
   }
 }

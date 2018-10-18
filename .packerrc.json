@@ -6,11 +6,13 @@
     "stylesDir": "styles",
     "generateFESM5": true,
     "generateFESM2015": true,
-    "generateMin": true
+    "generateMin": false
   },
   "typescript": false,
+  "stylePreprocessor": "scss",
   "cliProject": true,
   "styleSupport": false,
+  "browserCompliant": false,
   "watch": {
     "scriptDir": ".tmp",
     "helperDir": "demo/helper",
@@ -67,7 +69,11 @@
     "rollup-plugin-serve",
     "karma",
     "gulp-chmod",
-    "rollup-plugin-uglify-es"
+    "uglify-es",
+    "@babel/runtime/helpers/toConsumableArray",
+    "@babel/runtime/helpers/asyncToGenerator",
+    "@babel/runtime/helpers/defineProperty",
+    "@babel/runtime/regenerator"
   ],
   "pathReplacePatterns": [],
   "ignore": [],
@@ -77,10 +83,12 @@
   "testFramework": "jasmine",
   "bundle": {
     "amd": {
-      "define": ""
+      "define": "",
+      "id": ""
     },
     "format": "cjs",
     "imageInlineLimit": 1000000,
+    "inlineStyle": false,
     "dependencyMapMode": "mapDependency"
   },
   "license": {

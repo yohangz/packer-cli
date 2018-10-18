@@ -23,9 +23,9 @@ switch (karmaPacker.testFramework) {
     plugins.push(karmaMocha);
     client.mocha = {
       // change Karma's debug.html to the mocha web reporter
-      reporter: 'html',
+      reporter: 'html'
     };
-    break
+    break;
   }
 }
 
@@ -33,13 +33,13 @@ plugins.push(karmaChromeLauncher);
 plugins.push(karmaCoverage);
 plugins.push(karmaPacker.rollupPreprocessor);
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     basePath: '',
 
     frameworks: [ karmaPacker.testFramework ],
 
-    browsers: [ process.env.CI? 'ChromeHeadless': 'Chrome' ],
+    browsers: [ process.env.CI ? 'ChromeHeadless' : 'Chrome' ],
 
     port: 9876,
 
@@ -70,6 +70,5 @@ module.exports = function(config) {
     client: client,
 
     rollupPreprocessor: karmaPacker.packerPlugin
-  })
+  });
 };
-

@@ -133,6 +133,7 @@ const getPackageConfig = (options, packageName) => {
       'tslib': '^1.9.3'
     },
     devDependencies: {
+      '@babel/polyfill': '^7.0.0',
       '@babel/preset-env': '^7.1.0',
       '@babel/register': '^7.0.0',
       '@babel/runtime': '^7.1.0',
@@ -158,6 +159,7 @@ const getPackageConfig = (options, packageName) => {
       'mocha': '^5.2.0',
       'puppeteer': '^1.5.0',
       'stylelint-config-standard': '^18.2.0',
+      'uglify-es': '^3.3.9',
       [cliPackageData.name]: `^${cliPackageData.version}`
     },
     private: false
