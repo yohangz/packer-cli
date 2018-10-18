@@ -212,13 +212,13 @@ const sourceCopy = (packerConfig, styleExt, projectDir) => {
     .pipe(gulp.dest(path.join(projectDir, 'src')));
 };
 
-const licenseCopy = (packerConfig, packageConfig, projectDir) => {
+const licenseCopy = (packageConfig, projectDir) => {
   return gulp.src([
     path.join(__dirname, '../resources/dynamic/license', `${packageConfig.license}.hbs`)
   ])
     .pipe(gulpHbsRuntime({
-      year: packerConfig.year,
-      author: packerConfig.author
+      year: packageConfig.year,
+      author: packageConfig.author
     }, {
       rename: 'LICENSE'
     }))
@@ -499,7 +499,7 @@ gulp.task('generate', (done) => {
 
       merged.add([
         sourceCopy(packerConfig, styleExt, projectDir),
-        licenseCopy(packerConfig, packageConfig, projectDir),
+        licenseCopy(packageConfig, projectDir),
         readmeCopy(packageConfig, projectDir),
         configCopy(packageConfig, packerConfig, projectDir)
       ]);
