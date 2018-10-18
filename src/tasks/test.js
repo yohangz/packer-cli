@@ -1,10 +1,11 @@
 import gulp from 'gulp';
-import {Server} from 'karma';
 import path from 'path';
 import chalk from 'chalk';
 
 gulp.task('test', async () => {
-  const server = new Server({
+  const karma = require('karma');
+
+  const server = new karma.Server({
     configFile: path.join(process.cwd(), 'karma.conf.js'),
     port: 9876
   }, (exitCode) => {

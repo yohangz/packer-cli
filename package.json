@@ -66,7 +66,6 @@
     "through2": "^2.0.3",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.1",
     "validate-npm-package-name": "^3.0.0",
     "validator": "^10.7.1"
   },
@@ -78,6 +77,7 @@
     "@types/assert": "^1.4.0",
     "@types/jasmine": "^2.8.8",
     "@types/mocha": "^5.2.5",
+    "typescript": "^3.1.1",
     "assert": "^1.4.1",
     "eslint": ">=5.0.0",
     "eslint-config-standard": "*",

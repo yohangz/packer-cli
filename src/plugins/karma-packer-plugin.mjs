@@ -8,7 +8,6 @@ import rollupBabel from 'rollup-plugin-babel';
 import rollupPreprocessor from 'karma-rollup-preprocessor';
 
 import path from 'path';
-import typescript from 'typescript';
 
 export default function karmaPackerPlugin () {
   const config = require(path.join(process.cwd(), '.packerrc.json'));
@@ -24,7 +23,7 @@ export default function karmaPackerPlugin () {
   if (config.tsProject) {
     buildPlugin = rollupTypescript({
       tsconfig: 'tsconfig.es5.json',
-      typescript: typescript,
+      typescript: require('typescript'),
       check: !!process.env.CI
     });
   } else {

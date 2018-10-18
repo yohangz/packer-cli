@@ -116,6 +116,7 @@ gulp.task('build:copy:essentials', () => {
 });
 
 gulp.task('build:bundle', async () => {
+  const typescript = require('typescript');
   const config = readConfig();
   const packageJson = readPackageData();
   const banner = getBanner(config, packageJson);
@@ -140,7 +141,7 @@ gulp.task('build:bundle', async () => {
         rollupStyleBuildPlugin(config, packageJson, false, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        buildPlugin(flatBundleTarget, true, false, config),
+        buildPlugin(flatBundleTarget, true, false, config, typescript),
         ...postBundlePlugins()
       ]
     });
@@ -162,7 +163,7 @@ gulp.task('build:bundle', async () => {
           rollupStyleBuildPlugin(config, packageJson, false, true, true),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
-          buildPlugin(flatBundleTarget, false, false, config),
+          buildPlugin(flatBundleTarget, false, false, config, typescript),
           rollupUglify({
             output: {
               comments: /@preserve|@license/
@@ -185,7 +186,7 @@ gulp.task('build:bundle', async () => {
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
           ...preBundlePlugins(config),
-          buildPlugin('es5', false, false, config),
+          buildPlugin('es5', false, false, config, typescript),
           ...postBundlePlugins()
         ],
         external: config.esmExternals
@@ -205,7 +206,7 @@ gulp.task('build:bundle', async () => {
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
           ...preBundlePlugins(config),
-          buildPlugin('es2015', false, false, config),
+          buildPlugin('es2015', false, false, config, typescript),
           ...postBundlePlugins()
         ],
         external: config.esmExternals

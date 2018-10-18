@@ -10,7 +10,6 @@ import rollupReplace from 'rollup-plugin-re';
 import rollupIgnore from 'rollup-plugin-ignore';
 import rollupResolve from 'rollup-plugin-node-resolve';
 import rollupCommonjs from 'rollup-plugin-commonjs';
-import typescript from 'typescript';
 import rollupTypescript from 'rollup-plugin-typescript2';
 import rollupBabel from 'rollup-plugin-babel';
 import rollupHandlebars from 'rollup-plugin-hbs';
@@ -87,11 +86,11 @@ export const resolvePlugins = (config) => {
   ];
 };
 
-export const buildPlugin = (esVersion, generateDefinition, watch, config) => {
+export const buildPlugin = (esVersion, generateDefinition, watch, config, tsPackage) => {
   if (config.typescript) {
     let buildConf = {
       tsconfig: `tsconfig.${esVersion}.json`,
-      typescript: typescript,
+      typescript: tsPackage,
       check: !watch
     };
 

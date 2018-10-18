@@ -20,6 +20,7 @@ import { makeDir } from './util';
 
 gulp.task('build:watch', async () => {
   try {
+    const typescript = require('typescript');
     const config = readConfig();
     const packageJson = readPackageData();
     const banner = getBanner(config, packageJson);
@@ -61,7 +62,7 @@ gulp.task('build:watch', async () => {
         rollupStyleBuildPlugin(config, packageJson, true, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        buildPlugin(flatBundleTarget, false, true, config),
+        buildPlugin(flatBundleTarget, false, true, config, typescript),
         ...rollupServePlugins,
         rollupProgress()
       ],
