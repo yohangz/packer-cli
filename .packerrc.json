@@ -6,7 +6,7 @@
     "stylesDir": "styles",
     "generateFESM5": true,
     "generateFESM2015": true,
-    "generateMin": false
+    "generateMin": true
   },
   "typescript": false,
   "stylePreprocessor": "scss",

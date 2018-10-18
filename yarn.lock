@@ -1666,12 +1666,6 @@ commander@~2.17.1:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
-commander@~2.9.0:
-  version "2.9.0"
-  resolved "http://registry.npmjs.org/commander/-/commander-2.9.0.tgz#9c99094176e12240cb22d6c5146098400fe0f7d4"
-  dependencies:
-    graceful-readlink ">= 1.0.0"
-
 commondir@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
@@ -3172,10 +3166,6 @@ got@^8.3.1:
 graceful-fs@^4.0.0, graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
-
-"graceful-readlink@>= 1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
 growl@1.10.5:
   version "1.10.5"
@@ -5157,12 +5147,13 @@ p-try@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-1.0.0.tgz#cbc79cdbaf8fd4228e13f621f2b1a237c1b207b3"
 
-packer-cli@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.0.6.tgz#731be3b4705b450cd7657226b4be4c6294254d2f"
+packer-cli@^2.0.7:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.0.7.tgz#d69858dcb3f6f833257c54770e4fcac4f401e52f"
   dependencies:
     "@babel/cli" "^7.1.0"
     "@babel/core" "^7.1.0"
+    "@babel/polyfill" "^7.0.0"
     autoprefixer "^8.6.3"
     chalk "^2.4.1"
     gulp "^4.0.0"
@@ -5197,12 +5188,12 @@ packer-cli@^2.0.6:
     rollup-plugin-re "^1.0.7"
     rollup-plugin-serve "^0.4.2"
     rollup-plugin-typescript2 "^0.15.1"
-    rollup-plugin-uglify-es "^0.0.1"
     stylelint "^9.5.0"
     stylus "^0.54.5"
     through2 "^2.0.3"
     tslib "^1.9.3"
     tslint "^5.11.0"
+    uglify-es "^3.3.9"
     validate-npm-package-name "^3.0.0"
     validator "^10.7.1"
 
@@ -6515,12 +6506,6 @@ rollup-plugin-typescript2@^0.15.1:
     rollup-pluginutils "^2.0.1"
     tslib "1.9.2"
 
-rollup-plugin-uglify-es@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-uglify-es/-/rollup-plugin-uglify-es-0.0.1.tgz#e45644f2b685a59abdb9363407207a03a7b5a9b7"
-  dependencies:
-    uglify-es "3.0.3"
-
 rollup-pluginutils@^1.5.1:
   version "1.5.2"
   resolved "http://registry.npmjs.org/rollup-pluginutils/-/rollup-pluginutils-1.5.2.tgz#1e156e778f94b7255bfa1b3d0178be8f5c552408"
@@ -6774,7 +6759,7 @@ source-map@^0.4.2:
   dependencies:
     amdefine ">=0.0.4"
 
-source-map@^0.5.0, source-map@^0.5.1, source-map@^0.5.3, source-map@^0.5.6, source-map@^0.5.7, source-map@~0.5.1:
+source-map@^0.5.0, source-map@^0.5.1, source-map@^0.5.3, source-map@^0.5.6, source-map@^0.5.7:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
 
@@ -7374,15 +7359,6 @@ typescript@^3.1.1:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.3.tgz#01b70247a6d3c2467f70c45795ef5ea18ce191d5"
 
-uglify-es@3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.0.3.tgz#63cc84aa9468b34973a4887787c64c01a8a87576"
-  dependencies:
-    commander "~2.9.0"
-    source-map "~0.5.1"
-  optionalDependencies:
-    uglify-to-browserify "~1.0.0"
-
 uglify-es@^3.3.9:
   version "3.3.9"
   resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.3.9.tgz#0c1c4f0700bed8dbc124cdb304d2592ca203e677"
@@ -7396,10 +7372,6 @@ uglify-js@^3.1.4:
   dependencies:
     commander "~2.17.1"
     source-map "~0.6.1"
-
-uglify-to-browserify@~1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz#6e0924d6bda6b5afe349e39a6d632850a0f882b7"
 
 ultron@1.0.x:
   version "1.0.2"
