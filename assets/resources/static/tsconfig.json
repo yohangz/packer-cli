@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "es2015",
+    "target": "ESNext",
+    "module": "ESNext",
     "sourceMap": true,
-    "importHelpers": true,
-    "noImplicitAny": true,
-    "removeComments": true,
+    "noImplicitAny": false,
     "preserveConstEnums": true,
     "allowSyntheticDefaultImports": true
   },

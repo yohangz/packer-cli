@@ -14,7 +14,10 @@
     "quotemark": [
       true,
       "single"
-    ]
+    ],
+    "trailing-comma": false,
+    "ordered-imports": false,
+    "no-console": false
   },
   "rulesDirectory": []
 }

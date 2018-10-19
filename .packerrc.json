@@ -1,5 +1,5 @@
 {
-  "entry": "index.mjs",
+  "entry": "index.ts",
   "source": "src",
   "dist": {
     "outDir": "dist",
@@ -8,7 +8,7 @@
     "generateFESM2015": true,
     "generateMin": true
   },
-  "typescript": false,
+  "typescript": true,
   "stylePreprocessor": "scss",
   "cliProject": true,
   "styleSupport": false,
