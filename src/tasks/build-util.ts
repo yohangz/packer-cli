@@ -87,9 +87,10 @@ export const resolvePlugins = (config) => {
 };
 
 export const buildPlugin = (esVersion, generateDefinition, watch, config, tsPackage) => {
+  const plugins = [];
   if (config.typescript) {
-    let buildConf = {
-      tsconfig: `tsconfig.${esVersion}.json`,
+    const buildConf: any = {
+      tsconfig: `tsconfig.json`,
       typescript: tsPackage,
       check: !watch
     };
@@ -105,17 +106,20 @@ export const buildPlugin = (esVersion, generateDefinition, watch, config, tsPack
       buildConf.useTsconfigDeclarationDir = true;
     }
 
-    return rollupTypescript(buildConf);
+    plugins.push(rollupTypescript(buildConf));
   }
 
   const babelConfig = readBabelConfig(esVersion);
-  return rollupBabel({
+  plugins.push(rollupBabel({
     babelrc: false,
     exclude: 'node_modules/**',
-    presets: babelConfig.presets,
+    extensions: [ '.js', '.jsx', '.es6', '.es', '.mjs', '.ts', 'tsx' ],
     plugins: babelConfig.plugins,
+    presets: babelConfig.presets,
     runtimeHelpers: true
-  });
+  }));
+
+  return plugins;
 };
 
 export const preBundlePlugins = (config) => {

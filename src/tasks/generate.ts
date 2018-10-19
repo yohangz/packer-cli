@@ -9,11 +9,11 @@ import gulpFile from 'gulp-file';
 import mergeStream from 'merge-stream';
 
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
-import { runShellCommand, args } from './util';
+import { args, runShellCommand } from './util';
 import { parseLicenseType, parseStylePreprocessorExtension } from './parser';
 import { readCLIPackageData } from './meta';
 
-const getPackerConfig = (options) => {
+const getPackerConfig = (options: any) => {
   const entry = 'index' + (options.typescript ? '.ts' : '.js');
 
   let bundleFormat = '';
@@ -91,7 +91,7 @@ const getPackerConfig = (options) => {
   };
 };
 
-const getPackageConfig = (options, packageName) => {
+const getPackageConfig = (options: any, packageName: any) => {
   const cliPackageData = readCLIPackageData();
 
   let author = '';
@@ -106,7 +106,7 @@ const getPackageConfig = (options, packageName) => {
     repository = `${projectUrl}.git`;
   }
 
-  let packageConfig = {
+  const packageConfig: any = {
     name: packageName,
     version: '1.0.0',
     description: options.description || '',

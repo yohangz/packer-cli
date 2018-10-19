@@ -4,7 +4,7 @@ import path from 'path';
 import rollupLivereload from 'rollup-plugin-livereload';
 import merge from 'lodash/merge';
 import rollupProgress from 'rollup-plugin-progress';
-import { watch } from 'rollup';
+import { RollupWatchOptions, watch } from 'rollup';
 import chalk from 'chalk';
 import {
   buildPlugin,
@@ -50,7 +50,7 @@ gulp.task('build:watch', async () => {
       ];
     }
 
-    const watchConfig = merge({}, baseConfig, {
+    const watchConfig: RollupWatchOptions = merge({}, baseConfig, {
       output: {
         name: config.namespace,
         format: config.bundle.format,
@@ -62,7 +62,7 @@ gulp.task('build:watch', async () => {
         rollupStyleBuildPlugin(config, packageJson, true, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        buildPlugin(flatBundleTarget, false, true, config, typescript),
+        ...buildPlugin(flatBundleTarget, false, true, config, typescript),
         ...rollupServePlugins,
         rollupProgress()
       ],
@@ -71,7 +71,7 @@ gulp.task('build:watch', async () => {
       }
     });
 
-    const watcher = await watch(watchConfig);
+    const watcher = await watch([watchConfig]);
     watcher.on('event', event => {
       switch (event.code) {
         case 'START':

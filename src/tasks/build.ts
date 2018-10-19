@@ -25,8 +25,8 @@ gulp.task('build:copy:essentials', () => {
   const packageJson = readPackageData();
   const config = readConfig();
 
-  let targetPackage = {};
-  let fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
+  const targetPackage: any = {};
+  const fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
 
   // only copy needed properties from project's package json
   fieldsToCopy.forEach((field) => {
@@ -74,16 +74,13 @@ gulp.task('build:copy:essentials', () => {
   }
 
   // copy the needed additional files in the 'dist' folder
-  const packageFlatEssentials = gulp.src((config.copy || []).map((copyFile) => {
-    return path.join(process.cwd(), copyFile);
-  }), {
-    allowEmpty: true
-  })
-    .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)).on('error', (error) => {
-      console.log(chalk.red(`Bundle build Failure`));
-      console.error(error);
-    }))
-    .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir)));
+  const packageFlatEssentials = gulp.src((config.copy || []).map((copyFile: string) => {
+      return path.join(process.cwd(), copyFile);
+    }), {
+      allowEmpty: true
+    })
+      .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
+      .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir)));
 
   if (!config.cliProject) {
     return packageFlatEssentials;
@@ -96,18 +93,18 @@ gulp.task('build:copy:essentials', () => {
       rename: `${packageJson.name}.js`
     }))
     .pipe(chmod({
-      owner: {
-        read: true,
-        write: true,
-        execute: true
-      },
       group: {
-        read: true,
-        execute: true
+        execute: true,
+        read: true
       },
       others: {
+        execute: true,
+        read: true
+      },
+      owner: {
+        execute: true,
         read: true,
-        execute: true
+        write: true
       }
     })) // Grand read and execute permission.
     .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir, 'bin')));
@@ -141,7 +138,7 @@ gulp.task('build:bundle', async () => {
         rollupStyleBuildPlugin(config, packageJson, false, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        buildPlugin(flatBundleTarget, true, false, config, typescript),
+        ...buildPlugin(flatBundleTarget, true, false, config, typescript),
         ...postBundlePlugins()
       ]
     });
@@ -163,7 +160,7 @@ gulp.task('build:bundle', async () => {
           rollupStyleBuildPlugin(config, packageJson, false, true, true),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
-          buildPlugin(flatBundleTarget, false, false, config, typescript),
+          ...buildPlugin(flatBundleTarget, false, false, config, typescript),
           rollupUglify({
             output: {
               comments: /@preserve|@license/
@@ -186,7 +183,7 @@ gulp.task('build:bundle', async () => {
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
           ...preBundlePlugins(config),
-          buildPlugin('es5', false, false, config, typescript),
+          ...buildPlugin('es5', false, false, config, typescript),
           ...postBundlePlugins()
         ],
         external: config.esmExternals
@@ -206,7 +203,7 @@ gulp.task('build:bundle', async () => {
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
           ...preBundlePlugins(config),
-          buildPlugin('es2015', false, false, config, typescript),
+          ...buildPlugin('es2015', false, false, config, typescript),
           ...postBundlePlugins()
         ],
         external: config.esmExternals

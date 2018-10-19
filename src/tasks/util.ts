@@ -1,5 +1,5 @@
+import { spawn, StdioOptions } from 'child_process';
 import fs from 'fs';
-import { spawn } from 'child_process';
 
 const isWindows = process.platform === 'win32';
 
@@ -8,9 +8,9 @@ export const args = process.argv.splice(2);
 export const runShellCommand = (command, args, dir) => {
   const cmd = isWindows ? `${command}.cmd` : command;
   const options = {
+    cwd: dir,
     detached: true,
-    stdio: 'inherit',
-    cwd: dir
+    stdio: 'inherit' as StdioOptions
   };
 
   return new Promise((resolve) => {
