@@ -5346,13 +5346,18 @@ p-try@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-1.0.0.tgz#cbc79cdbaf8fd4228e13f621f2b1a237c1b207b3"
 
-packer-cli@^2.0.8:
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.0.8.tgz#403e7183ad0a5c5018cf3017407363602db468b3"
+packer-cli@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.0.9.tgz#a790ec9383a8b25449789d3dd0eea76342ecc86d"
   dependencies:
     "@babel/cli" "^7.1.0"
     "@babel/core" "^7.1.0"
     "@babel/polyfill" "^7.0.0"
+    "@types/handlebars" "^4.0.39"
+    "@types/lodash" "^4.14.117"
+    "@types/merge-stream" "^1.1.2"
+    "@types/plugin-error" "^0.1.0"
+    "@types/uglify-es" "^3.0.0"
     autoprefixer "^8.6.3"
     chalk "^2.4.1"
     gulp "^4.0.0"

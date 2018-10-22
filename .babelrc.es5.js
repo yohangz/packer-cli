@@ -4,8 +4,8 @@ module.exports = {
       '@babel/preset-env',
       {
         targets: {
-          esmodules: false,
-        },
+          esmodules: false
+        }
       }
     ]
   ],
