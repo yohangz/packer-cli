@@ -43,7 +43,8 @@ export const getBaseConfig = (config, packageJson, banner) => {
 
 export const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main) => {
   const styleDir = watch ? config.watch.scriptDir : config.dist.outDir;
-  const styleDist = path.join(process.cwd(), styleDir, config.dist.stylesDir, packageJson.name + (minify ? '.min.css' : '.css'));
+  const fileName = packageJson.name + (minify ? '.min.css' : '.css');
+  const styleDist = path.join(process.cwd(), styleDir, config.dist.stylesDir, fileName);
 
   if (!main && !config.bundle.inlineStyle) {
     return rollupIgnoreImport({
@@ -86,11 +87,11 @@ export const resolvePlugins = (config) => {
   ];
 };
 
-export const buildPlugin = (packageModule, generateDefinition, watch, config, tsPackage) => {
+export const buildPlugin = (packageModule, generateDefinition, check, config, tsPackage) => {
   const plugins = [];
   if (config.typescript) {
     const buildConf: any = {
-      check: !watch,
+      check,
       tsconfig: `tsconfig.json`,
       typescript: tsPackage
     };

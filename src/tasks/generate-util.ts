@@ -284,7 +284,7 @@ export const configCopy = (packageConfig, packerConfig, projectDir) => {
     .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
     .on('end', () => {
       runShellCommand(packerConfig.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
-        console.log('--done--');
+        console.log('📦 package generated 🚀');
       });
     })
     .pipe(gulp.dest(projectDir));

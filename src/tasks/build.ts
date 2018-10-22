@@ -147,7 +147,7 @@ gulp.task('build:bundle', async () => {
         rollupStyleBuildPlugin(config, packageJson, false, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        ...buildPlugin('bundle', true, false, config, typescript),
+        ...buildPlugin('bundle', true, true, config, typescript),
         ...postBundlePlugins()
       ]
     });
@@ -169,7 +169,7 @@ gulp.task('build:bundle', async () => {
           rollupStyleBuildPlugin(config, packageJson, false, true, true),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
-          ...buildPlugin('bundle', false, false, config, typescript),
+          ...buildPlugin('bundle', false, true, config, typescript),
           rollupUglify({
             output: {
               comments: /@preserve|@license/
@@ -193,7 +193,7 @@ gulp.task('build:bundle', async () => {
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
           ...preBundlePlugins(config),
-          ...buildPlugin('es5', false, false, config, typescript),
+          ...buildPlugin('es5', false, true, config, typescript),
           ...postBundlePlugins()
         ]
       });
@@ -212,7 +212,7 @@ gulp.task('build:bundle', async () => {
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
           ...preBundlePlugins(config),
-          ...buildPlugin('esnext', false, false, config, typescript),
+          ...buildPlugin('esnext', false, true, config, typescript),
           ...postBundlePlugins()
         ]
       });

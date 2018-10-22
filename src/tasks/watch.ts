@@ -61,7 +61,7 @@ gulp.task('build:watch', async () => {
         rollupStyleBuildPlugin(config, packageJson, true, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        ...buildPlugin('bundle', false, true, config, typescript),
+        ...buildPlugin('bundle', false, false, config, typescript),
         ...rollupServePlugins,
         rollupProgress()
       ],
