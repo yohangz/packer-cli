@@ -6,36 +6,57 @@ import { readConfig } from './meta';
 import { runShellCommand } from './util';
 
 gulp.task('lint:style', (done) => {
-  const config = readConfig();
-
-  if (config.styleSupport) {
-    console.log(chalk.blue('[Style Lint]'));
+  try {
     const config = readConfig();
-    runShellCommand('stylelint', [ path.join(config.source, '**/*.{styl,scss,sass,less,css}') ], process.cwd()).then(() => {
+
+    if (config.styleSupport) {
+      console.log(chalk.blue('[Style Lint]'));
+      const src = path.join(config.source, '**/*.{styl,scss,sass,less,css}');
+      runShellCommand('stylelint', [src], process.cwd())
+        .then(() => {
+          done();
+        });
+    } else {
       done();
-    });
+    }
+  } catch (e) {
+    console.error(e);
   }
 });
 
 gulp.task('lint:script:ts', (done) => {
-  const config = readConfig();
+  try {
+    const config = readConfig();
 
-  if (config.typescript) {
-    console.log(chalk.blue('[TS Lint]'));
-    runShellCommand('tslint', [path.join(config.source, '**/*.{ts,tsx}')], process.cwd()).then(() => {
+    if (config.typescript) {
+      console.log(chalk.blue('[TS Lint]'));
+      const src = path.join(config.source, '**/*.{ts,tsx}');
+      runShellCommand('tslint', [src], process.cwd()).then(() => {
+        done();
+      });
+    } else {
       done();
-    });
+    }
+  } catch (e) {
+    console.error(e);
   }
 });
 
 gulp.task('lint:script:es', (done) => {
-  const config = readConfig();
+  try {
+    const config = readConfig();
 
-  if (!config.typescript) {
-    console.log(chalk.blue('[ES Lint]'));
-    runShellCommand('eslint', [path.join(config.source, '**/*.{js,mjs}')], process.cwd()).then(() => {
+    if (!config.typescript) {
+      console.log(chalk.blue('[ES Lint]'));
+      const src = path.join(config.source, '**/*.{js,mjs}');
+      runShellCommand('eslint', [src], process.cwd()).then(() => {
+        done();
+      });
+    } else {
       done();
-    });
+    }
+  } catch (e) {
+    console.error(e);
   }
 });
 
