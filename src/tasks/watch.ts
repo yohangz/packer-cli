@@ -25,7 +25,6 @@ gulp.task('build:watch', async () => {
     const packageJson = readPackageData();
     const banner = getBanner(config, packageJson);
     const baseConfig = getBaseConfig(config, packageJson, banner);
-    const flatBundleTarget = config.browserCompliant ? 'es5' : 'es2015';
 
     makeDir(config.watch.scriptDir);
 
@@ -38,8 +37,8 @@ gulp.task('build:watch', async () => {
             path.join(process.cwd(), config.watch.demoDir),
             path.join(process.cwd(), config.watch.helperDir)
           ],
-          port: config.watch.port,
-          open: config.watch.open
+          open: config.watch.open,
+          port: config.watch.port
         }),
         rollupLivereload({
           watch: [
@@ -51,18 +50,18 @@ gulp.task('build:watch', async () => {
     }
 
     const watchConfig: RollupWatchOptions = merge({}, baseConfig, {
-      output: {
-        name: config.namespace,
-        format: config.bundle.format,
-        file: path.join(process.cwd(), config.watch.scriptDir, `${packageJson.name}.js`),
-        globals: config.flatGlobals
-      },
       external: Object.keys(config.flatGlobals),
+      output: {
+        file: path.join(process.cwd(), config.watch.scriptDir, `${packageJson.name}.js`),
+        format: config.bundle.format,
+        globals: config.flatGlobals,
+        name: config.namespace
+      },
       plugins: [
         rollupStyleBuildPlugin(config, packageJson, true, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        ...buildPlugin(flatBundleTarget, false, true, config, typescript),
+        ...buildPlugin('bundle', false, true, config, typescript),
         ...rollupServePlugins,
         rollupProgress()
       ],
@@ -72,7 +71,7 @@ gulp.task('build:watch', async () => {
     });
 
     const watcher = await watch([watchConfig]);
-    watcher.on('event', event => {
+    watcher.on('event', (event) => {
       switch (event.code) {
         case 'START':
           console.log(chalk.blue('[WATCH] ') + chalk.yellow('bundling start'));

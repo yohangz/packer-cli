@@ -26,7 +26,17 @@ gulp.task('build:copy:essentials', () => {
   const config = readConfig();
 
   const targetPackage: any = {};
-  const fieldsToCopy = ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'];
+  const fieldsToCopy = [
+    'name',
+    'version',
+    'description',
+    'keywords',
+    'author',
+    'repository',
+    'license',
+    'bugs',
+    'homepage'
+  ];
 
   // only copy needed properties from project's package json
   fieldsToCopy.forEach((field) => {
@@ -49,8 +59,8 @@ gulp.task('build:copy:essentials', () => {
   }
 
   if (config.dist.generateFESM2015) {
-    targetPackage.es2015 = path.join('fesm2015', `${packageJson.name}.js`);
-    targetPackage.fesm2015 = path.join('fesm2015', `${packageJson.name}.js`);
+    targetPackage.esnext = path.join('fesmnext', `${packageJson.name}.js`);
+    targetPackage.fesmnext = path.join('fesmnext', `${packageJson.name}.js`);
   }
 
   // Map dependencies to target package file
@@ -122,23 +132,22 @@ gulp.task('build:bundle', async () => {
   try {
     const globalKeys = Object.keys(config.flatGlobals);
     const flatBundleExternals = globalKeys.length ? globalKeys : config.esmExternals;
-    const flatBundleTarget = config.browserCompliant ? 'es5' : 'es2015';
 
     // flat bundle.
     const flatConfig = merge({}, baseConfig, {
-      output: {
-        name: config.namespace,
-        format: config.bundle.format,
-        file: path.join(process.cwd(), config.dist.outDir, 'bundle', `${packageJson.name}.js`),
-        globals: config.flatGlobals,
-        amd: config.bundle.amd
-      },
       external: flatBundleExternals,
+      output: {
+        amd: config.bundle.amd,
+        file: path.join(process.cwd(), config.dist.outDir, 'bundle', `${packageJson.name}.js`),
+        format: config.bundle.format,
+        globals: config.flatGlobals,
+        name: config.namespace
+      },
       plugins: [
         rollupStyleBuildPlugin(config, packageJson, false, false, true),
         ...preBundlePlugins(config),
         ...resolvePlugins(config),
-        ...buildPlugin(flatBundleTarget, true, false, config, typescript),
+        ...buildPlugin('bundle', true, false, config, typescript),
         ...postBundlePlugins()
       ]
     });
@@ -148,19 +157,19 @@ gulp.task('build:bundle', async () => {
     if (config.dist.generateMin) {
       // minified flat bundle.
       const minifiedFlatConfig = merge({}, baseConfig, {
-        output: {
-          name: config.namespace,
-          format: config.bundle.format,
-          file: path.join(process.cwd(), config.dist.outDir, 'bundle', `${packageJson.name}.min.js`),
-          globals: config.flatGlobals,
-          amd: config.bundle.amd
-        },
         external: flatBundleExternals,
+        output: {
+          amd: config.bundle.amd,
+          file: path.join(process.cwd(), config.dist.outDir, 'bundle', `${packageJson.name}.min.js`),
+          format: config.bundle.format,
+          globals: config.flatGlobals,
+          name: config.namespace
+        },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, true),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
-          ...buildPlugin(flatBundleTarget, false, false, config, typescript),
+          ...buildPlugin('bundle', false, false, config, typescript),
           rollupUglify({
             output: {
               comments: /@preserve|@license/
@@ -176,40 +185,39 @@ gulp.task('build:bundle', async () => {
     if (config.dist.generateFESM5) {
       // FESM+ES5 flat module bundle.
       const fesm5config = merge({}, baseConfig, {
+        external: config.esmExternals,
         output: {
-          format: 'es',
-          file: path.join(process.cwd(), config.dist.outDir, 'fesm5', `${packageJson.name}.js`)
+          file: path.join(process.cwd(), config.dist.outDir, 'fesm5', `${packageJson.name}.js`),
+          format: 'es'
         },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
           ...preBundlePlugins(config),
           ...buildPlugin('es5', false, false, config, typescript),
           ...postBundlePlugins()
-        ],
-        external: config.esmExternals
+        ]
       });
 
-      await bundleBuild(fesm5config, 'FESM5');
+      await bundleBuild(fesm5config, 'ES5');
     }
 
     if (config.dist.generateFESM2015) {
       // FESM+ES2015 flat module bundle.
       const fesm2015config = merge({}, baseConfig, {
+        external: config.esmExternals,
         output: {
-          format: 'es',
-          file: path.join(process.cwd(), config.dist.outDir, 'fesm2015', `${packageJson.name}.js`)
+          file: path.join(process.cwd(), config.dist.outDir, 'fesmnext', `${packageJson.name}.js`),
+          format: 'es'
         },
-
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
           ...preBundlePlugins(config),
-          ...buildPlugin('es2015', false, false, config, typescript),
+          ...buildPlugin('esnext', false, false, config, typescript),
           ...postBundlePlugins()
-        ],
-        external: config.esmExternals
+        ]
       });
 
-      await bundleBuild(fesm2015config, 'FESM2015');
+      await bundleBuild(fesm2015config, 'ESNEXT');
     }
   } catch (e) {
     console.log(chalk.red('[build:bundle] failure'));

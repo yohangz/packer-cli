@@ -24,7 +24,7 @@ export const getBanner = (config, packageJson) => {
   if (config.license.banner) {
     const bannerTemplate = readBannerTemplate();
     return handlebars.compile(bannerTemplate)({
-      config: config,
+      config,
       pkg: packageJson
     });
   }
@@ -34,9 +34,9 @@ export const getBaseConfig = (config, packageJson, banner) => {
   return {
     input: path.join(config.source, config.entry),
     output: {
+      banner,
       name: packageJson.name,
-      sourcemap: true,
-      banner: banner
+      sourcemap: true
     }
   };
 };
@@ -52,16 +52,16 @@ export const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main)
   }
 
   return rollupPostCss({
+    extract: config.bundle.inlineStyle ? false : styleDist,
+    minimize: minify,
     plugins: [
       postCssImageInline({
-        maxFileSize: config.bundle.imageInlineLimit,
-        assetPaths: config.assetPaths
+        assetPaths: config.assetPaths,
+        maxFileSize: config.bundle.imageInlineLimit
       }),
       postCssAutoPrefix
     ],
-    sourceMap: true,
-    minimize: minify,
-    extract: config.bundle.inlineStyle ? false : styleDist
+    sourceMap: true
   });
 };
 
@@ -75,9 +75,9 @@ export const resolvePlugins = (config) => {
   return [
     rollupIgnore(config.ignore),
     rollupResolve({
+      browser: true,
       jsnext: true,
       main: true,
-      browser: true,
       preferBuiltins: false
     }),
     rollupCommonjs({
@@ -86,13 +86,13 @@ export const resolvePlugins = (config) => {
   ];
 };
 
-export const buildPlugin = (esVersion, generateDefinition, watch, config, tsPackage) => {
+export const buildPlugin = (packageModule, generateDefinition, watch, config, tsPackage) => {
   const plugins = [];
   if (config.typescript) {
     const buildConf: any = {
+      check: !watch,
       tsconfig: `tsconfig.json`,
-      typescript: tsPackage,
-      check: !watch
+      typescript: tsPackage
     };
 
     if (generateDefinition) {
@@ -109,13 +109,13 @@ export const buildPlugin = (esVersion, generateDefinition, watch, config, tsPack
     plugins.push(rollupTypescript(buildConf));
   }
 
-  const babelConfig = readBabelConfig(esVersion);
+  const babelConfig = readBabelConfig(packageModule);
   plugins.push(rollupBabel({
     babelrc: false,
     exclude: 'node_modules/**',
     extensions: [ '.js', '.jsx', '.es6', '.es', '.mjs', '.ts', 'tsx' ],
-    plugins: babelConfig.plugins,
-    presets: babelConfig.presets,
+    plugins: babelConfig.plugins || [],
+    presets: babelConfig.presets || [],
     runtimeHelpers: true
   }));
 
@@ -127,9 +127,9 @@ export const preBundlePlugins = (config) => {
     rollupReplacePlugin(config),
     rollupHandlebars(),
     rollupImage({
+      exclude: 'node_modules/**',
       extensions: /\.(png|jpg|jpeg|gif|svg)$/,
-      limit: config.bundle.imageInlineLimit,
-      exclude: 'node_modules/**'
+      limit: config.bundle.imageInlineLimit
     })
   ];
 };
@@ -138,7 +138,7 @@ export const postBundlePlugins = () => {
   return [
     rollupProgress(),
     rollupFilesize({
-      render: function (options, size, gzippedSize) {
+      render: (options, size, gzippedSize) => {
         return chalk.yellow(`Bundle size: ${chalk.red(size)}, Gzipped size: ${chalk.red(gzippedSize)}`);
       }
     })
