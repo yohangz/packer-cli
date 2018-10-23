@@ -1,14 +1,18 @@
+import { ScriptPreprocessor } from '../model/script-preprocessor';
+import { StylePreprocessor } from '../model/style-preprocessor';
+import { LicenseType } from '../model/license-type';
+
 export const parseStylePreprocessorExtension = (preprocessor) => {
   switch (preprocessor) {
-    case 'scss':
+    case StylePreprocessor.scss:
       return 'scss';
-    case 'sass':
+    case StylePreprocessor.sass:
       return 'sass';
-    case 'less':
+    case StylePreprocessor.less:
       return 'less';
-    case 'stylus':
+    case StylePreprocessor.stylus:
       return 'styl';
-    case 'none':
+    case StylePreprocessor.none:
       return 'css';
   }
 };
@@ -17,37 +21,44 @@ export const parseLicenseType = (license) => {
   let licenseFileName = '';
 
   switch (license) {
-    case 'MIT License':
+    case LicenseType.MIT:
       licenseFileName = 'MIT';
       break;
-    case 'Apache 2 License':
+    case LicenseType.APACHE_2:
       licenseFileName = 'Apache-2.0';
       break;
-    case 'Mozilla Public License 2.0':
+    case LicenseType.MPL_2:
       licenseFileName = 'MPL-2.0';
       break;
-    case 'BSD 2-Clause (FreeBSD) License':
+    case LicenseType.BSD_2:
       licenseFileName = 'BSD-2-Clause-FreeBSD';
       break;
-    case 'BSD 3-Clause (NewBSD) License':
+    case LicenseType.BSD_3:
       licenseFileName = 'BSD-3-Clause';
       break;
-    case 'Internet Systems Consortium (ISC) License':
+    case LicenseType.ISC:
       licenseFileName = 'ISC';
       break;
-    case 'GNU LGPL 3.0 License':
+    case LicenseType.LGPL_3:
       licenseFileName = 'LGPL-3.0';
       break;
-    case 'GNU GPL 3.0 License':
+    case LicenseType.GLP_3:
       licenseFileName = 'GPL-3.0';
       break;
-    case 'Unlicense':
-      licenseFileName = 'unlicense';
-      break;
-    case 'No License':
-      licenseFileName = 'UNLICENSED';
+    case LicenseType.UNLICENSE:
+      licenseFileName = 'Unlicense';
       break;
   }
 
   return licenseFileName;
+};
+
+export const parseScriptPreprocessorExtension = (preprocessor: string): string => {
+  switch (preprocessor) {
+    case ScriptPreprocessor.typescript:
+      return 'ts';
+    case ScriptPreprocessor[ScriptPreprocessor.none]:
+    default:
+      return 'js';
+  }
 };

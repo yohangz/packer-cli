@@ -4,12 +4,13 @@ import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 
 import path from 'path';
 import { buildPlugin, preBundlePlugins, resolvePlugins } from '../tasks/build-util';
+import { parseScriptPreprocessorExtension } from '../tasks/parser';
 
 export default function karmaPackerPlugin() {
   const typescript = require('typescript');
   const config = require(path.join(process.cwd(), '.packerrc.json'));
 
-  const testGlob = config.source + '/**/*.spec' + (config.typescript ? '.ts' : '.js');
+  const testGlob = config.source + '/**/*.spec.' + parseScriptPreprocessorExtension(config.compiler.scriptPreprocessor);
   console.log(testGlob);
 
   const packerPreprocess = {};

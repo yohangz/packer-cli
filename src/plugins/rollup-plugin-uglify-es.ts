@@ -2,14 +2,14 @@
 
 import uglifyEs from 'uglify-es';
 
-export default function rollupUglify (options) {
+export default function rollupUglify(options) {
   if (options === void 0) {
     options = {};
   }
 
   return {
     name: 'uglify',
-    transformBundle: function transformBundle (code) {
+    transformBundle: (code) => {
       const result = uglifyEs.minify(
         code,
         Object.assign({ sourceMap: { url: 'out.js.map' } }, options) // force sourcemap creation

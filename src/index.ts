@@ -15,27 +15,27 @@ import karmaPackerPlugin from './plugins/karma-packer-plugin';
 switch (args[0]) {
   case 'generate':
     gulp.series('generate')(() => {
-      console.log('generate complete');
+      // no implementation
     });
     break;
   case 'build':
     gulp.series('build')(() => {
-      console.log('build complete');
+      // no implementation
     });
     break;
   case 'watch':
     gulp.series('watch')(() => {
-      console.log('watch complete');
+      // no implementation
     });
     break;
   case 'test':
     gulp.series('test')(() => {
-      console.log('test complete');
+      // no implementation
     });
     break;
   case 'clean':
     gulp.series('build:clean', 'watch:clean')(() => {
-      console.log('clean complete');
+      // no implementation
     });
     break;
   case 'lint': {
@@ -43,20 +43,20 @@ switch (args[0]) {
       switch (args[1]) {
         case '--style':
           gulp.series('lint:style')(() => {
-            console.log('style lint complete');
+            // no implementation
           });
           break;
         case '--script':
           gulp.series('lint:script')(() => {
-            console.log('script lint complete');
+            // no implementation
           });
           break;
         default:
-          console.log(chalk.red('Invalid lint task argument'));
+        // no implementation
       }
     } else {
       gulp.series('lint')(() => {
-        console.log('lint complete');
+        // no implementation
       });
     }
 

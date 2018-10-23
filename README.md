@@ -215,7 +215,7 @@ npm run release
 ├── package.json                # NPM configuration and medata.
 ├── README.md                   # Project documentation markup file.
 ├── tsconfig.es5.json           # This file contains ES5 typescript compiler options and configuration.
-├── tsconfig.es2015.json        # This file contains ES2015 typescript compiler options and configuration.
+├── tsconfig.esnext.json        # This file contains ES2015 typescript compiler options and configuration.
 ├── tsconfig.json               # This file contains base typescript compiler options and configuration.
 └── tslint.json                 # TS Lint rules for the project.
 ```
@@ -232,8 +232,8 @@ Build configuration can be updated after project generation via ``.packerrc.json
   "dist": {
     "outDir": "dist",
     "stylesDir": "styles",
-    "generateFESM5": true,
-    "generateFESM2015": true,
+    "es5": true,
+    "es2015": true,
     "generateMin": true
   },
   "typescript": true,
@@ -293,8 +293,8 @@ Build configuration can be updated after project generation via ``.packerrc.json
 | source                      	| string           	| source directory                                                                 	|
 | dist.outDir                   | string           	| build artifact output directory                                                   |
 | dist.stylesDir                | string           	| build associated stylesheet output directory within out dir                       |
-| generateFESM5                 | boolean           | Generate flat ESM5 module build artifacts                                         |
-| generateFESM2015              | boolean           | Generate flat ESM2015 module build artifacts                                      |
+| es5                           | boolean           | Generate flat ESM5 module build artifacts                                         |
+| es2015                        | boolean           | Generate flat ESM2015 module build artifacts                                      |
 | generateMin                   | boolean           | Generate flat bundle build minified artifact                                      |
 | typescript                    | boolean           | Set true if library source is in Typescript                                       |
 | stylePreprocessor             | string           	| Style preprocessor can be "scss", "sass", "stylus", "less"                        |    

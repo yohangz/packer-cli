@@ -15,7 +15,7 @@ gulp.task('watch:clean', () => {
 
 gulp.task('build:clean', () => {
   const config = readConfig();
-  return gulp.src([ path.join(process.cwd(), '.rpt2_cache'), path.join(process.cwd(), config.dist.outDir) ], {
+  return gulp.src([ path.join(process.cwd(), '.rpt2_cache'), path.join(process.cwd(), config.dist) ], {
     allowEmpty: true,
     read: false
   })

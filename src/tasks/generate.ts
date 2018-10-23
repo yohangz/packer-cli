@@ -22,6 +22,11 @@ import {
   styleCopy,
   templateCopy
 } from './generate-util';
+import { LicenseType } from '../model/license-type';
+import { StylePreprocessor } from '../model/style-preprocessor';
+import { ScriptPreprocessor } from '../model/script-preprocessor';
+import { TestFramework } from '../model/test-framework';
+import { BrowserBundleFormat } from '../model/browser-bundle-format';
 
 gulp.task('generate', (done) => {
   try {
@@ -66,10 +71,11 @@ gulp.task('generate', (done) => {
         }
       },
       {
-        default: true,
-        message: 'Do you want to use typescript?',
-        name: 'typescript',
-        type: 'confirm'
+        choices: Object.values(ScriptPreprocessor),
+        default: 0,
+        message: 'What\'s the script pre processor you want to use?',
+        name: 'scriptPreprocessor',
+        type: 'list'
       },
       {
         default: true,
@@ -78,13 +84,7 @@ gulp.task('generate', (done) => {
         type: 'confirm'
       },
       {
-        choices: [
-          'scss',
-          'sass',
-          'less',
-          'stylus',
-          'none'
-        ],
+        choices: Object.values(StylePreprocessor),
         default: 0,
         message: 'What\'s the style pre processor you want to use?',
         name: 'stylePreprocessor',
@@ -118,12 +118,7 @@ gulp.task('generate', (done) => {
         }
       },
       {
-        choices: [
-          'umd',
-          'amd',
-          'iife',
-          'system'
-        ],
+        choices: Object.values(BrowserBundleFormat),
         default: 0,
         message: 'What\'s the build bundle format you want to use?',
         name: 'bundleFormat',
@@ -136,15 +131,16 @@ gulp.task('generate', (done) => {
         }
       },
       {
-        message: 'What\'s the AMD id you want to use? (optional)',
+        default: 'my-lib',
+        message: 'What\'s the AMD id you want to use?',
         name: 'amdId',
         type: 'input',
         validate: (value) => {
           const matches = value.match(/^(?:[a-z]\d*(?:-[a-z])?)*$/i);
-          return value === '' || !!matches || 'AMD id should only contain alphabetic characters, i.e: \'my-bundle\'';
+          return !!matches || 'AMD id should only contain alphabetic characters, i.e: \'my-bundle\'';
         },
         when: (answers) => {
-          return answers.bundleFormat === 'umd' || answers.bundleFormat === 'amd';
+          return answers.bundleFormat === BrowserBundleFormat.umd || answers.bundleFormat === BrowserBundleFormat.amd;
         }
       },
       {
@@ -156,14 +152,13 @@ gulp.task('generate', (done) => {
           return !!matches || 'Namespace should be an object path, i.e: \'ys.nml.lib\'';
         },
         when: (answers) => {
-          return answers.bundleFormat === 'umd' || answers.bundleFormat === 'iife' || answers.bundleFormat === 'system';
+          return answers.bundleFormat === BrowserBundleFormat.umd
+            || answers.bundleFormat === BrowserBundleFormat.iife
+            || answers.bundleFormat === BrowserBundleFormat.system;
         }
       },
       {
-        choices: [
-          'Jasmine',
-          'Mocha'
-        ],
+        choices: Object.values(TestFramework),
         default: 0,
         message: 'Which unit test framework do you want to use?',
         name: 'testFramework',
@@ -177,16 +172,15 @@ gulp.task('generate', (done) => {
       },
       {
         choices: [
-          'MIT License',
-          'Apache 2 License',
-          'Mozilla Public License 2.0',
-          'BSD 2-Clause (FreeBSD) License',
-          'BSD 3-Clause (NewBSD) License',
-          'Internet Systems Consortium (ISC) License',
-          'GNU LGPL 3.0 License',
-          'GNU GPL 3.0 License',
-          'Unlicense',
-          'No License'
+          LicenseType.MIT,
+          LicenseType.APACHE_2,
+          LicenseType.MPL_2,
+          LicenseType.BSD_2,
+          LicenseType.BSD_3,
+          LicenseType.ISC,
+          LicenseType.LGPL_3,
+          LicenseType.GLP_3,
+          LicenseType.UNLICENSE
         ],
         default: 0,
         message: 'What\'s the license you want to use?',
@@ -223,15 +217,15 @@ gulp.task('generate', (done) => {
       const packerConfig = getPackerConfig(options);
       const packageConfig = getPackageConfig(options, packageName);
       const projectDir = path.join(process.cwd(), packageName);
-      const styleExt = parseStylePreprocessorExtension(packerConfig.stylePreprocessor);
+      const styleExt = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
 
       const merged = mergeStream(assetCopy(projectDir), templateCopy(projectDir));
 
-      if (packerConfig.styleSupport) {
+      if (packerConfig.compiler.styleSupport) {
         merged.add(styleCopy(styleExt, projectDir));
       }
 
-      if (!packerConfig.cliProject) {
+      if (!packerConfig.compiler.cliProject) {
         merged.add(demoCopy(packerConfig, packageName, projectDir));
         merged.add(demoHelperScriptCopy(projectDir));
       }

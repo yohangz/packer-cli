@@ -11,6 +11,7 @@ import { readConfig, readPackageData } from './meta';
 import {
   buildPlugin,
   bundleBuild,
+  extractBundleExternals,
   getBanner,
   getBaseConfig,
   postBundlePlugins,
@@ -20,6 +21,9 @@ import {
 } from './build-util';
 
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
+import { ScriptPreprocessor } from '../model/script-preprocessor';
+import { DependencyMap } from '../model/dependency-map';
+import { NodeBundleFormat } from '../model/node-bundle-format';
 
 gulp.task('build:copy:essentials', () => {
   const packageJson = readPackageData();
@@ -43,41 +47,41 @@ gulp.task('build:copy:essentials', () => {
     targetPackage[field] = packageJson[field];
   });
 
-  if (config.cliProject) {
+  if (config.compiler.cliProject) {
     targetPackage.bin = packageJson.bin;
   }
 
   targetPackage.main = path.join('bundle', `${packageJson.name}.js`);
 
-  if (config.typescript) {
+  if (config.compiler.scriptPreprocessor  === ScriptPreprocessor.typescript) {
     targetPackage.typings = 'index.d.ts';
   }
 
-  if (config.dist.generateFESM5) {
+  if (config.output.es5) {
     targetPackage.module = path.join('fesm5', `${packageJson.name}.js`);
     targetPackage.fesm5 = path.join('fesm5', `${packageJson.name}.js`);
   }
 
-  if (config.dist.generateFESM2015) {
+  if (config.output.es2015) {
     targetPackage.esnext = path.join('fesmnext', `${packageJson.name}.js`);
     targetPackage.fesmnext = path.join('fesmnext', `${packageJson.name}.js`);
   }
 
   // Map dependencies to target package file
-  switch (config.bundle.dependencyMapMode) {
-    case 'crossMapPeerDependency':
+  switch (DependencyMap[config.output.dependencyMapMode]) {
+    case DependencyMap.crossMapPeerDependency:
       targetPackage.peerDependencies = packageJson.dependencies;
       break;
-    case 'crossMapDependency':
+    case DependencyMap.crossMapDependency:
       targetPackage.dependencies = packageJson.peerDependencies;
       break;
-    case 'mapDependency':
+    case DependencyMap.mapDependency:
       targetPackage.dependencies = packageJson.dependencies;
       break;
-    case 'mapPeerDependency':
+    case DependencyMap.mapPeerDependency:
       targetPackage.peerDependencies = packageJson.peerDependencies;
       break;
-    case 'all':
+    case DependencyMap.all:
       targetPackage.peerDependencies = packageJson.peerDependencies;
       targetPackage.dependencies = packageJson.dependencies;
       break;
@@ -90,9 +94,9 @@ gulp.task('build:copy:essentials', () => {
       allowEmpty: true
     })
       .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
-      .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir)));
+      .pipe(gulp.dest(path.join(process.cwd(), config.dist)));
 
-  if (!config.cliProject) {
+  if (!config.compiler.cliProject) {
     return packageFlatEssentials;
   }
 
@@ -117,7 +121,7 @@ gulp.task('build:copy:essentials', () => {
         write: true
       }
     })) // Grand read and execute permission.
-    .pipe(gulp.dest(path.join(process.cwd(), config.dist.outDir, 'bin')));
+    .pipe(gulp.dest(path.join(process.cwd(), config.dist, 'bin')));
 
   return mergeStream(packageFlatEssentials, packageBin);
 });
@@ -130,17 +134,16 @@ gulp.task('build:bundle', async () => {
   const baseConfig = getBaseConfig(config, packageJson, banner);
 
   try {
-    const globalKeys = Object.keys(config.flatGlobals);
-    const flatBundleExternals = globalKeys.length ? globalKeys : config.esmExternals;
+    const externals = extractBundleExternals(config);
 
     // flat bundle.
     const flatConfig = merge({}, baseConfig, {
-      external: flatBundleExternals,
+      external: externals,
       output: {
-        amd: config.bundle.amd,
-        file: path.join(process.cwd(), config.dist.outDir, 'bundle', `${packageJson.name}.js`),
-        format: config.bundle.format,
-        globals: config.flatGlobals,
+        amd: config.output.amd,
+        file: path.join(process.cwd(), config.dist, 'bundle', `${packageJson.name}.js`),
+        format: config.output.format,
+        globals: config.bundle.globals,
         name: config.namespace
       },
       plugins: [
@@ -154,15 +157,15 @@ gulp.task('build:bundle', async () => {
 
     await bundleBuild(flatConfig, 'FLAT');
 
-    if (config.dist.generateMin) {
+    if (config.output.minBundle) {
       // minified flat bundle.
       const minifiedFlatConfig = merge({}, baseConfig, {
-        external: flatBundleExternals,
+        external: externals,
         output: {
-          amd: config.bundle.amd,
-          file: path.join(process.cwd(), config.dist.outDir, 'bundle', `${packageJson.name}.min.js`),
-          format: config.bundle.format,
-          globals: config.flatGlobals,
+          amd: config.output.amd,
+          file: path.join(process.cwd(), config.dist, 'bundle', `${packageJson.name}.min.js`),
+          format: config.output.format,
+          globals: config.bundle.globals,
           name: config.namespace
         },
         plugins: [
@@ -182,13 +185,13 @@ gulp.task('build:bundle', async () => {
       await bundleBuild(minifiedFlatConfig, 'FLAT MIN');
     }
 
-    if (config.dist.generateFESM5) {
+    if (config.output.es5) {
       // FESM+ES5 flat module bundle.
       const fesm5config = merge({}, baseConfig, {
-        external: config.esmExternals,
+        external: config.bundle.externals,
         output: {
-          file: path.join(process.cwd(), config.dist.outDir, 'fesm5', `${packageJson.name}.js`),
-          format: 'es'
+          file: path.join(process.cwd(), config.dist, 'fesm5', `${packageJson.name}.js`),
+          format: NodeBundleFormat.es
         },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
@@ -201,13 +204,13 @@ gulp.task('build:bundle', async () => {
       await bundleBuild(fesm5config, 'ES5');
     }
 
-    if (config.dist.generateFESM2015) {
-      // FESM+ES2015 flat module bundle.
+    if (config.output.es2015) {
+      // FESM+ESNEXT flat module bundle.
       const fesm2015config = merge({}, baseConfig, {
-        external: config.esmExternals,
+        external: config.bundle.externals,
         output: {
-          file: path.join(process.cwd(), config.dist.outDir, 'fesmnext', `${packageJson.name}.js`),
-          format: 'es'
+          file: path.join(process.cwd(), config.dist, 'fesmnext', `${packageJson.name}.js`),
+          format: NodeBundleFormat.es
         },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),

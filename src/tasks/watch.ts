@@ -8,6 +8,7 @@ import { RollupWatchOptions, watch } from 'rollup';
 import chalk from 'chalk';
 import {
   buildPlugin,
+  extractBundleExternals,
   getBanner,
   getBaseConfig,
   preBundlePlugins,
@@ -29,7 +30,7 @@ gulp.task('build:watch', async () => {
     makeDir(config.watch.scriptDir);
 
     let rollupServePlugins = [];
-    if (config.watch.serve && config.bundle.format !== 'cjs') {
+    if (config.watch.serve && config.output.format !== 'cjs') {
       rollupServePlugins = [
         rollupServe({
           contentBase: [
@@ -49,12 +50,13 @@ gulp.task('build:watch', async () => {
       ];
     }
 
+    const externals = extractBundleExternals(config);
     const watchConfig: RollupWatchOptions = merge({}, baseConfig, {
-      external: Object.keys(config.flatGlobals),
+      external: externals,
       output: {
         file: path.join(process.cwd(), config.watch.scriptDir, `${packageJson.name}.js`),
-        format: config.bundle.format,
-        globals: config.flatGlobals,
+        format: config.output.format,
+        globals: config.bundle.globals,
         name: config.namespace
       },
       plugins: [

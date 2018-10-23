@@ -1,103 +1,111 @@
 import { readCLIPackageData } from './meta';
-import { parseLicenseType } from './parser';
+import { parseScriptPreprocessorExtension, parseLicenseType, parseStylePreprocessorExtension } from './parser';
 import path from 'path';
 import gulp from 'gulp';
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 import gulpFilter from 'gulp-filter';
 import gulpFile from 'gulp-file';
 import { runShellCommand } from './util';
+import { DependencyMap } from '../model/dependency-map';
+import { TestFramework } from '../model/test-framework';
+import { StylePreprocessor } from '../model/style-preprocessor';
+import { BrowserBundleFormat } from '../model/browser-bundle-format';
+import { NodeBundleFormat } from '../model/node-bundle-format';
 
 export const getPackerConfig = (options: any) => {
-  const entry = 'index' + (options.typescript ? '.ts' : '.js');
+  const entryFile = 'index.' + parseScriptPreprocessorExtension(options.scriptPreprocessor);
 
   let bundleFormat = '';
   if (options.browserCompliant) {
-    bundleFormat = String(options.bundleFormat || 'umd').toLowerCase();
+    bundleFormat = String(options.bundleFormat || BrowserBundleFormat.umd).toLowerCase();
   } else {
-    bundleFormat = 'cjs';
+    bundleFormat = NodeBundleFormat.cjs;
   }
 
-  let dependencyMapMode = 'crossMapPeerDependency';
+  let mapMode = DependencyMap.crossMapPeerDependency;
   if (options.cliProject) {
-    dependencyMapMode = 'mapDependency';
+    mapMode = DependencyMap.mapDependency;
   }
 
   return {
-    namespace: options.namespace,
-    entry: entry,
+    entry: entryFile,
     source: 'src',
-    dist: {
-      outDir: 'dist',
-      stylesDir: 'styles',
-      generateFESM5: true,
-      generateFESM2015: true,
-      generateMin: true
-    },
-    typescript: Boolean(options.typescript),
-    stylePreprocessor: (options.stylePreprocessor || 'scss').toLowerCase(),
-    cliProject: Boolean(options.cliProject),
-    styleSupport: Boolean(options.styleSupport),
-    browserCompliant: Boolean(options.browserCompliant),
-    watch: {
-      scriptDir: '.tmp',
-      helperDir: 'demo/helper',
-      demoDir: 'demo/watch',
-      serve: true,
-      port: 4000,
-      open: true
-    },
-    copy: [
-      'README.md',
-      'LICENSE'
-    ],
-    flatGlobals: {},
-    esmExternals: [
-      'handlebars/runtime'
-    ],
-    pathReplacePatterns: [
-      {
-        test: './config/base-config',
-        replace: './config/replace-config'
-      }
-    ],
-    ignore: [],
-    assetPaths: [
-      'src/assets'
-    ],
-    testFramework: (options.testFramework || 'jasmine').toLowerCase(),
-    bundle: {
+    dist: 'dist',
+    namespace: options.namespace,
+    output: {
       amd: {
         define: '',
         id: (options.amdId || '')
       },
+      dependencyMapMode: mapMode,
+      es2015: true,
+      es5: true,
+      minBundle: true,
       format: bundleFormat,
       imageInlineLimit: 1000000,
       inlineStyle: Boolean(options.bundleStyles),
-      dependencyMapMode: dependencyMapMode
+      stylesDir: 'styles'
+    },
+    compiler: {
+      browserCompliant: Boolean(options.browserCompliant),
+      cliProject: Boolean(options.cliProject),
+      scriptPreprocessor: String(options.scriptPreprocessor).toLowerCase(),
+      stylePreprocessor: (options.stylePreprocessor || StylePreprocessor.scss).toLowerCase(),
+      styleSupport: Boolean(options.styleSupport)
+    },
+    assetPaths: [
+      'src/assets'
+    ],
+    copy: [
+      'README.md',
+      'LICENSE'
+    ],
+    bundle: {
+      externals: [
+        'handlebars/runtime'
+      ],
+      globals: {},
+      mapExternals: false
+    },
+    ignore: [],
+    pathReplacePatterns: [
+      {
+        replace: './config/replace-config',
+        test: './config/base-config'
+      }
+    ],
+    testFramework: (options.testFramework || TestFramework.jasmine).toLowerCase(),
+    watch: {
+      demoDir: 'demo/watch',
+      helperDir: 'demo/helper',
+      open: true,
+      port: 4000,
+      scriptDir: '.tmp',
+      serve: true
     },
     license: {
       banner: true,
       thirdParty: {
-        includePrivate: false,
-        fileName: 'dependencies.txt'
+        fileName: 'dependencies.txt',
+        includePrivate: false
       }
-    }
+    },
   };
 };
 
 export const getPackageConfig = (options: any, packageName: any) => {
   const cliPackageData = readCLIPackageData();
 
-  let author = '';
+  let projectAuthor = '';
   if (options.author && options.email) {
-    author = `${options.author} <${options.email}>`;
+    projectAuthor = `${options.author} <${options.email}>`;
   }
 
   let projectUrl = '';
-  let repository = '';
+  let projectRepository = '';
   if (options.githubUsername) {
     projectUrl = `https://github.com/${options.githubUsername}/${packageName}`;
-    repository = `${projectUrl}.git`;
+    projectRepository = `${projectUrl}.git`;
   }
 
   const packageConfig: any = {
@@ -118,8 +126,8 @@ export const getPackageConfig = (options: any, packageName: any) => {
       'prerelease': 'npm run build',
       'release': 'npm publish dist'
     },
-    author: author,
-    repository: repository,
+    author: projectAuthor,
+    repository: projectRepository,
     license: parseLicenseType(options.license),
     homepage: options.homepage || projectUrl,
     dependencies: {
@@ -190,16 +198,18 @@ export const assetCopy = (projectDir) => {
 };
 
 export const sourceCopy = (packerConfig, styleExt, projectDir) => {
-  const isJasmine = packerConfig.testFramework === 'jasmine';
+  const jasmine = packerConfig.testFramework === TestFramework.jasmine;
+  const scriptExtension = parseScriptPreprocessorExtension(packerConfig.compiler.scriptPreprocessor);
+  const styleExtension = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
 
   return gulp.src([
-    path.join(__dirname, '../resources/dynamic/example', packerConfig.typescript ? 'ts' : 'js', '**/*')
+    path.join(__dirname, '../resources/dynamic/example', scriptExtension, '**/*')
   ])
     .pipe(gulpHbsRuntime({
-      styleExt: styleExt,
-      isJasmine: isJasmine,
-      styleSupport: packerConfig.styleSupport,
-      cliProject: packerConfig.cliProject
+      styleExt: styleExtension,
+      isJasmine: jasmine,
+      styleSupport: packerConfig.compiler.styleSupport,
+      cliProject: packerConfig.compiler.cliProject
     }, {
       replaceExt: ''
     }))
@@ -240,24 +250,24 @@ export const demoHelperScriptCopy = (projectDir) => {
 };
 
 export const demoCopy = (packerConfig, packageName, projectDir) => {
-  const isAmd = packerConfig.bundle.format === 'amd';
-  const isIife = packerConfig.bundle.format === 'umd' || packerConfig.bundle.format === 'iife';
-  const isSystem = packerConfig.bundle.format === 'system';
+  const isAmd = packerConfig.output.format === BrowserBundleFormat.amd;
+  const isIife = packerConfig.output.format === BrowserBundleFormat.umd || packerConfig.output.format === BrowserBundleFormat.iife;
+  const isSystem = packerConfig.output.format === BrowserBundleFormat.system;
 
   return gulp.src([
     path.join(__dirname, '../resources/dynamic/demo/**/*.hbs')
   ])
-    .pipe(gulpFilter('**/*' + (packerConfig.browserCompliant ? '.html.hbs' : '.js.hbs')))
+    .pipe(gulpFilter('**/*' + (packerConfig.compiler.browserCompliant ? '.html.hbs' : '.js.hbs')))
     .pipe(gulpHbsRuntime({
       projectName: packageName,
-      inlineStyle: packerConfig.bundle.inlineStyle,
+      inlineStyle: packerConfig.output.inlineStyle,
       namespace: packerConfig.namespace,
       watchDir: packerConfig.watch.scriptDir,
-      distDir: packerConfig.dist.outDir,
+      distDir: packerConfig.dist,
       require: isAmd,
       iife: isIife,
       system: isSystem,
-      amdModule: packerConfig.bundle.amd.id
+      amdModule: packerConfig.output.amd.id
     }, {
       replaceExt: ''
     }))
@@ -269,7 +279,7 @@ export const babelConfigCopy = (packerConfig, projectDir) => {
     path.join(__dirname, '../resources/dynamic/babel/.*.hbs')
   ])
     .pipe(gulpHbsRuntime({
-      browserCompliant: packerConfig.browserCompliant,
+      browserCompliant: packerConfig.compiler.browserCompliant,
     }, {
       replaceExt: ''
     }))

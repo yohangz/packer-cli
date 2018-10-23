@@ -19,6 +19,7 @@ import rollupFilesize from 'rollup-plugin-filesize';
 
 import chalk from 'chalk';
 import { readBabelConfig, readBannerTemplate } from './meta';
+import { ScriptPreprocessor } from '../model/script-preprocessor';
 
 export const getBanner = (config, packageJson) => {
   if (config.license.banner) {
@@ -42,23 +43,23 @@ export const getBaseConfig = (config, packageJson, banner) => {
 };
 
 export const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main) => {
-  const styleDir = watch ? config.watch.scriptDir : config.dist.outDir;
+  const styleDir = watch ? config.watch.scriptDir : config.dist;
   const fileName = packageJson.name + (minify ? '.min.css' : '.css');
-  const styleDist = path.join(process.cwd(), styleDir, config.dist.stylesDir, fileName);
+  const styleDist = path.join(process.cwd(), styleDir, config.output.stylesDir, fileName);
 
-  if (!main && !config.bundle.inlineStyle) {
+  if (!main && !config.output.inlineStyle) {
     return rollupIgnoreImport({
       extensions: ['.scss', '.sass', '.styl', '.css', '.less']
     });
   }
 
   return rollupPostCss({
-    extract: config.bundle.inlineStyle ? false : styleDist,
+    extract: config.output.inlineStyle ? false : styleDist,
     minimize: minify,
     plugins: [
       postCssImageInline({
         assetPaths: config.assetPaths,
-        maxFileSize: config.bundle.imageInlineLimit
+        maxFileSize: config.output.imageInlineLimit
       }),
       postCssAutoPrefix
     ],
@@ -89,7 +90,7 @@ export const resolvePlugins = (config) => {
 
 export const buildPlugin = (packageModule, generateDefinition, check, config, tsPackage) => {
   const plugins = [];
-  if (config.typescript) {
+  if (config.compiler.scriptPreprocessor  === ScriptPreprocessor.typescript) {
     const buildConf: any = {
       check,
       tsconfig: `tsconfig.json`,
@@ -100,7 +101,7 @@ export const buildPlugin = (packageModule, generateDefinition, check, config, ts
       buildConf.tsconfigOverride = {
         compilerOptions: {
           declaration: true,
-          declarationDir: path.join(process.cwd(), config.dist.outDir)
+          declarationDir: path.join(process.cwd(), config.dist)
         }
       };
 
@@ -130,7 +131,7 @@ export const preBundlePlugins = (config) => {
     rollupImage({
       exclude: 'node_modules/**',
       extensions: /\.(png|jpg|jpeg|gif|svg)$/,
-      limit: config.bundle.imageInlineLimit
+      limit: config.output.imageInlineLimit
     })
   ];
 };
@@ -157,4 +158,8 @@ export const bundleBuild = async (config, type) => {
     console.log(error);
     throw error;
   }
+};
+
+export const extractBundleExternals = (config) => {
+  return config.bundle.mapExternals ? Object.keys(config.bundle.globals) : config.bundle.externals;
 };
