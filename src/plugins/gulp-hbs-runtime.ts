@@ -39,4 +39,4 @@ export default function gulpHbsRuntime(data, options) {
       throw new PluginError('gulp-hbs-runtime', 'Data parse failure!');
     }
   });
-};
+}

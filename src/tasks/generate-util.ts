@@ -131,8 +131,8 @@ export const getPackageConfig = (options: any, packageName: any) => {
     license: parseLicenseType(options.license),
     homepage: options.homepage || projectUrl,
     dependencies: {
-      'handlebars': '^4.0.11',
-      'tslib': '^1.9.3'
+      handlebars: '^4.0.11',
+      tslib: '^1.9.3'
     },
     devDependencies: {
       '@babel/polyfill': '^7.0.0',
@@ -251,7 +251,8 @@ export const demoHelperScriptCopy = (projectDir) => {
 
 export const demoCopy = (packerConfig, packageName, projectDir) => {
   const isAmd = packerConfig.output.format === BrowserBundleFormat.amd;
-  const isIife = packerConfig.output.format === BrowserBundleFormat.umd || packerConfig.output.format === BrowserBundleFormat.iife;
+  const isIife = packerConfig.output.format === BrowserBundleFormat.umd
+    || packerConfig.output.format === BrowserBundleFormat.iife;
   const isSystem = packerConfig.output.format === BrowserBundleFormat.system;
 
   return gulp.src([
