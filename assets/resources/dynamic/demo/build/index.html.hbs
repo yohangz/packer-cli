@@ -13,7 +13,7 @@
   <script src="../helper/require.js"></script>
   <script>
     require.config({
-      baseUrl: '../../{{distDir}}/bundles',
+      baseUrl: '../../{{distDir}}/bundle',
       paths: {
         '{{amdModule}}': '{{projectName}}'
       }
@@ -26,7 +26,7 @@
   </script>
 {{/if}}
 {{#if iife}}
-  <script src="../../{{distDir}}/bundles/{{projectName}}.js"></script>
+  <script src="../../{{distDir}}/bundle/{{projectName}}.js"></script>
   <script type="application/javascript">
     var main = new window.{{namespace}}.Main();
     main.render('.container');
@@ -37,7 +37,7 @@
   <script>
     window.System.config({
       bundles: {
-        '../../{{distDir}}/bundles/{{projectName}}.js': ['{{namespace}}']
+        '../../{{distDir}}/bundle/{{projectName}}.js': ['{{namespace}}']
       }
     });
 
