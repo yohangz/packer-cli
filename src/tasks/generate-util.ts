@@ -65,7 +65,7 @@ export const getPackerConfig = (options: any) => {
         'handlebars/runtime'
       ],
       globals: {},
-      mapExternals: false
+      mapExternals: true
     },
     ignore: [],
     pathReplacePatterns: [

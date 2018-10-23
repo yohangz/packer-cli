@@ -1,101 +1,108 @@
 {
   "entry": "index.ts",
   "source": "src",
-  "dist": {
-    "outDir": "dist",
-    "stylesDir": "styles",
-    "generateFESM5": true,
-    "generateFESM2015": true,
-    "generateMin": true
-  },
-  "typescript": true,
-  "stylePreprocessor": "scss",
-  "cliProject": true,
-  "styleSupport": false,
-  "browserCompliant": false,
-  "watch": {
-    "scriptDir": ".tmp",
-    "helperDir": "demo/helper",
-    "demoDir": "demo/watch",
-    "serve": true,
-    "port": 4000,
-    "open": true
-  },
-  "copy": [
-    "README.md",
-    "LICENSE",
-    "assets/**/{.*,*}"
-  ],
-  "flatGlobals": {},
-  "esmExternals": [
-    "handlebars/runtime",
-    "path",
-    "handlebars",
-    "plugin-error",
-    "through2",
-    "chalk",
-    "rollup-plugin-filesize",
-    "rollup-plugin-progress",
-    "rollup-plugin-img",
-    "rollup-plugin-hbs",
-    "rollup-plugin-babel",
-    "rollup-plugin-typescript2",
-    "typescript",
-    "rollup-plugin-commonjs",
-    "rollup-plugin-node-resolve",
-    "rollup-plugin-ignore",
-    "rollup-plugin-re",
-    "autoprefixer",
-    "postcss-image-inliner",
-    "rollup-plugin-postcss",
-    "rollup-plugin-ignore-import",
-    "rollup",
-    "fs",
-    "gulp",
-    "merge-stream",
-    "gulp-file",
-    "gulp-filter",
-    "inquirer",
-    "validate-npm-package-name",
-    "validator/lib/isURL",
-    "validator/lib/isEmail",
-    "rollup-plugin-uglify",
-    "lodash/merge",
-    "gulp-clean",
-    "karma-rollup-preprocessor",
-    "rollup-plugin-istanbul",
-    "child_process",
-    "rollup-plugin-livereload",
-    "rollup-plugin-serve",
-    "karma",
-    "gulp-chmod",
-    "uglify-es",
-    "@babel/runtime/helpers/toConsumableArray",
-    "@babel/runtime/helpers/asyncToGenerator",
-    "@babel/runtime/helpers/defineProperty",
-    "@babel/runtime/regenerator"
-  ],
-  "pathReplacePatterns": [],
-  "ignore": [],
-  "assetPaths": [
-    "src/assets"
-  ],
-  "testFramework": "jasmine",
-  "bundle": {
+  "dist": "dist",
+  "output": {
     "amd": {
       "define": "",
       "id": ""
     },
+    "dependencyMapMode": "mapDependency",
+    "es2015": true,
+    "es5": true,
+    "minBundle": true,
     "format": "cjs",
     "imageInlineLimit": 1000000,
     "inlineStyle": false,
-    "dependencyMapMode": "mapDependency"
+    "stylesDir": "styles"
+  },
+  "compiler": {
+    "browserCompliant": false,
+    "cliProject": true,
+    "scriptPreprocessor": "typescript",
+    "stylePreprocessor": "scss",
+    "styleSupport": false
+  },
+  "assetPaths": [
+    "src/assets"
+  ],
+  "copy": [
+    "README.md",
+    "LICENSE"
+  ],
+  "bundle": {
+    "externals": [
+      "handlebars/runtime",
+      "path",
+      "handlebars",
+      "plugin-error",
+      "through2",
+      "chalk",
+      "rollup-plugin-filesize",
+      "rollup-plugin-progress",
+      "rollup-plugin-img",
+      "rollup-plugin-hbs",
+      "rollup-plugin-babel",
+      "rollup-plugin-typescript2",
+      "typescript",
+      "rollup-plugin-commonjs",
+      "rollup-plugin-node-resolve",
+      "rollup-plugin-ignore",
+      "rollup-plugin-re",
+      "autoprefixer",
+      "postcss-image-inliner",
+      "rollup-plugin-postcss",
+      "rollup-plugin-ignore-import",
+      "rollup",
+      "fs",
+      "gulp",
+      "merge-stream",
+      "gulp-file",
+      "gulp-filter",
+      "inquirer",
+      "validate-npm-package-name",
+      "validator/lib/isURL",
+      "validator/lib/isEmail",
+      "rollup-plugin-uglify",
+      "lodash/merge",
+      "gulp-clean",
+      "karma-rollup-preprocessor",
+      "rollup-plugin-istanbul",
+      "child_process",
+      "rollup-plugin-livereload",
+      "rollup-plugin-serve",
+      "karma",
+      "gulp-chmod",
+      "uglify-es",
+      "@babel/runtime/helpers/toConsumableArray",
+      "@babel/runtime/helpers/asyncToGenerator",
+      "@babel/runtime/helpers/defineProperty",
+      "@babel/runtime/regenerator"
+    ],
+    "globals": {},
+    "mapExternals": false
+  },
+  "ignore": [],
+  "pathReplacePatterns": [
+    {
+      "replace": "./config/replace-config",
+      "test": "./config/base-config"
+    }
+  ],
+  "testFramework": "jasmine",
+  "watch": {
+    "demoDir": "demo/watch",
+    "helperDir": "demo/helper",
+    "open": true,
+    "port": 4000,
+    "scriptDir": ".tmp",
+    "serve": true
   },
   "license": {
     "banner": true,
     "thirdParty": {
-      "includePrivate": false,
-      "fileName": "dependencies.txt"
+      "fileName": "dependencies.txt",
+      "includePrivate": false
     }
   }
 }
