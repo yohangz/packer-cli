@@ -37,7 +37,7 @@ export const getPackerConfig = (options: any) => {
         id: (options.amdId || '')
       },
       dependencyMapMode: mapMode,
-      es2015: true,
+      esnext: true,
       es5: true,
       minBundle: true,
       format: bundleFormat,

@@ -81,7 +81,7 @@ Then CLI will query questions associated to custom project generation,
 
 ```sh
 # Description about the library
-Give us a small description about the library (optional)? Client complient node module
+Give us a small description about the library (optional)? Client compliant node module
 
 # Name of the library author
 Author's name (optional)? Yohan Gomez
@@ -235,7 +235,7 @@ Build configuration can be updated after project generation via ``.packerrc.json
       "id": ""
     },
     "dependencyMapMode": "mapDependency",
-    "es2015": true,
+    "esnext": true,
     "es5": true,
     "minBundle": true,
     "format": "umd",
@@ -291,47 +291,65 @@ Build configuration can be updated after project generation via ``.packerrc.json
 }
 ```
 
-| Config                      	| Type             	| Definition                                                                       	|
-|-----------------------------	|------------------	|----------------------------------------------------------------------------------	|
-| namespace                   	| string           	| application namespace to be used                                                 	|
-| entry                       	| string           	| entry typescript file                                                            	|
-| source                      	| string           	| source directory                                                                 	|
-| dist.outDir                   | string           	| build artifact output directory                                                   |
-| dist.stylesDir                | string           	| build associated stylesheet output directory within out dir                       |
-| es5                           | boolean           | Generate flat ESM5 module build artifacts                                         |
-| es2015                        | boolean           | Generate flat ESM2015 module build artifacts                                      |
-| generateMin                   | boolean           | Generate flat bundle build minified artifact                                      |
-| typescript                    | boolean           | Set true if library source is in Typescript                                       |
-| stylePreprocessor             | string           	| Style preprocessor can be "scss", "sass", "stylus", "less"                        |    
-| cliProject                    | boolean           | Append node environment hash bang for CLI projects if true                        |
-| styleSupport                  | boolean           | Support style preprocessing and linting                                           |
-| watch                       	| object           	| watch mode configuration object                                                  	|
-| watch.scriptDir               | string           	| watch build temp directory                                                       	|
-| watch.helperDir               | string           	| watch build helper library directory                                              |
-| watch.demoDir                 | string           	| watch demo page dir                                                              	|
-| watch.port                  	| number           	| watch server port                                                                	|
-| watch.serve                  	| boolean          	| Serve project via browser on watch mode                                           |
-| watch.open                  	| boolean          	| open browser automatically                                                       	|
-| copy                        	| array of strings 	| List of files paths to copy on build.                                            	|
-| flatGlobals                 	| object           	| flat bundle build global dependencies.  Listed will not be treated as externals. 	|
-| esmExternals                	| array of string   | ESM build external dependencies                                                  	|
-| pathReplacePatterns         	| array of objects 	| Import path replace pattern collection                                           	|
-| pathReplacePatterns.test    	| string           	| Path to find                                                                     	|
-| pathReplacePatterns.replace 	| string           	| Path to replace                                                                  	|
-| ignore                      	| array of strings 	| Import paths to ignore with noop implementation                                  	|
-| assetPaths                  	| array of strings 	| List of paths which contains static assets referenced in style sheets            	|
-| testFramework                 | string            | "Jasmine" and "Karma" framework options are available                             |
-| imageInlineLimit            	| number           	| Inline image if image size is less than specified limit                          	|
-| bundle                        | object           	| Build bundle associated configuration                                             |
-| bundle.amd                 	  | object          	| AMD flat bundle configuration                                                    	|
-| bundle.amd.define             | string          	| AMD flat bundle define function name                                              |
-| bundle.amd.id                 | string          	| AMD flat bundle module identifier name                                            |
-| bundle.format                	| string           	| "umd", "amd", "iife" and "system" flat bundle options are available               |
-| bundle.imageInlineLimit       | number            | Size limit in bytes to inline compile images                                      |
-| bundle.inlineStyle            | boolean           | Inline bundle styles withing JS code if true                                      |
-| license                       | object            | Bundle license configuration                                                      |
-| license.banner                | boolean           | Include inline header banner passed via ``.banner.hbs`` template                  |
-
+| Config                      	| Type             	| Definition                                                                       	                                                                                                                             |
+|-----------------------------	|------------------	|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| entry                       	| string           	| entry source file                                                            	                                                                                                                                 |
+| source                      	| string           	| source directory                                                                 	                                                                                                                             |
+| dist                          | string           	| build artifact output directory                                                                                                                                                                                |
+| output                        | object           	| Build artifact output generation config                                                                                                                                                                        |
+| output.amd                 	  | object          	| AMD flat bundle configuration                                                    	                                                                                                                             |
+| output.amd.define             | string          	| AMD flat bundle define function name                                                                                                                                                                           |
+| output.amd.id                 | string          	| AMD flat bundle module identifier name                                                                                                                                                                         |
+| output.dependencyMapMode      | object            | Dependency map modes                                                                                                                                                                                           |
+|                               |                   | "cross-map-peer-dependency" - Map project dependencies to target peerDependencies                                                                                                                              |
+|                               |                   | "cross-map-dependency" - Map project peerDependencies to target dependencies                                                                                                                                   |
+|                               |                   | "map-dependency" - Map project dependencies to target dependencies                                                                                                                                             |
+|                               |                   | "map-peer-dependency" - Map project peer dependencies to target peerDependencies                                                                                                                               |
+|                               |                   | "all" - Map both peerDependencies and dependencies to target peerDependencies and dependencies                                                                                                                 |
+| output.es5                    | boolean           | Generate flat ES5 module build artifacts based on ``.babelrc.es5.js``                                                                                                                                          |
+| output.esnext                 | boolean           | Generate flat ESNext module build artifacts based on ``.babelrc.esnext.js``                                                                                                                                    |
+| output.minBundle              | boolean           | Generate minified flat bundle build artifact                                                                                                                                                                   |
+| output.format                	| string           	| Browser compliant bundle modules formats (based on ``.babelrc.bundle.js``)                                                                                                                                     |
+|                               |                   | "umd" – Universal Module Definition, works as amd, cjs and iife all in one                                                                                                                                     |
+|                               |                   | "amd" – Asynchronous Module Definition, used with module loaders like RequireJS                                                                                                                                |
+|                               |                   | "iife" – A self-executing function, suitable for inclusion as a <script> tag. (If you want to create a bundle for your application, you probably want to use this, because it leads to smaller file sizes.)    |
+|                               |                   | "system" - Native format of SystemJS loader                                                                                                                                                                    |
+|                               |                   | NodeJS only bundle module formats                                                                                                                                                                              |
+|                               |                   | "cjs" – CommonJS, suitable for Node and Browserify/Webpack                                                                                                                                                     |
+|                               |                   | "esm" – Keep the bundle as an ES module file                                                                                                                                                                   |
+| output.imageInlineLimit       | number            | Size limit in bytes to inline compile images                                                                                                                                                                   |
+| output.inlineStyle            | boolean           | Inline bundle styles withing JS distribution if true                                                                                                                                                           |
+| output.stylesDir              | string            | Style artifact output directory within dist                                                                                                                                                                    |
+| output.namespace              | string            | Library global scope namespace (only applicable for browser compliant)                                                                                                                                         |
+| compiler                      | object            | Compiler options object                                                                                                                                                                                        |
+| compiler.buildMode            | string            | Library compile mode                                                                                                                                                                                           |
+|                               |                   | "browser" - Browser/NodeJS compliant module                                                                                                                                                                    |
+|                               |                   | "node" - NodeJS only module                                                                                                                                                                                    |
+|                               |                   | "node-cli" - Node CLI module                                                                                                                                                                                   |
+| compiler.scriptPreprocessor   | string            | Support "typescript" and "none" options                                                                                                                                                                        |
+| compiler.stylePreprocessor    | string            | Support "scss", "sass", "stylus", "less" and "none" options                                                                                                                                                    |
+| compiler.styleSupport         | boolean           | Support style preprocessing and linting                                                                                                                                                                        |
+| assetPaths                    | array of strings 	| List of paths which contains static assets referenced in style sheets                                                                                                                                          |
+| copy                          | array of strings 	| List of files paths to copy on build.                                                                                                                                                                          |
+| bundle                        | object            | Bundle options                                                                                                                                                                                                 |
+| bundle.externals              | array of string   | Bundle output external dependencies (dependency modules to treat as externals). Refer [rollup](https://rollupjs.org) options for more info.                                                                    |
+| bundle.globals                | object            | Bundle output global dependencies (dependency modules to tread as globals). Refer [rollup](https://rollupjs.org) options for more info.                                                                        |
+| bundle.mapExternals           | boolean           | Treat globals as externals if true                                                                                                                                                                             |
+| bundle.ignore                 | array of strings 	| Import paths to ignore with noop implementation                                                                                                                                                                |
+| pathReplacePatterns         	| array of objects 	| Import path replace pattern collection                                           	                                                                                                                             |
+| pathReplacePatterns.test    	| string           	| Path to find                                                                     	                                                                                                                             |
+| pathReplacePatterns.replace 	| string           	| Path to replace                                                                  	                                                                                                                             |
+| testFramework                 | string            | Support "Jasmine" and "Mocha" test framework options                                                                                                                                                           |
+| watch                       	| object           	| watch mode configuration object                                                  	                                                                                                                             |
+| watch.scriptDir               | string           	| watch build temporary directory                                                       	                                                                                                                       |
+| watch.helperDir               | string           	| watch build helper library directory                                                                                                                                                                           |
+| watch.demoDir                 | string           	| watch demo page dir                                                              	                                                                                                                             |
+| watch.port                  	| number           	| watch server port                                                                	                                                                                                                             |
+| watch.serve                  	| boolean          	| Serve project via browser on watch mode                                                                                                                                                                        |
+| watch.open                  	| boolean          	| open browser automatically on watch mode                                                      	                                                                                                               |
+| license                       | object            | Bundle license configuration                                                                                                                                                                                   |
+| license.banner                | boolean           | Include inline header banner passed via ``.banner.hbs`` template                                                                                                                                               |
+                                                                                                                                                                  
 # Contributions
 
 Feel free to open an issue or create a PR

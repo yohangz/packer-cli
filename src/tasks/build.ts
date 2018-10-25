@@ -62,7 +62,7 @@ gulp.task('build:copy:essentials', () => {
     targetPackage.fesm5 = path.join('fesm5', `${packageJson.name}.js`);
   }
 
-  if (config.output.es2015) {
+  if (config.output.esnext) {
     targetPackage.esnext = path.join('fesmnext', `${packageJson.name}.js`);
     targetPackage.fesmnext = path.join('fesmnext', `${packageJson.name}.js`);
   }
@@ -204,7 +204,7 @@ gulp.task('build:bundle', async () => {
       await bundleBuild(fesm5config, 'ES5');
     }
 
-    if (config.output.es2015) {
+    if (config.output.esnext) {
       // FESM+ESNEXT flat module bundle.
       const fesm2015config = merge({}, baseConfig, {
         external: config.bundle.externals,
