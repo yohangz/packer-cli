@@ -31,7 +31,6 @@ export const getPackerConfig = (options: any) => {
     entry: entryFile,
     source: 'src',
     dist: 'dist',
-    namespace: options.namespace,
     output: {
       amd: {
         define: '',
@@ -44,7 +43,8 @@ export const getPackerConfig = (options: any) => {
       format: bundleFormat,
       imageInlineLimit: 1000000,
       inlineStyle: Boolean(options.bundleStyles),
-      stylesDir: 'styles'
+      stylesDir: 'styles',
+      namespace: options.namespace || '',
     },
     compiler: {
       browserCompliant: Boolean(options.browserCompliant),
@@ -262,7 +262,7 @@ export const demoCopy = (packerConfig, packageName, projectDir) => {
     .pipe(gulpHbsRuntime({
       projectName: packageName,
       inlineStyle: packerConfig.output.inlineStyle,
-      namespace: packerConfig.namespace,
+      namespace: packerConfig.output.namespace,
       watchDir: packerConfig.watch.scriptDir,
       distDir: packerConfig.dist,
       require: isAmd,

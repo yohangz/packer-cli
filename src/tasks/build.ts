@@ -144,7 +144,7 @@ gulp.task('build:bundle', async () => {
         file: path.join(process.cwd(), config.dist, 'bundle', `${packageJson.name}.js`),
         format: config.output.format,
         globals: config.bundle.globals,
-        name: config.namespace
+        name: config.output.namespace
       },
       plugins: [
         rollupStyleBuildPlugin(config, packageJson, false, false, true),
@@ -166,7 +166,7 @@ gulp.task('build:bundle', async () => {
           file: path.join(process.cwd(), config.dist, 'bundle', `${packageJson.name}.min.js`),
           format: config.output.format,
           globals: config.bundle.globals,
-          name: config.namespace
+          name: config.output.namespace
         },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, true),

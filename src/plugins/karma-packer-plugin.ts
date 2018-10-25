@@ -3,7 +3,7 @@ import rollupPreprocessor from 'karma-rollup-preprocessor';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 
 import path from 'path';
-import { buildPlugin, preBundlePlugins, resolvePlugins } from '../tasks/build-util';
+import { buildPlugin, extractBundleExternals, preBundlePlugins, resolvePlugins } from '../tasks/build-util';
 import { parseScriptPreprocessorExtension } from '../tasks/parser';
 
 export default function karmaPackerPlugin() {
@@ -20,11 +20,14 @@ export default function karmaPackerPlugin() {
    * This is just a normal Rollup config object,
    * except that `input` is handled for you.
    */
+  const externals = extractBundleExternals(config);
   const packerPlugin = {
+    external: externals,
     output: {
       format: 'iife',
       name: 'test',
-      sourcemap: 'inline'
+      sourcemap: 'inline',
+      globals: config.bundle.globals,
     },
     plugins: [
       rollupIgnoreImport({

@@ -226,61 +226,66 @@ Build configuration can be updated after project generation via ``.packerrc.json
 
 ```json
 {
-  "namespace": "my.lib",
   "entry": "index.ts",
   "source": "src",
-  "dist": {
-    "outDir": "dist",
-    "stylesDir": "styles",
-    "es5": true,
+  "dist": "dist",
+  "output": {
+    "amd": {
+      "define": "",
+      "id": ""
+    },
+    "dependencyMapMode": "mapDependency",
     "es2015": true,
-    "generateMin": true
+    "es5": true,
+    "minBundle": true,
+    "format": "umd",
+    "imageInlineLimit": 1000000,
+    "inlineStyle": false,
+    "stylesDir": "styles",
+    "namespace": "my.lib"
   },
-  "typescript": true,
-  "cliProject": false,
-  "styleSupport": true,
-  "stylePreprocessor": "scss",
-  "watch": {
-    "scriptDir": ".tmp",
-    "helperDir": "demo/helper",
-    "demoDir": "demo/watch",
-    "serve": true,
-    "port": 4000,
-    "open": true
+  "compiler": {
+    "browserCompliant": true,
+    "cliProject": false,
+    "scriptPreprocessor": "typescript",
+    "stylePreprocessor": "scss",
+    "styleSupport": true
   },
+  "assetPaths": [
+    "src/assets"
+  ],
   "copy": [
     "README.md",
     "LICENSE"
   ],
-  "flatGlobals": {},
-  "esmExternals": [
-    "handlebars/runtime"
-  ],
+  "bundle": {
+    "externals": [
+      "handlebars/runtime"
+    ],
+    "globals": {},
+    "mapExternals": false
+  },
+  "ignore": [],
   "pathReplacePatterns": [
     {
-      "test": "./config/base-config",
-      "replace": "./config/replace-config"
+      "replace": "./config/replace-config",
+      "test": "./config/base-config"
     }
   ],
-  "ignore": [],
-  "assetPaths": [
-    "src/assets"
-  ],
   "testFramework": "jasmine",
-  "bundle": {
-    "amd": {
-      "define": "",
-      "id": "myLib"
-    },
-    "format": "umd",
-    "imageInlineLimit": 1000000,
-    "inlineStyle": false
+  "watch": {
+    "demoDir": "demo/watch",
+    "helperDir": "demo/helper",
+    "open": true,
+    "port": 4000,
+    "scriptDir": ".tmp",
+    "serve": true
   },
   "license": {
     "banner": true,
     "thirdParty": {
-      "includePrivate": false,
-      "fileName": "dependencies.txt"
+      "fileName": "dependencies.txt",
+      "includePrivate": false
     }
   }
 }

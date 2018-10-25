@@ -57,7 +57,7 @@ gulp.task('build:watch', async () => {
         file: path.join(process.cwd(), config.watch.scriptDir, `${packageJson.name}.js`),
         format: config.output.format,
         globals: config.bundle.globals,
-        name: config.namespace
+        name: config.output.namespace
       },
       plugins: [
         rollupStyleBuildPlugin(config, packageJson, true, false, true),
