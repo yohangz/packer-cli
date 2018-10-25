@@ -79,9 +79,12 @@ or
 
 Then CLI will query questions associated to custom project generation,
 
-```sh
+
 # Description about the library
 Give us a small description about the library (optional)? Client compliant node module
+
+# Comma separated package keywords to be included in package config
+Give us a set of comma separated package keywords (optional)? lib,awesome library,my library
 
 # Name of the library author
 Author's name (optional)? Yohan Gomez
@@ -89,16 +92,21 @@ Author's name (optional)? Yohan Gomez
 # Name of the library author.
 Author's email address (optional)? yohan.gz@gmail.com
 
+# Github username of the library author.
+Author's github username (optional)? yohangz
+
 # Web home page of the library. This must be a valid URL.
 Library homepage link (optional)? http://www.my-project.com
 
-# Use typescript transpiler if yes.
-Do you want to use typescript? (Y/n) Yes
+# Script transpiler to be used. Select "none" to use vanilla javascript.
+What's the script pre processor you want to use?
+- typescript
+- none
 
 # Support CSS bundling if yes.  
 Do you want style sheet support? (Y/n) Yes
 
-# Style proprocessor to be used. Select none if not required.
+# Style preprocessor to be used. Select none if not required.
 What's the style pre processor you want to use?
 - scss
 - sass
@@ -115,17 +123,17 @@ Are you building a browser compliant library? Yes
 # This options will generate a NodeJS CLI tool project.
 Are you building a node CLI project? No
 
-# You can chose from the browser compliant flat bundel formats options list.
+# You can chose from the browser compliant flat bundle formats options list.
 What's the build bundle format you want to use? umd
 - umd
 - amd
 - iife
 - system
 
-# Custom AMD id can be provided if flat bundle format is UMD or AMD.
+# Custom AMD id can be provided if flat bundle format is UMD or AMD. Applicable for "amd" module format only.
 What's the AMD id you want to use? (optional) my-lib
 
-# Library namespace will be used when exposing the libray via global scope.
+# Library namespace will be used when exposing the library via global scope. Applicable for "umd" | "iife" | "systemjs" module formats.
 What's the library namespace you want to use? my.lib
 
 # You can chose either Jasmine or Mocha unit test framework.
@@ -133,23 +141,22 @@ Which unit test framework do you want to use?
 - Jasmine
 - Mocha
 
-# Library copyright year will be included in license file.
+# Library copyright year to be included in license file.
 What is the library copyright year (optional)? 2018
 
-# License type which suould be used.
-What's the license you want to use? MIT License
+# Generate license file for the project.
+What's the library copyright year (optional)?
 - MIT License
-- Apache 2 License
+- Apache License 2.0
 - Mozilla Public License 2.0
-- BSD 2-Clause (FreeBSD) License
-- BSD 3-Clause (NewBSD) License
+- BBSD 2-Clause FreeBSD License
+- BSD 3-Clause Revised License
 - Internet Systems Consortium (ISC) License
-- GNU LGPL 3.0 License
-- GNU GPL 3.0 License
-- Unlicense
-- No License
+- GNU Lesser General Public License v3.0 only
+- GNU General Public License v3.0 only
+- The Unlicense
 
-# Use yarn package manager instaid of NPM CLI if true.
+# Use yarn package manager instead of NPM CLI if true.
 Do you want to use yarn as package manager? (Y/n) Yes
 ```
  
@@ -245,8 +252,7 @@ Build configuration can be updated after project generation via ``.packerrc.json
     "namespace": "my.lib"
   },
   "compiler": {
-    "browserCompliant": true,
-    "cliProject": false,
+    "buildMode": "browser",
     "scriptPreprocessor": "typescript",
     "stylePreprocessor": "scss",
     "styleSupport": true
