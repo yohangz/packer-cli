@@ -4,7 +4,6 @@ import path from 'path';
 
 import { readConfig } from './meta';
 import { runShellCommand } from './util';
-import { ScriptPreprocessor } from '../model/script-preprocessor';
 
 gulp.task('lint:style', (done) => {
   try {
@@ -29,7 +28,7 @@ gulp.task('lint:script:ts', (done) => {
   try {
     const config = readConfig();
 
-    if (config.compiler.scriptPreprocessor === ScriptPreprocessor.typescript) {
+    if (config.compiler.scriptPreprocessor === 'typescript') {
       console.log(chalk.blue('[TS Lint]'));
       const src = path.join(config.source, '**/*.{ts,tsx}');
       runShellCommand('tslint', [src], process.cwd()).then(() => {
@@ -47,7 +46,7 @@ gulp.task('lint:script:es', (done) => {
   try {
     const config = readConfig();
 
-    if (config.compiler.scriptPreprocessor !== ScriptPreprocessor.typescript) {
+    if (config.compiler.scriptPreprocessor !== 'typescript') {
       console.log(chalk.blue('[ES Lint]'));
       const src = path.join(config.source, '**/*.{js,mjs}');
       runShellCommand('eslint', [src], process.cwd()).then(() => {

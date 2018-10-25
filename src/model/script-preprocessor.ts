@@ -1,4 +1,1 @@
-export enum ScriptPreprocessor {
-  none = 'none',
-  typescript = 'typescript'
-}
+export type ScriptPreprocessor = 'none' | 'typescript';

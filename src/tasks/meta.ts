@@ -1,7 +1,8 @@
 import path from 'path';
 import fs from 'fs';
+import { PackerConfig } from '../model/packer-config';
 
-export const readConfig = () => {
+export const readConfig = (): PackerConfig => {
   return require(path.join(process.cwd(), '.packerrc.json'));
 };
 

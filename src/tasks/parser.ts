@@ -2,22 +2,22 @@ import { ScriptPreprocessor } from '../model/script-preprocessor';
 import { StylePreprocessor } from '../model/style-preprocessor';
 import { LicenseType } from '../model/license-type';
 
-export const parseStylePreprocessorExtension = (preprocessor) => {
+export const parseStylePreprocessorExtension = (preprocessor: StylePreprocessor): string => {
   switch (preprocessor) {
-    case StylePreprocessor.scss:
+    case 'scss':
       return 'scss';
-    case StylePreprocessor.sass:
+    case 'sass':
       return 'sass';
-    case StylePreprocessor.less:
+    case 'less':
       return 'less';
-    case StylePreprocessor.stylus:
+    case 'stylus':
       return 'styl';
-    case StylePreprocessor.none:
+    case 'none':
       return 'css';
   }
 };
 
-export const parseLicenseType = (license) => {
+export const parseLicenseType = (license: string): string => {
   let licenseFileName = '';
 
   switch (license) {
@@ -53,11 +53,11 @@ export const parseLicenseType = (license) => {
   return licenseFileName;
 };
 
-export const parseScriptPreprocessorExtension = (preprocessor: string): string => {
+export const parseScriptPreprocessorExtension = (preprocessor: ScriptPreprocessor): string => {
   switch (preprocessor) {
-    case ScriptPreprocessor.typescript:
+    case 'typescript':
       return 'ts';
-    case ScriptPreprocessor[ScriptPreprocessor.none]:
+    case 'none':
     default:
       return 'js';
   }

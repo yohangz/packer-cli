@@ -1,7 +1,1 @@
-export enum StylePreprocessor {
-  scss = 'scss',
-  sass = 'sass',
-  less = 'less',
-  stylus = 'stylus',
-  none = 'css'
-}
+export type StylePreprocessor = 'scss' | 'sass' | 'less' | 'stylus' | 'none';

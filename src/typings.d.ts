@@ -6,7 +6,7 @@ declare module 'gulp-file' {
   export default function(fileName: string, fileContent: string): NodeJS.ReadWriteStream;
 }
 
-declare interface IPermissionOptions {
+declare interface PermissionOptions {
   owner?: {
     read?: boolean,
     write?: boolean,
@@ -24,7 +24,7 @@ declare interface IPermissionOptions {
   };
 }
 
-declare interface IPackageValidity {
+declare interface PackageValidity {
   validForNewPackages: false;
   validForOldPackages: true;
   warnings: string [];
@@ -32,11 +32,11 @@ declare interface IPackageValidity {
 }
 
 declare module 'gulp-chmod' {
-  export default function(options: IPermissionOptions): NodeJS.ReadWriteStream;
+  export default function(options: PermissionOptions): NodeJS.ReadWriteStream;
 }
 
 declare module 'validate-npm-package-name' {
-  export default function(packageName: string): IPackageValidity;
+  export default function(packageName: string): PackageValidity;
 }
 
 declare module 'gulp-filter' {

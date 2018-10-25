@@ -23,10 +23,6 @@ import {
   templateCopy
 } from './generate-util';
 import { LicenseType } from '../model/license-type';
-import { StylePreprocessor } from '../model/style-preprocessor';
-import { ScriptPreprocessor } from '../model/script-preprocessor';
-import { TestFramework } from '../model/test-framework';
-import { BrowserBundleFormat } from '../model/browser-bundle-format';
 
 gulp.task('generate', (done) => {
   try {
@@ -71,7 +67,10 @@ gulp.task('generate', (done) => {
         }
       },
       {
-        choices: Object.values(ScriptPreprocessor),
+        choices: [
+          'none',
+          'typescript'
+        ],
         default: 0,
         message: 'What\'s the script pre processor you want to use?',
         name: 'scriptPreprocessor',
@@ -84,7 +83,13 @@ gulp.task('generate', (done) => {
         type: 'confirm'
       },
       {
-        choices: Object.values(StylePreprocessor),
+        choices: [
+          'scss',
+          'sass',
+          'less',
+          'stylus',
+          'none'
+        ],
         default: 0,
         message: 'What\'s the style pre processor you want to use?',
         name: 'stylePreprocessor',
@@ -118,7 +123,12 @@ gulp.task('generate', (done) => {
         }
       },
       {
-        choices: Object.values(BrowserBundleFormat),
+        choices: [
+          'umd',
+          'amd',
+          'iife',
+          'system'
+        ],
         default: 0,
         message: 'What\'s the build bundle format you want to use?',
         name: 'bundleFormat',
@@ -140,7 +150,7 @@ gulp.task('generate', (done) => {
           return !!matches || 'AMD id should only contain alphabetic characters, i.e: \'my-bundle\'';
         },
         when: (answers) => {
-          return answers.bundleFormat === BrowserBundleFormat.umd || answers.bundleFormat === BrowserBundleFormat.amd;
+          return answers.bundleFormat === 'umd' || answers.bundleFormat === 'amd';
         }
       },
       {
@@ -152,13 +162,16 @@ gulp.task('generate', (done) => {
           return !!matches || 'Namespace should be an object path, i.e: \'ys.nml.lib\'';
         },
         when: (answers) => {
-          return answers.bundleFormat === BrowserBundleFormat.umd
-            || answers.bundleFormat === BrowserBundleFormat.iife
-            || answers.bundleFormat === BrowserBundleFormat.system;
+          return answers.bundleFormat === 'umd'
+            || answers.bundleFormat === 'iife'
+            || answers.bundleFormat === 'system';
         }
       },
       {
-        choices: Object.values(TestFramework),
+        choices: [
+          'jasmine',
+          'mocha'
+        ],
         default: 0,
         message: 'Which unit test framework do you want to use?',
         name: 'testFramework',
@@ -166,7 +179,7 @@ gulp.task('generate', (done) => {
       },
       {
         default: (new Date()).getFullYear(),
-        message: 'What is the library copyright year (optional)?',
+        message: 'What\'s the library copyright year (optional)?',
         name: 'year',
         type: 'input'
       },
@@ -225,7 +238,7 @@ gulp.task('generate', (done) => {
         merged.add(styleCopy(styleExt, projectDir));
       }
 
-      if (!packerConfig.compiler.cliProject) {
+      if (packerConfig.compiler.buildMode !== 'node-cli') {
         merged.add(demoCopy(packerConfig, packageName, projectDir));
         merged.add(demoHelperScriptCopy(projectDir));
       }

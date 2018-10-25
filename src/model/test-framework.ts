@@ -1,4 +1,1 @@
-export enum TestFramework {
-  jasmine = 'jasmine',
-  mocha = 'mocha'
-}
+export type TestFramework = 'jasmine' | 'mocha';

@@ -1,7 +1,5 @@
-export enum DependencyMap {
-  crossMapPeerDependency = 'crossMapPeerDependency',
-  crossMapDependency = 'crossMapDependency',
-  mapDependency = 'mapDependency',
-  mapPeerDependency = 'mapPeerDependency',
-  all = 'all'
-}
+export type DependencyMap  = 'cross-map-peer-dependency'
+  | 'cross-map-dependency'
+  | 'map-dependency'
+  | 'map-peer-dependency'
+  | 'all';

@@ -1,4 +1,1 @@
-export enum NodeBundleFormat {
-  cjs = 'cjs',
-  es = 'esm'
-}
+export type NodeBundleFormat = 'cjs' | 'esm';

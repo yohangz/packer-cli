@@ -19,7 +19,6 @@ import rollupFilesize from 'rollup-plugin-filesize';
 
 import chalk from 'chalk';
 import { readBabelConfig, readBannerTemplate } from './meta';
-import { ScriptPreprocessor } from '../model/script-preprocessor';
 
 export const getBanner = (config, packageJson) => {
   if (config.license.banner) {
@@ -90,7 +89,7 @@ export const resolvePlugins = (config) => {
 
 export const buildPlugin = (packageModule, generateDefinition, check, config, tsPackage) => {
   const plugins = [];
-  if (config.compiler.scriptPreprocessor  === ScriptPreprocessor.typescript) {
+  if (config.compiler.scriptPreprocessor  === 'typescript') {
     const buildConf: any = {
       check,
       tsconfig: `tsconfig.json`,

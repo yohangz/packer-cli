@@ -29,7 +29,8 @@
   ],
   "copy": [
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "assets/**/{.*,*}"
   ],
   "bundle": {
     "externals": [

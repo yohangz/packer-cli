@@ -21,9 +21,6 @@ import {
 } from './build-util';
 
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
-import { ScriptPreprocessor } from '../model/script-preprocessor';
-import { DependencyMap } from '../model/dependency-map';
-import { NodeBundleFormat } from '../model/node-bundle-format';
 
 gulp.task('build:copy:essentials', () => {
   const packageJson = readPackageData();
@@ -47,13 +44,13 @@ gulp.task('build:copy:essentials', () => {
     targetPackage[field] = packageJson[field];
   });
 
-  if (config.compiler.cliProject) {
+  if (config.compiler.buildMode === 'node-cli') {
     targetPackage.bin = packageJson.bin;
   }
 
   targetPackage.main = path.join('bundle', `${packageJson.name}.js`);
 
-  if (config.compiler.scriptPreprocessor  === ScriptPreprocessor.typescript) {
+  if (config.compiler.scriptPreprocessor  === 'typescript') {
     targetPackage.typings = 'index.d.ts';
   }
 
@@ -68,20 +65,20 @@ gulp.task('build:copy:essentials', () => {
   }
 
   // Map dependencies to target package file
-  switch (DependencyMap[config.output.dependencyMapMode]) {
-    case DependencyMap.crossMapPeerDependency:
+  switch (config.output.dependencyMapMode) {
+    case 'cross-map-peer-dependency':
       targetPackage.peerDependencies = packageJson.dependencies;
       break;
-    case DependencyMap.crossMapDependency:
+    case 'cross-map-dependency':
       targetPackage.dependencies = packageJson.peerDependencies;
       break;
-    case DependencyMap.mapDependency:
+    case 'map-dependency':
       targetPackage.dependencies = packageJson.dependencies;
       break;
-    case DependencyMap.mapPeerDependency:
+    case 'map-peer-dependency':
       targetPackage.peerDependencies = packageJson.peerDependencies;
       break;
-    case DependencyMap.all:
+    case 'all':
       targetPackage.peerDependencies = packageJson.peerDependencies;
       targetPackage.dependencies = packageJson.dependencies;
       break;
@@ -93,10 +90,13 @@ gulp.task('build:copy:essentials', () => {
     }), {
       allowEmpty: true
     })
+      .on('error', (e) => {
+        console.error(e);
+      })
       .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
       .pipe(gulp.dest(path.join(process.cwd(), config.dist)));
 
-  if (!config.compiler.cliProject) {
+  if (config.compiler.buildMode !== 'node-cli') {
     return packageFlatEssentials;
   }
 
@@ -191,7 +191,7 @@ gulp.task('build:bundle', async () => {
         external: config.bundle.externals,
         output: {
           file: path.join(process.cwd(), config.dist, 'fesm5', `${packageJson.name}.js`),
-          format: NodeBundleFormat.es
+          format: 'esm'
         },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
@@ -210,7 +210,7 @@ gulp.task('build:bundle', async () => {
         external: config.bundle.externals,
         output: {
           file: path.join(process.cwd(), config.dist, 'fesmnext', `${packageJson.name}.js`),
-          format: NodeBundleFormat.es
+          format: 'esm'
         },
         plugins: [
           rollupStyleBuildPlugin(config, packageJson, false, true, false),
