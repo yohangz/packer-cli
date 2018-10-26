@@ -185,7 +185,7 @@ npm run test
 npm run test:ci
 
 # Bump package version and push updated package config
-npm version major|monor|patch
+npm version major|minor|patch
 
 # Build project and publish to NPM
 npm run release
