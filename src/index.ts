@@ -13,6 +13,11 @@ import { args } from './tasks/util';
 import karmaPackerPlugin from './plugins/karma-packer-plugin';
 
 switch (args[0]) {
+  case 'version':
+    gulp.series('version')(() => {
+      // no implementation
+    });
+    break;
   case 'generate':
     gulp.series('generate')(() => {
       // no implementation

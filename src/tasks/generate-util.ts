@@ -191,6 +191,7 @@ export const styleCopy = (styleExt: string, projectDir: string): ReadWriteStream
       .pipe(gulp.dest(path.join(projectDir, 'src/style')));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -202,6 +203,7 @@ export const templateCopy = (projectDir: string): ReadWriteStream => {
       .pipe(gulp.dest(path.join(projectDir, 'src/templates')));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -213,6 +215,7 @@ export const assetCopy = (projectDir: string): ReadWriteStream => {
       .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -236,6 +239,7 @@ export const sourceCopy = (packerConfig: PackerConfig, styleExt: string, project
       .pipe(gulp.dest(path.join(projectDir, 'src')));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -246,6 +250,7 @@ export const licenseCopy = (packageConfig: PackerOptions, packerConfig: PackerCo
     ])
       .on('error', (e) => {
         console.error(e);
+        throw Error('task failure');
       })
       .pipe(gulpHbsRuntime({
         year: packageConfig.year,
@@ -256,6 +261,7 @@ export const licenseCopy = (packageConfig: PackerOptions, packerConfig: PackerCo
       .pipe(gulp.dest(projectDir));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -266,6 +272,7 @@ export const readmeCopy = (packageConfig: PackageConfig, projectDir: string): Re
     ])
       .on('error', (e) => {
         console.error(e);
+        throw Error('task failure');
       })
       .pipe(gulpHbsRuntime({
         packageName: packageConfig.name,
@@ -276,6 +283,7 @@ export const readmeCopy = (packageConfig: PackageConfig, projectDir: string): Re
       .pipe(gulp.dest(projectDir));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -287,6 +295,7 @@ export const demoHelperScriptCopy = (projectDir: string): ReadWriteStream => {
       .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -317,6 +326,7 @@ export const demoCopy = (packerConfig: PackerConfig, packageName: string, projec
       .pipe(gulp.dest(path.join(projectDir, 'demo')));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -333,6 +343,7 @@ export const babelConfigCopy = (packerConfig: PackerConfig, projectDir: string):
       .pipe(gulp.dest(projectDir));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -343,6 +354,7 @@ export const copyGitIgnore = (projectDir: string): ReadWriteStream => {
     ])
       .on('error', (e) => {
         console.error(e);
+        throw Error('task failure');
       })
       .pipe(gulpHbsRuntime({}, {
         replaceExt: ''
@@ -350,6 +362,7 @@ export const copyGitIgnore = (projectDir: string): ReadWriteStream => {
       .pipe(gulp.dest(projectDir));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -361,10 +374,12 @@ export const copyPackerAssets = (projectDir: string): ReadWriteStream => {
     ])
       .on('error', (e) => {
         console.error(e);
+        throw Error('task failure');
       })
       .pipe(gulp.dest(path.join(projectDir, '.packer')));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };
 
@@ -384,6 +399,7 @@ export const configCopy = (packageConfig: PackageConfig,
     ])
       .on('error', (e) => {
         console.error(e);
+        throw Error('task failure');
       })
       .pipe(gulpFile('.packerrc.json', JSON.stringify(packerConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
@@ -397,5 +413,6 @@ export const configCopy = (packageConfig: PackageConfig,
       .pipe(gulp.dest(projectDir));
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 };

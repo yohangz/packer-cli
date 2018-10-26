@@ -42,3 +42,5 @@ declare module 'validate-npm-package-name' {
 declare module 'gulp-filter' {
   export default function(glob: string|string[]): NodeJS.ReadWriteStream;
 }
+
+declare module 'schema-inspector';

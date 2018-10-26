@@ -25,120 +25,126 @@ import { PackageConfig } from '../model/package-config';
 import { RollupFileOptions } from 'rollup';
 
 gulp.task('build:copy:essentials', () => {
-  const packageJson = readPackageData();
-  const config = readConfig();
+  try {
+    const packageJson = readPackageData();
+    const config = readConfig();
 
-  const targetPackage: PackageConfig = {};
-  const fieldsToCopy = [
-    'name',
-    'version',
-    'description',
-    'keywords',
-    'author',
-    'repository',
-    'license',
-    'bugs',
-    'homepage'
-  ];
+    const targetPackage: PackageConfig = {};
+    const fieldsToCopy = [
+      'name',
+      'version',
+      'description',
+      'keywords',
+      'author',
+      'repository',
+      'license',
+      'bugs',
+      'homepage'
+    ];
 
-  // only copy needed properties from project's package json
-  fieldsToCopy.forEach((field: string) => {
-    targetPackage[field] = packageJson[field];
-  });
+    // only copy needed properties from project's package json
+    fieldsToCopy.forEach((field: string) => {
+      targetPackage[field] = packageJson[field];
+    });
 
-  if (config.compiler.buildMode === 'node-cli') {
-    targetPackage.bin = packageJson.bin;
-  }
+    if (config.compiler.buildMode === 'node-cli') {
+      targetPackage.bin = packageJson.bin;
+    }
 
-  targetPackage.main = path.join('bundle', `${packageJson.name}.js`);
+    targetPackage.main = path.join('bundle', `${packageJson.name}.js`);
 
-  if (config.compiler.scriptPreprocessor  === 'typescript') {
-    targetPackage.typings = 'index.d.ts';
-  }
+    if (config.compiler.scriptPreprocessor === 'typescript') {
+      targetPackage.typings = 'index.d.ts';
+    }
 
-  if (config.output.es5) {
-    targetPackage.module = path.join('fesm5', `${packageJson.name}.js`);
-    targetPackage.fesm5 = path.join('fesm5', `${packageJson.name}.js`);
-  }
+    if (config.output.es5) {
+      targetPackage.module = path.join('fesm5', `${packageJson.name}.js`);
+      targetPackage.fesm5 = path.join('fesm5', `${packageJson.name}.js`);
+    }
 
-  if (config.output.esnext) {
-    targetPackage.esnext = path.join('fesmnext', `${packageJson.name}.js`);
-    targetPackage.fesmnext = path.join('fesmnext', `${packageJson.name}.js`);
-  }
+    if (config.output.esnext) {
+      targetPackage.esnext = path.join('fesmnext', `${packageJson.name}.js`);
+      targetPackage.fesmnext = path.join('fesmnext', `${packageJson.name}.js`);
+    }
 
-  // Map dependencies to target package file
-  switch (config.output.dependencyMapMode) {
-    case 'cross-map-peer-dependency':
-      targetPackage.peerDependencies = packageJson.dependencies;
-      break;
-    case 'cross-map-dependency':
-      targetPackage.dependencies = packageJson.peerDependencies;
-      break;
-    case 'map-dependency':
-      targetPackage.dependencies = packageJson.dependencies;
-      break;
-    case 'map-peer-dependency':
-      targetPackage.peerDependencies = packageJson.peerDependencies;
-      break;
-    case 'all':
-      targetPackage.peerDependencies = packageJson.peerDependencies;
-      targetPackage.dependencies = packageJson.dependencies;
-      break;
-  }
+    // Map dependencies to target package file
+    switch (config.output.dependencyMapMode) {
+      case 'cross-map-peer-dependency':
+        targetPackage.peerDependencies = packageJson.dependencies;
+        break;
+      case 'cross-map-dependency':
+        targetPackage.dependencies = packageJson.peerDependencies;
+        break;
+      case 'map-dependency':
+        targetPackage.dependencies = packageJson.dependencies;
+        break;
+      case 'map-peer-dependency':
+        targetPackage.peerDependencies = packageJson.peerDependencies;
+        break;
+      case 'all':
+        targetPackage.peerDependencies = packageJson.peerDependencies;
+        targetPackage.dependencies = packageJson.dependencies;
+        break;
+    }
 
-  // copy the needed additional files in the 'dist' folder
-  const packageFlatEssentials = gulp.src((config.copy || []).map((copyFile: string) => {
+    // copy the needed additional files in the 'dist' folder
+    const packageFlatEssentials = gulp.src((config.copy || []).map((copyFile: string) => {
       return path.join(process.cwd(), copyFile);
     }), {
       allowEmpty: true
     })
       .on('error', (e) => {
         console.error(e);
+        throw Error('task failure');
       })
       .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
       .pipe(gulp.dest(path.join(process.cwd(), config.dist)));
 
-  if (config.compiler.buildMode !== 'node-cli') {
-    return packageFlatEssentials;
+    if (config.compiler.buildMode !== 'node-cli') {
+      return packageFlatEssentials;
+    }
+
+    const packageBin = gulp.src([path.join(process.cwd(), '.packer/bin.hbs')])
+      .on('error', (e) => {
+        console.error(e);
+        throw Error('task failure');
+      })
+      .pipe(gulpHbsRuntime({
+        packageName: packageJson.name
+      }, {
+        rename: `${packageJson.name}.js`
+      }))
+      .pipe(chmod({
+        group: {
+          execute: true,
+          read: true
+        },
+        others: {
+          execute: true,
+          read: true
+        },
+        owner: {
+          execute: true,
+          read: true,
+          write: true
+        }
+      })) // Grand read and execute permission.
+      .pipe(gulp.dest(path.join(process.cwd(), config.dist, 'bin')));
+
+    return mergeStream(packageFlatEssentials, packageBin);
+  } catch (e) {
+    console.error(e);
+    throw Error('task failure');
   }
-
-  const packageBin = gulp.src([ path.join(process.cwd(), '.packer/bin.hbs') ])
-    .on('error', (e) => {
-      console.error(e);
-    })
-    .pipe(gulpHbsRuntime({
-      packageName: packageJson.name
-    }, {
-      rename: `${packageJson.name}.js`
-    }))
-    .pipe(chmod({
-      group: {
-        execute: true,
-        read: true
-      },
-      others: {
-        execute: true,
-        read: true
-      },
-      owner: {
-        execute: true,
-        read: true,
-        write: true
-      }
-    })) // Grand read and execute permission.
-    .pipe(gulp.dest(path.join(process.cwd(), config.dist, 'bin')));
-
-  return mergeStream(packageFlatEssentials, packageBin);
 });
 
 gulp.task('build:bundle', async () => {
-  const typescript = require('typescript');
-  const config = readConfig();
-  const packageJson = readPackageData();
-  const banner = getBanner(config, packageJson);
-  const baseConfig = getBaseConfig(config, packageJson, banner);
-
   try {
+    const typescript = require('typescript');
+    const config = readConfig();
+    const packageJson = readPackageData();
+    const banner = getBanner(config, packageJson);
+    const baseConfig = getBaseConfig(config, packageJson, banner);
     const externals = extractBundleExternals(config);
 
     // flat bundle.
@@ -230,7 +236,7 @@ gulp.task('build:bundle', async () => {
   } catch (e) {
     console.log(chalk.red('[build:bundle] failure'));
     console.error(e);
-    return null;
+    throw Error('task failure');
   }
 });
 

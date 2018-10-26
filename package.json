@@ -69,6 +69,7 @@
     "rollup-plugin-re": "^1.0.7",
     "rollup-plugin-serve": "^0.4.2",
     "rollup-plugin-typescript2": "^0.15.1",
+    "schema-inspector": "^1.6.8",
     "stylelint": "^9.5.0",
     "stylus": "^0.54.5",
     "through2": "^2.0.3",

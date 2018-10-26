@@ -78,7 +78,8 @@
       "@babel/runtime/helpers/toConsumableArray",
       "@babel/runtime/helpers/asyncToGenerator",
       "@babel/runtime/helpers/defineProperty",
-      "@babel/runtime/regenerator"
+      "@babel/runtime/regenerator",
+      "schema-inspector"
     ],
     "globals": {},
     "mapExternals": false

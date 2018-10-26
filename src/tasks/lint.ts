@@ -21,6 +21,7 @@ gulp.task('lint:style', (done) => {
     }
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 });
 
@@ -39,6 +40,7 @@ gulp.task('lint:script:ts', (done) => {
     }
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 });
 
@@ -57,6 +59,7 @@ gulp.task('lint:script:es', (done) => {
     }
   } catch (e) {
     console.error(e);
+    throw Error('task failure');
   }
 });
 
