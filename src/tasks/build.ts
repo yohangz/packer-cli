@@ -103,6 +103,9 @@ gulp.task('build:copy:essentials', () => {
   }
 
   const packageBin = gulp.src([ path.join(process.cwd(), '.packer/bin.hbs') ])
+    .on('error', (e) => {
+      console.error(e);
+    })
     .pipe(gulpHbsRuntime({
       packageName: packageJson.name
     }, {
