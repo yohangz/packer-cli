@@ -335,7 +335,16 @@ export const babelConfigCopy = (packerConfig, projectDir) => {
 export const configCopy = (packageConfig, packerConfig, projectDir) => {
   try {
     return gulp.src([
-      path.join(__dirname, '../resources/static/**/{.*,*}')
+      path.join(__dirname, '../resources/static/.build/.banner.hbs'),
+      path.join(__dirname, '../resources/static/.build/.bin.hbs'),
+      path.join(__dirname, '../resources/static/.editorconfig'),
+      path.join(__dirname, '../resources/static/.eslintrc.yml'),
+      path.join(__dirname, '../resources/static/.gitignore'),
+      path.join(__dirname, '../resources/static/.stylelintrc.json'),
+      path.join(__dirname, '../resources/static/.travis.yml'),
+      path.join(__dirname, '../resources/static/karma.conf.js'),
+      path.join(__dirname, '../resources/static/tsconfig.json'),
+      path.join(__dirname, '../resources/static/tslint.json'),
     ])
       .pipe(gulpFile('.packerrc.json', JSON.stringify(packerConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
