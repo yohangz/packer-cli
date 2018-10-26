@@ -2,7 +2,7 @@ import gulp from 'gulp';
 import isEmail from 'validator/lib/isEmail';
 import isUrl from 'validator/lib/isURL';
 import npmValidate from 'validate-npm-package-name';
-import inquirer from 'inquirer';
+import inquirer, { Questions } from 'inquirer';
 import path from 'path';
 import mergeStream from 'merge-stream';
 
@@ -11,7 +11,7 @@ import { parseStylePreprocessorExtension } from './parser';
 import {
   assetCopy,
   babelConfigCopy,
-  configCopy,
+  configCopy, copyGitIgnore, copyPackerAssets,
   demoCopy,
   demoHelperScriptCopy,
   getPackageConfig,
@@ -23,10 +23,11 @@ import {
   templateCopy
 } from './generate-util';
 import { LicenseType } from '../model/license-type';
+import { PackerOptions } from '../model/packer-options';
 
 gulp.task('generate', (done) => {
   try {
-    const questions = [
+    const questions: Questions = [
       {
         message: 'Give us a small description about the library (optional)?',
         name: 'description',
@@ -211,7 +212,7 @@ gulp.task('generate', (done) => {
       }
     ];
 
-    if (args.length !== 2) {
+    if (args.length < 2) {
       console.log('Please provide a library name to generate the project');
       console.log('npx packer-cli generate my-library');
       done();
@@ -226,7 +227,7 @@ gulp.task('generate', (done) => {
       return;
     }
 
-    inquirer.prompt(questions).then((options) => {
+    inquirer.prompt(questions).then((options: PackerOptions) => {
       const packerConfig = getPackerConfig(options);
       const packageConfig = getPackageConfig(options, packageName);
       const projectDir = path.join(process.cwd(), packageName);
@@ -245,10 +246,12 @@ gulp.task('generate', (done) => {
 
       merged.add([
         sourceCopy(packerConfig, styleExt, projectDir),
-        licenseCopy(packageConfig, projectDir),
+        licenseCopy(options, packerConfig, projectDir),
         readmeCopy(packageConfig, projectDir),
         babelConfigCopy(packerConfig, projectDir),
-        configCopy(packageConfig, packerConfig, projectDir)
+        copyGitIgnore(projectDir),
+        copyPackerAssets(projectDir),
+        configCopy(packageConfig, packerConfig, options.isYarn, projectDir)
       ]);
 
       merged.on('end', () => {

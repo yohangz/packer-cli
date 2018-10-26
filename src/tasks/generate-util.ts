@@ -5,7 +5,7 @@ import gulp from 'gulp';
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 import gulpFilter from 'gulp-filter';
 import gulpFile from 'gulp-file';
-import { runShellCommand } from './util';
+import { runShellCommand, args } from './util';
 import { DependencyMap } from '../model/dependency-map';
 import { TestFramework } from '../model/test-framework';
 import { StylePreprocessor } from '../model/style-preprocessor';
@@ -14,8 +14,12 @@ import { NodeBundleFormat } from '../model/node-bundle-format';
 import { PackerConfig } from '../model/packer-config';
 import { ScriptPreprocessor } from '../model/script-preprocessor';
 import { BuildMode } from '../model/build-mode';
+import { PackerOptions } from '../model/packer-options';
+import { PackageConfig } from '../model/package-config';
 
-export const getPackerConfig = (options: any): PackerConfig => {
+import ReadWriteStream = NodeJS.ReadWriteStream;
+
+export const getPackerConfig = (options: PackerOptions): PackerConfig => {
   const entryFile = 'index.' + parseScriptPreprocessorExtension(options.scriptPreprocessor);
 
   let bundleFormat: NodeBundleFormat | BrowserBundleFormat = 'cjs';
@@ -96,7 +100,7 @@ export const getPackerConfig = (options: any): PackerConfig => {
   };
 };
 
-export const getPackageConfig = (options: any, packageName: any) => {
+export const getPackageConfig = (options: PackerOptions, packageName: string): PackageConfig => {
   const cliPackageData = readCLIPackageData();
 
   let projectAuthor = '';
@@ -111,7 +115,7 @@ export const getPackageConfig = (options: any, packageName: any) => {
     projectRepository = `${projectUrl}.git`;
   }
 
-  const packageConfig: any = {
+  const packageConfig: PackageConfig = {
     name: packageName,
     version: '1.0.0',
     description: options.description || '',
@@ -132,7 +136,7 @@ export const getPackageConfig = (options: any, packageName: any) => {
     author: projectAuthor,
     repository: projectRepository,
     license: parseLicenseType(options.license),
-    homepage: options.homepage || projectUrl,
+    homepage: options.website || projectUrl,
     dependencies: {
       handlebars: '^4.0.11',
       tslib: '^1.9.3'
@@ -179,7 +183,7 @@ export const getPackageConfig = (options: any, packageName: any) => {
   return packageConfig;
 };
 
-export const styleCopy = (styleExt, projectDir) => {
+export const styleCopy = (styleExt: string, projectDir: string): ReadWriteStream => {
   try {
     return gulp.src([
       path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${styleExt}`)
@@ -190,7 +194,7 @@ export const styleCopy = (styleExt, projectDir) => {
   }
 };
 
-export const templateCopy = (projectDir) => {
+export const templateCopy = (projectDir: string): ReadWriteStream => {
   try {
     return gulp.src([
       path.join(__dirname, '../resources/dynamic/example/common/templates/**/*')
@@ -201,7 +205,7 @@ export const templateCopy = (projectDir) => {
   }
 };
 
-export const assetCopy = (projectDir) => {
+export const assetCopy = (projectDir: string): ReadWriteStream => {
   try {
     return gulp.src([
       path.join(__dirname, '../resources/dynamic/example/common/assets/**/*')
@@ -212,7 +216,7 @@ export const assetCopy = (projectDir) => {
   }
 };
 
-export const sourceCopy = (packerConfig, styleExt, projectDir) => {
+export const sourceCopy = (packerConfig: PackerConfig, styleExt: string, projectDir: string): ReadWriteStream => {
   try {
     const jasmine = packerConfig.testFramework === 'jasmine';
     const scriptExtension = parseScriptPreprocessorExtension(packerConfig.compiler.scriptPreprocessor);
@@ -235,10 +239,10 @@ export const sourceCopy = (packerConfig, styleExt, projectDir) => {
   }
 };
 
-export const licenseCopy = (packageConfig, projectDir) => {
+export const licenseCopy = (packageConfig: PackerOptions, packerConfig: PackerConfig, projectDir: string): ReadWriteStream => {
   try {
     return gulp.src([
-      path.join(__dirname, '../resources/dynamic/license', `${packageConfig.license}.hbs`)
+      path.join(__dirname, '../resources/dynamic/license', `${packerConfig.license}.hbs`)
     ])
       .on('error', (e) => {
         console.error(e);
@@ -255,7 +259,7 @@ export const licenseCopy = (packageConfig, projectDir) => {
   }
 };
 
-export const readmeCopy = (packageConfig, projectDir) => {
+export const readmeCopy = (packageConfig: PackageConfig, projectDir: string): ReadWriteStream => {
   try {
     return gulp.src([
       path.join(__dirname, '../resources/dynamic/README.md.hbs')
@@ -275,7 +279,7 @@ export const readmeCopy = (packageConfig, projectDir) => {
   }
 };
 
-export const demoHelperScriptCopy = (projectDir) => {
+export const demoHelperScriptCopy = (projectDir: string): ReadWriteStream => {
   try {
     return gulp.src([
       path.join(__dirname, '../resources/dynamic/demo/helper/**/*')
@@ -286,7 +290,7 @@ export const demoHelperScriptCopy = (projectDir) => {
   }
 };
 
-export const demoCopy = (packerConfig, packageName, projectDir) => {
+export const demoCopy = (packerConfig: PackerConfig, packageName: string, projectDir: string): ReadWriteStream => {
   try {
     const isAmd = packerConfig.output.format === 'amd';
     const isIife = packerConfig.output.format === 'umd'
@@ -316,7 +320,7 @@ export const demoCopy = (packerConfig, packageName, projectDir) => {
   }
 };
 
-export const babelConfigCopy = (packerConfig, projectDir) => {
+export const babelConfigCopy = (packerConfig: PackerConfig, projectDir: string): ReadWriteStream => {
   try {
     return gulp.src([
       path.join(__dirname, '../resources/dynamic/babel/.*.hbs')
@@ -332,26 +336,63 @@ export const babelConfigCopy = (packerConfig, projectDir) => {
   }
 };
 
-export const configCopy = (packageConfig, packerConfig, projectDir) => {
+export const copyGitIgnore = (projectDir: string): ReadWriteStream => {
   try {
     return gulp.src([
-      path.join(__dirname, '../resources/static/.build/.banner.hbs'),
-      path.join(__dirname, '../resources/static/.build/.bin.hbs'),
+      path.join(__dirname, '../resources/dynamic/.gitignore.hbs')
+    ])
+      .on('error', (e) => {
+        console.error(e);
+      })
+      .pipe(gulpHbsRuntime({}, {
+        replaceExt: ''
+      }))
+      .pipe(gulp.dest(projectDir));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const copyPackerAssets = (projectDir: string): ReadWriteStream => {
+  try {
+    return gulp.src([
+      path.join(__dirname, '../resources/dynamic/packer/banner.hbs'),
+      path.join(__dirname, '../resources/dynamic/packer/bin.hbs')
+    ])
+      .on('error', (e) => {
+        console.error(e);
+      })
+      .pipe(gulp.dest(path.join(projectDir, '.packer')));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const configCopy = (packageConfig: PackageConfig,
+                           packerConfig: PackerConfig,
+                           isYarn: boolean,
+                           projectDir: string): ReadWriteStream => {
+  try {
+    return gulp.src([
       path.join(__dirname, '../resources/static/.editorconfig'),
       path.join(__dirname, '../resources/static/.eslintrc.yml'),
-      path.join(__dirname, '../resources/static/.gitignore'),
       path.join(__dirname, '../resources/static/.stylelintrc.json'),
       path.join(__dirname, '../resources/static/.travis.yml'),
       path.join(__dirname, '../resources/static/karma.conf.js'),
       path.join(__dirname, '../resources/static/tsconfig.json'),
       path.join(__dirname, '../resources/static/tslint.json'),
     ])
+      .on('error', (e) => {
+        console.error(e);
+      })
       .pipe(gulpFile('.packerrc.json', JSON.stringify(packerConfig, null, 2)))
       .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
       .on('end', () => {
-        runShellCommand(packerConfig.isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
-          console.log('📦 package generated 🚀');
-        });
+        if (!args.includes('--skipInstall')) {
+          runShellCommand(isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
+            console.log('📦 package generated 🚀');
+          });
+        }
       })
       .pipe(gulp.dest(projectDir));
   } catch (e) {

@@ -21,12 +21,14 @@ import {
 } from './build-util';
 
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
+import { PackageConfig } from '../model/package-config';
+import { RollupFileOptions } from 'rollup';
 
 gulp.task('build:copy:essentials', () => {
   const packageJson = readPackageData();
   const config = readConfig();
 
-  const targetPackage: any = {};
+  const targetPackage: PackageConfig = {};
   const fieldsToCopy = [
     'name',
     'version',
@@ -40,7 +42,7 @@ gulp.task('build:copy:essentials', () => {
   ];
 
   // only copy needed properties from project's package json
-  fieldsToCopy.forEach((field) => {
+  fieldsToCopy.forEach((field: string) => {
     targetPackage[field] = packageJson[field];
   });
 
@@ -100,7 +102,7 @@ gulp.task('build:copy:essentials', () => {
     return packageFlatEssentials;
   }
 
-  const packageBin = gulp.src([ path.join(process.cwd(), '.build/.bin.hbs') ])
+  const packageBin = gulp.src([ path.join(process.cwd(), '.packer/bin.hbs') ])
     .pipe(gulpHbsRuntime({
       packageName: packageJson.name
     }, {
@@ -137,7 +139,7 @@ gulp.task('build:bundle', async () => {
     const externals = extractBundleExternals(config);
 
     // flat bundle.
-    const flatConfig = merge({}, baseConfig, {
+    const flatConfig: RollupFileOptions = merge({}, baseConfig, {
       external: externals,
       output: {
         amd: config.output.amd,
@@ -159,7 +161,7 @@ gulp.task('build:bundle', async () => {
 
     if (config.output.minBundle) {
       // minified flat bundle.
-      const minifiedFlatConfig = merge({}, baseConfig, {
+      const minifiedFlatConfig: RollupFileOptions = merge({}, baseConfig, {
         external: externals,
         output: {
           amd: config.output.amd,
@@ -187,7 +189,7 @@ gulp.task('build:bundle', async () => {
 
     if (config.output.es5) {
       // FESM+ES5 flat module bundle.
-      const es5config = merge({}, baseConfig, {
+      const es5config: RollupFileOptions = merge({}, baseConfig, {
         external: config.bundle.externals,
         output: {
           file: path.join(process.cwd(), config.dist, 'fesm5', `${packageJson.name}.js`),
@@ -206,7 +208,7 @@ gulp.task('build:bundle', async () => {
 
     if (config.output.esnext) {
       // FESM+ESNEXT flat module bundle.
-      const esnextconfig = merge({}, baseConfig, {
+      const esnextConfig: RollupFileOptions = merge({}, baseConfig, {
         external: config.bundle.externals,
         output: {
           file: path.join(process.cwd(), config.dist, 'fesmnext', `${packageJson.name}.js`),
@@ -220,7 +222,7 @@ gulp.task('build:bundle', async () => {
         ]
       });
 
-      await bundleBuild(esnextconfig, 'ESNEXT');
+      await bundleBuild(esnextConfig, 'ESNEXT');
     }
   } catch (e) {
     console.log(chalk.red('[build:bundle] failure'));

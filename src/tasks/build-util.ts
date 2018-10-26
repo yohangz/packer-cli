@@ -1,7 +1,7 @@
 import path from 'path';
 import handlebars from 'handlebars';
 
-import { rollup } from 'rollup';
+import { rollup, RollupFileOptions } from 'rollup';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupPostCss from 'rollup-plugin-postcss';
 import postCssImageInline from 'postcss-image-inliner';
@@ -19,8 +19,10 @@ import rollupFilesize from 'rollup-plugin-filesize';
 
 import chalk from 'chalk';
 import { readBabelConfig, readBannerTemplate } from './meta';
+import { PackageConfig } from '../model/package-config';
+import { PackerConfig } from '../model/packer-config';
 
-export const getBanner = (config, packageJson) => {
+export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
   if (config.license.banner) {
     const bannerTemplate = readBannerTemplate();
     return handlebars.compile(bannerTemplate)({
@@ -30,7 +32,7 @@ export const getBanner = (config, packageJson) => {
   }
 };
 
-export const getBaseConfig = (config, packageJson, banner) => {
+export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, banner: string) => {
   return {
     input: path.join(config.source, config.entry),
     output: {
@@ -41,7 +43,11 @@ export const getBaseConfig = (config, packageJson, banner) => {
   };
 };
 
-export const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main) => {
+export const rollupStyleBuildPlugin = (config: PackerConfig,
+                                       packageJson: PackageConfig,
+                                       watch: boolean,
+                                       minify: boolean,
+                                       main: boolean) => {
   const styleDir = watch ? config.watch.scriptDir : config.dist;
   const fileName = packageJson.name + (minify ? '.min.css' : '.css');
   const styleDist = path.join(process.cwd(), styleDir, config.output.stylesDir, fileName);
@@ -66,13 +72,13 @@ export const rollupStyleBuildPlugin = (config, packageJson, watch, minify, main)
   });
 };
 
-export const rollupReplacePlugin = (config) => {
+export const rollupReplacePlugin = (config: PackerConfig) => {
   return rollupReplace({
     patterns: config.pathReplacePatterns
   });
 };
 
-export const resolvePlugins = (config) => {
+export const resolvePlugins = (config: PackerConfig) => {
   return [
     rollupIgnore(config.ignore),
     rollupResolve({
@@ -87,7 +93,11 @@ export const resolvePlugins = (config) => {
   ];
 };
 
-export const buildPlugin = (packageModule, generateDefinition, check, config, tsPackage) => {
+export const buildPlugin = (packageModule: string,
+                            generateDefinition: boolean,
+                            check: boolean,
+                            config: PackerConfig,
+                            tsPackage: boolean) => {
   const plugins = [];
   if (config.compiler.scriptPreprocessor  === 'typescript') {
     const buildConf: any = {
@@ -123,7 +133,7 @@ export const buildPlugin = (packageModule, generateDefinition, check, config, ts
   return plugins;
 };
 
-export const preBundlePlugins = (config) => {
+export const preBundlePlugins = (config: PackerConfig) => {
   return [
     rollupReplacePlugin(config),
     rollupHandlebars(),
@@ -146,7 +156,7 @@ export const postBundlePlugins = () => {
   ];
 };
 
-export const bundleBuild = async (config, type) => {
+export const bundleBuild = async (config: RollupFileOptions, type: string) => {
   try {
     console.log(chalk.blue(`${type} bundle build start`));
     const bundle = await rollup(config);
@@ -159,6 +169,6 @@ export const bundleBuild = async (config, type) => {
   }
 };
 
-export const extractBundleExternals = (config) => {
+export const extractBundleExternals = (config: PackerConfig) => {
   return config.bundle.mapExternals ? Object.keys(config.bundle.globals) : config.bundle.externals;
 };
