@@ -8,9 +8,9 @@
       "id": ""
     },
     "dependencyMapMode": "map-dependency",
-    "esnext": true,
-    "es5": true,
-    "minBundle": true,
+    "esnext": false,
+    "es5": false,
+    "minBundle": false,
     "format": "cjs",
     "imageInlineLimit": 1000000,
     "inlineStyle": false,

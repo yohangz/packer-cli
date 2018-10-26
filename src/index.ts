@@ -7,6 +7,7 @@ import './tasks/generate';
 import './tasks/lint';
 import './tasks/test';
 import './tasks/watch';
+import './tasks/version';
 
 import { args } from './tasks/util';
 
