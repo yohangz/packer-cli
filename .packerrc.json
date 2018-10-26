@@ -7,8 +7,8 @@
       "define": "",
       "id": ""
     },
-    "dependencyMapMode": "mapDependency",
-    "es2015": true,
+    "dependencyMapMode": "map-dependency",
+    "esnext": true,
     "es5": true,
     "minBundle": true,
     "format": "cjs",
@@ -18,8 +18,7 @@
     "namespace": ""
   },
   "compiler": {
-    "browserCompliant": false,
-    "cliProject": true,
+    "buildMode": "node-cli",
     "scriptPreprocessor": "typescript",
     "stylePreprocessor": "scss",
     "styleSupport": false
@@ -88,11 +87,11 @@
   "pathReplacePatterns": [],
   "testFramework": "jasmine",
   "watch": {
+    "scriptDir": ".tmp",
     "demoDir": "demo/watch",
     "helperDir": "demo/helper",
     "open": true,
     "port": 4000,
-    "scriptDir": ".tmp",
     "serve": true
   },
   "license": {
