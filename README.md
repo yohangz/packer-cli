@@ -79,7 +79,7 @@ or
 
 Then CLI will query questions associated to custom project generation,
 
-
+```
 # Description about the library
 Give us a small description about the library (optional)? Client compliant node module
 
@@ -158,8 +158,8 @@ What's the library copyright year (optional)?
 
 # Use yarn package manager instead of NPM CLI if true.
 Do you want to use yarn as package manager? (Y/n) Yes
-
 ```
+
 Once project is generated and dependencies are installed, you can use the following CLI commands:
 
 ```sh
