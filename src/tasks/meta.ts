@@ -47,7 +47,7 @@ const packerSchema = {
           type: 'string',
           optional: true,
           def: 'cross-map-peer-dependency',
-          exp: /^(cross-map-peer-dependency|cross-map-dependency|map-dependency|map-peer-dependency|all)$/
+          pattern: /^(cross-map-peer-dependency|cross-map-dependency|map-dependency|map-peer-dependency|all)$/
         },
         esnext: {
           type: 'boolean',
@@ -68,7 +68,7 @@ const packerSchema = {
           type: 'string',
           optional: true,
           def: 'umd',
-          exp: /^(umd|amd|iife|system|cjs|esm)$/
+          pattern: /^(umd|amd|iife|system|cjs|esm)$/
         },
         imageInlineLimit: {
           type: 'number',
@@ -101,19 +101,19 @@ const packerSchema = {
           type: 'string',
           optional: true,
           def: 'browser',
-          exp: /^(browser|node|node-cli)$/
+          pattern: /^(browser|node|node-cli)$/
         },
         scriptPreprocessor: {
           type: 'string',
           optional: true,
           def: 'none',
-          exp: /^(scss|sass|less|stylus|none)$/
+          pattern: /^(scss|sass|less|stylus|none)$/
         },
         stylePreprocessor: {
           type: 'string',
           optional: true,
           def: 'node',
-          exp: /^(none|typescript)$/
+          pattern: /^(none|typescript)$/
         },
         styleSupport: {
           type: 'boolean',
@@ -170,7 +170,7 @@ const packerSchema = {
       type: 'string',
       optional: true,
       def: 'jasmine',
-      exp: /^(jasmine|mocha)$/
+      pattern: /^(jasmine|mocha)$/
     },
     watch: {
       type: 'object',
