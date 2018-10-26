@@ -19,5 +19,5 @@ export const readBabelConfig = (esVersion) => {
 };
 
 export const readBannerTemplate = () => {
-  return fs.readFileSync(path.join(process.cwd(), 'templates/.banner.hbs'), 'utf8');
+  return fs.readFileSync(path.join(process.cwd(), '.build/.banner.hbs'), 'utf8');
 };

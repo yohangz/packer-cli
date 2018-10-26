@@ -100,7 +100,7 @@ gulp.task('build:copy:essentials', () => {
     return packageFlatEssentials;
   }
 
-  const packageBin = gulp.src([ path.join(process.cwd(), 'templates/.bin.hbs') ])
+  const packageBin = gulp.src([ path.join(process.cwd(), '.build/.bin.hbs') ])
     .pipe(gulpHbsRuntime({
       packageName: packageJson.name
     }, {
