@@ -59,7 +59,6 @@
       "gulp",
       "merge-stream",
       "gulp-file",
-      "gulp-filter",
       "inquirer",
       "validate-npm-package-name",
       "validator/lib/isURL",

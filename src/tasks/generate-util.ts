@@ -3,7 +3,6 @@ import { parseScriptPreprocessorExtension, parseLicenseType, parseStylePreproces
 import path from 'path';
 import gulp from 'gulp';
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
-import gulpFilter from 'gulp-filter';
 import gulpFile from 'gulp-file';
 import { runShellCommand, args } from './util';
 import { DependencyMap } from '../model/dependency-map';
@@ -305,11 +304,11 @@ export const demoCopy = (packerConfig: PackerConfig, packageName: string, projec
     const isIife = packerConfig.output.format === 'umd'
       || packerConfig.output.format === 'iife';
     const isSystem = packerConfig.output.format === 'system';
+    const templateGlob = packerConfig.compiler.buildMode === 'browser' ? '*.html.hbs' : '*.js.hbs';
 
     return gulp.src([
-      path.join(__dirname, '../resources/dynamic/demo/**/*.hbs')
+      path.join(__dirname, '../resources/dynamic/demo/**', templateGlob)
     ])
-      .pipe(gulpFilter('**/*' + (packerConfig.compiler.buildMode === 'browser' ? '.html.hbs' : '.js.hbs')))
       .pipe(gulpHbsRuntime({
         projectName: packageName,
         inlineStyle: packerConfig.output.inlineStyle,
