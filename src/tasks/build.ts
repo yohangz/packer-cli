@@ -187,7 +187,7 @@ gulp.task('build:bundle', async () => {
 
     if (config.output.es5) {
       // FESM+ES5 flat module bundle.
-      const fesm5config = merge({}, baseConfig, {
+      const es5config = merge({}, baseConfig, {
         external: config.bundle.externals,
         output: {
           file: path.join(process.cwd(), config.dist, 'fesm5', `${packageJson.name}.js`),
@@ -201,12 +201,12 @@ gulp.task('build:bundle', async () => {
         ]
       });
 
-      await bundleBuild(fesm5config, 'ES5');
+      await bundleBuild(es5config, 'ES5');
     }
 
     if (config.output.esnext) {
       // FESM+ESNEXT flat module bundle.
-      const fesm2015config = merge({}, baseConfig, {
+      const esnextconfig = merge({}, baseConfig, {
         external: config.bundle.externals,
         output: {
           file: path.join(process.cwd(), config.dist, 'fesmnext', `${packageJson.name}.js`),
@@ -220,7 +220,7 @@ gulp.task('build:bundle', async () => {
         ]
       });
 
-      await bundleBuild(fesm2015config, 'ESNEXT');
+      await bundleBuild(esnextconfig, 'ESNEXT');
     }
   } catch (e) {
     console.log(chalk.red('[build:bundle] failure'));
