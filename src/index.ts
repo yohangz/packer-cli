@@ -45,27 +45,21 @@ switch (args[0]) {
     });
     break;
   case 'lint': {
-    if (args.length > 1) {
-      switch (args[1]) {
-        case '--style':
-          gulp.series('lint:style')(() => {
-            // no implementation
-          });
-          break;
-        case '--script':
-          gulp.series('lint:script')(() => {
-            // no implementation
-          });
-          break;
-        default:
+    if (args.includes('--style')) {
+      gulp.series('lint:style')(() => {
         // no implementation
-      }
+      });
+      break;
+    } else if (args.includes('--script')) {
+      gulp.series('lint:script')(() => {
+        // no implementation
+      });
+      break;
     } else {
       gulp.series('lint')(() => {
         // no implementation
       });
     }
-
     break;
   }
   default:

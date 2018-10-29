@@ -4,6 +4,7 @@ import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 
 import path from 'path';
 import { buildPlugin, extractBundleExternals, preBundlePlugins, resolvePlugins } from '../tasks/build-util';
+import { args } from '../tasks/util';
 import { parseScriptPreprocessorExtension } from '../tasks/parser';
 
 export default function karmaPackerPlugin() {
@@ -15,6 +16,15 @@ export default function karmaPackerPlugin() {
 
   const packerPreprocess = {};
   packerPreprocess[testGlob] = ['rollup'];
+
+  let coveragePlugins = [];
+  if (args.includes('--coverage')) {
+    coveragePlugins = [
+      rollupIstanbul({
+        exclude: [ testGlob, 'node_modules/**' ]
+      })
+    ];
+  }
 
   /**
    * This is just a normal Rollup config object,
@@ -36,9 +46,7 @@ export default function karmaPackerPlugin() {
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
       ...buildPlugin('bundle', false, false, config, typescript),
-      rollupIstanbul({
-        exclude: [ testGlob, 'node_modules/**' ]
-      })
+      ...coveragePlugins
     ]
   };
 
