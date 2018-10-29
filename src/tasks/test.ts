@@ -3,15 +3,19 @@ import path from 'path';
 import chalk from 'chalk';
 
 gulp.task('test', async () => {
-  const karma = require('karma');
+  try {
+    const karma = require('karma');
 
-  const server = new karma.Server({
-    configFile: path.join(process.cwd(), 'karma.conf.js'),
-    port: 9876
-  }, (exitCode) => {
-    console.log(chalk.blue(`Karma has exited with ${exitCode}`));
-    process.exit(exitCode);
-  });
+    const server = new karma.Server({
+      configFile: path.join(process.cwd(), 'karma.conf.js')
+    }, (exitCode) => {
+      console.log(chalk.blue(`Karma has exited with ${exitCode}`));
+      process.exit(exitCode);
+    });
 
-  server.start();
+    server.start();
+  } catch (e) {
+    console.error(e);
+    throw Error('task failure');
+  }
 });
