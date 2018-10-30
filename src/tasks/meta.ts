@@ -90,6 +90,12 @@ const packerSchema = {
           type: 'string',
           optional: true,
           def: ''
+        },
+        sourceMap: {
+          type: [ 'string', 'boolean' ],
+          optional: true,
+          pattern: /^(inline)$/,
+          def: true
         }
       }
     },

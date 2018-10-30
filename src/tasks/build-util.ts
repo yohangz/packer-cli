@@ -38,7 +38,7 @@ export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, 
     output: {
       banner,
       name: packageJson.name,
-      sourcemap: true
+      sourcemap: config.output.sourceMap
     }
   };
 };
@@ -68,7 +68,7 @@ export const rollupStyleBuildPlugin = (config: PackerConfig,
       }),
       postCssAutoPrefix
     ],
-    sourceMap: true
+    sourceMap: config.output.sourceMap
   });
 };
 

@@ -25,6 +25,7 @@ export interface PackerConfig {
     inlineStyle: boolean;
     stylesDir: string;
     namespace: string;
+    sourceMap: boolean | 'inline'
   };
   compiler: {
     buildMode: BuildMode,

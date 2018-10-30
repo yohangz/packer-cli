@@ -15,7 +15,8 @@
     "imageInlineLimit": 1000000,
     "inlineStyle": false,
     "stylesDir": "styles",
-    "namespace": ""
+    "namespace": "",
+    "sourceMaps": true
   },
   "compiler": {
     "buildMode": "node-cli",

@@ -52,6 +52,7 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
       inlineStyle: Boolean(options.bundleStyles),
       stylesDir: 'styles',
       namespace: options.namespace || '',
+      sourceMap: true
     },
     compiler: {
       buildMode: bundleBuildMode,
