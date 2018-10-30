@@ -113,13 +113,13 @@ const packerSchema = {
           type: 'string',
           optional: true,
           def: 'none',
-          pattern: /^(scss|sass|less|stylus|none)$/
+          pattern: /^(none|typescript)$/
         },
         stylePreprocessor: {
           type: 'string',
           optional: true,
           def: 'node',
-          pattern: /^(none|typescript)$/
+          pattern: /^(scss|sass|less|stylus|none)$/
         },
         styleSupport: {
           type: 'boolean',
