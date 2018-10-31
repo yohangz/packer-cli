@@ -180,11 +180,12 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
     },
     private: false,
     nyc: {
-      reporter: [
+      'reporter': [
         'lcov',
         'text-summary',
         'html'
-      ]
+      ],
+      'temp-dir': '.tmp/nyc_output'
     }
   };
 

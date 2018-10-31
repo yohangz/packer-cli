@@ -125,6 +125,7 @@
       "lcov",
       "text-summary",
       "html"
-    ]
+    ],
+    "temp-dir": ".tmp/nyc_output"
   }
 }
