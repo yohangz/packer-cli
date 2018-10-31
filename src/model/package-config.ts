@@ -29,5 +29,5 @@ export interface PackageConfig {
   fesm5?: string;
   esnext?: string;
   fesmnext?: string;
-  nyc: any;
+  nyc?: any;
 }
