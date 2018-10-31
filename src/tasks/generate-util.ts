@@ -131,6 +131,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       'test:coverage': 'packer test --coverage',
       'test:ci': 'CI=true packer test',
       'test:coverage:ci': 'CI=true packer test --coverage',
+      'clean': 'packer clean',
       'preversion': 'npm run build',
       'postversion': 'git push && git push --tags',
       'prerelease': 'npm run build',
