@@ -70,7 +70,8 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
     ],
     bundle: {
       externals: [
-        'handlebars/runtime'
+        'handlebars/runtime',
+        'assert'
       ],
       globals: {},
       mapExternals: true
@@ -162,6 +163,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       'eslint-plugin-node': '>=7.0.0',
       'eslint-plugin-promise': '>=4.0.0',
       'eslint-plugin-standard': '>=4.0.0',
+      'jasmine': '^3.3.0',
       'jasmine-core': '^3.1.0',
       'karma': '^3.0.0',
       'karma-chrome-launcher': '^2.2.0',
@@ -173,9 +175,17 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       'puppeteer': '^1.5.0',
       'stylelint-config-standard': '^18.2.0',
       'uglify-es': '^3.3.9',
+      'nyc': '^13.1.0',
       [cliPackageData.name]: `^${cliPackageData.version}`
     },
-    private: false
+    private: false,
+    nyc: {
+      reporter: [
+        'lcov',
+        'text-summary',
+        'html'
+      ]
+    }
   };
 
   if (options.cliProject) {
@@ -397,6 +407,7 @@ export const configCopy = (packageConfig: PackageConfig,
       path.join(__dirname, '../resources/static/.eslintrc.yml'),
       path.join(__dirname, '../resources/static/.stylelintrc.json'),
       path.join(__dirname, '../resources/static/.travis.yml'),
+      path.join(__dirname, '../resources/static/jasmine.json'),
       path.join(__dirname, '../resources/static/karma.conf.js'),
       path.join(__dirname, '../resources/static/tsconfig.json'),
       path.join(__dirname, '../resources/static/tslint.json'),

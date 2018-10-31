@@ -80,7 +80,8 @@
       "@babel/runtime/helpers/asyncToGenerator",
       "@babel/runtime/helpers/defineProperty",
       "@babel/runtime/regenerator",
-      "schema-inspector"
+      "schema-inspector",
+      "glob"
     ],
     "globals": {},
     "mapExternals": false
