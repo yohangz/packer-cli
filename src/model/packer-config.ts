@@ -11,6 +11,7 @@ export interface PackerConfig {
   entry: string;
   source: string;
   dist: string;
+  tmp: string;
   output: {
     amd: {
       define: string;
@@ -50,7 +51,6 @@ export interface PackerConfig {
     helperDir: string,
     open: boolean,
     port: number,
-    scriptDir: string,
     serve: boolean
   };
   license: {

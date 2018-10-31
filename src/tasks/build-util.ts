@@ -48,7 +48,7 @@ export const rollupStyleBuildPlugin = (config: PackerConfig,
                                        watch: boolean,
                                        minify: boolean,
                                        main: boolean) => {
-  const styleDir = watch ? config.watch.scriptDir : config.dist;
+  const styleDir = watch ? path.join(config.tmp, 'watch') : config.dist;
   const fileName = packageJson.name + (minify ? '.min.css' : '.css');
   const styleDist = path.join(process.cwd(), styleDir, config.output.stylesDir, fileName);
 
@@ -103,7 +103,8 @@ export const buildPlugin = (packageModule: string,
     const buildConf: any = {
       check,
       tsconfig: `tsconfig.json`,
-      typescript: tsPackage
+      typescript: tsPackage,
+      cacheRoot: path.join(process.cwd(), config.tmp, '.rts2_cache')
     };
 
     if (generateDefinition) {

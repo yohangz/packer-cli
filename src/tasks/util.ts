@@ -1,5 +1,6 @@
 import { spawn, SpawnOptions, StdioOptions } from 'child_process';
 import fs from 'fs';
+import path from 'path';
 
 const isWindows = process.platform === 'win32';
 
@@ -21,8 +22,12 @@ export const runShellCommand = (command: string, inputArguments: string[], dir: 
   });
 };
 
-export const makeDir = (name: string): void => {
-  if (!fs.existsSync(name)) {
-    fs.mkdirSync(name);
+export const makeRelativeDirPath = (...fragments: string[]): void => {
+  let currentPath = process.cwd();
+  for (const fragment of fragments) {
+    currentPath = path.join(currentPath, fragment);
+    if (!fs.existsSync(currentPath)) {
+      fs.mkdirSync(currentPath);
+    }
   }
 };

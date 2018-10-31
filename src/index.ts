@@ -40,7 +40,7 @@ switch (args[0]) {
     });
     break;
   case 'clean':
-    gulp.series('build:clean', 'watch:clean')(() => {
+    gulp.series('clean')(() => {
       // no implementation
     });
     break;

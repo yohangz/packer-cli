@@ -38,6 +38,7 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
     entry: entryFile,
     source: 'src',
     dist: 'dist',
+    tmp: '.tmp',
     output: {
       amd: {
         define: '',
@@ -83,7 +84,7 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
     ],
     testFramework: (options.testFramework || 'jasmine') as TestFramework,
     watch: {
-      scriptDir: '.tmp',
+      // scriptDir: '.tmp/watch',
       demoDir: 'demo/watch',
       helperDir: 'demo/helper',
       open: true,
@@ -316,7 +317,7 @@ export const demoCopy = (packerConfig: PackerConfig, packageName: string, projec
         projectName: packageName,
         inlineStyle: packerConfig.output.inlineStyle,
         namespace: packerConfig.output.namespace,
-        watchDir: packerConfig.watch.scriptDir,
+        watchDir: path.join(packerConfig.tmp, 'watch'),
         distDir: packerConfig.dist,
         require: isAmd,
         iife: isIife,

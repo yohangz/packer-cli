@@ -4,10 +4,10 @@ import path from 'path';
 
 import { readConfig } from './meta';
 
-gulp.task('watch:clean', () => {
+gulp.task('tmp:clean', () => {
   try {
     const config = readConfig();
-    return gulp.src([path.join(process.cwd(), '.rpt2_cache'), path.join(process.cwd(), config.watch.scriptDir)], {
+    return gulp.src([path.join(process.cwd(), config.tmp)], {
       allowEmpty: true,
       read: false
     })
@@ -21,7 +21,7 @@ gulp.task('watch:clean', () => {
 gulp.task('build:clean', () => {
   try {
     const config = readConfig();
-    return gulp.src([path.join(process.cwd(), '.rpt2_cache'), path.join(process.cwd(), config.dist)], {
+    return gulp.src([path.join(process.cwd(), config.dist)], {
       allowEmpty: true,
       read: false
     })
@@ -32,4 +32,4 @@ gulp.task('build:clean', () => {
   }
 });
 
-gulp.task('clean', gulp.series('watch:clean', 'build:clean'));
+gulp.task('clean', gulp.series('tmp:clean', 'build:clean'));

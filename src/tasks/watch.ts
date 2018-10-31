@@ -17,7 +17,7 @@ import {
 } from './build-util';
 
 import { readConfig, readPackageData } from './meta';
-import { makeDir } from './util';
+import { makeRelativeDirPath } from './util';
 
 gulp.task('build:watch', async () => {
   try {
@@ -27,14 +27,14 @@ gulp.task('build:watch', async () => {
     const banner = getBanner(config, packageJson);
     const baseConfig = getBaseConfig(config, packageJson, banner);
 
-    makeDir(config.watch.scriptDir);
+    makeRelativeDirPath(config.tmp, 'watch');
 
     let rollupServePlugins = [];
     if (config.watch.serve && config.output.format !== 'cjs') {
       rollupServePlugins = [
         rollupServe({
           contentBase: [
-            path.join(process.cwd(), config.watch.scriptDir),
+            path.join(process.cwd(), config.tmp, 'watch'),
             path.join(process.cwd(), config.watch.demoDir),
             path.join(process.cwd(), config.watch.helperDir)
           ],
@@ -43,7 +43,7 @@ gulp.task('build:watch', async () => {
         }),
         rollupLivereload({
           watch: [
-            path.join(process.cwd(), config.watch.scriptDir),
+            path.join(process.cwd(), config.tmp, 'watch'),
             path.join(process.cwd(), config.watch.demoDir)
           ]
         })
@@ -54,7 +54,7 @@ gulp.task('build:watch', async () => {
     const watchConfig: RollupWatchOptions = merge({}, baseConfig, {
       external: externals,
       output: {
-        file: path.join(process.cwd(), config.watch.scriptDir, `${packageJson.name}.js`),
+        file: path.join(process.cwd(), config.tmp, 'watch', `${packageJson.name}.js`),
         format: config.output.format,
         globals: config.bundle.globals,
         name: config.output.namespace
@@ -97,4 +97,4 @@ gulp.task('build:watch', async () => {
   }
 });
 
-gulp.task('watch', gulp.series('watch:clean', 'build:watch'));
+gulp.task('watch', gulp.series('tmp:clean', 'build:watch'));
