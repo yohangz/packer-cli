@@ -2,6 +2,7 @@
   "entry": "index.ts",
   "source": "src",
   "dist": "dist",
+  "tmp": ".tmp",
   "output": {
     "amd": {
       "define": "",
@@ -88,7 +89,6 @@
   "pathReplacePatterns": [],
   "testFramework": "jasmine",
   "watch": {
-    "scriptDir": ".tmp",
     "demoDir": "demo/watch",
     "helperDir": "demo/helper",
     "open": true,
