@@ -261,7 +261,8 @@ Build configuration can be updated after project generation via ``.packerrc.json
     "imageInlineLimit": 1000000,
     "inlineStyle": false,
     "stylesDir": "styles",
-    "namespace": "my.lib"
+    "namespace": "my.lib",
+    "sourceMap": true
   },
   "compiler": {
     "buildMode": "browser",
