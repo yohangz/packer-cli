@@ -272,3 +272,7 @@ export const readBabelConfig = (esVersion: string): BabelConfig => {
 export const readBannerTemplate = (): string => {
   return fs.readFileSync(path.join(process.cwd(), '.packer/banner.hbs'), 'utf8');
 };
+
+export const readSummary = (): string => {
+  return fs.readFileSync(path.join(__dirname, '../resources/dynamic/packer-help.txt'), 'utf8');
+};
