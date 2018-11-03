@@ -1,65 +1,76 @@
 import gulp from 'gulp';
-import chalk from 'chalk';
 import path from 'path';
 
 import { readConfig } from './meta';
 import { runShellCommand } from './util';
+import logger from '../common/logger';
 
-gulp.task('lint:style', (done) => {
+gulp.task('lint:style', async (done) => {
+  const log = logger.create('[lint:style]');
   try {
     const config = readConfig();
 
     if (config.compiler.styleSupport) {
-      console.log(chalk.blue('[Style Lint]'));
+      log.info('start');
+
       const src = path.join(config.source, '**/*.{styl,scss,sass,less,css}');
-      runShellCommand('stylelint', [src], process.cwd())
-        .then(() => {
-          done();
-        });
+      log.trace('style source path: %s', src);
+
+      await runShellCommand('stylelint', [src], process.cwd(), log);
+      log.info('end');
+      done();
     } else {
+      log.trace('skip style lint');
       done();
     }
   } catch (e) {
-    console.error(e);
-    throw Error('task failure');
+    log.error('failure: %s\n', e.stack || e.message);
   }
 });
 
-gulp.task('lint:script:ts', (done) => {
+gulp.task('lint:script:ts', async (done) => {
+  const log = logger.create('[lint:script:ts]');
   try {
     const config = readConfig();
 
     if (config.compiler.scriptPreprocessor === 'typescript') {
-      console.log(chalk.blue('[TS Lint]'));
+      log.info('start');
+
       const src = path.join(config.source, '**/*.{ts,tsx}');
-      runShellCommand('tslint', [src], process.cwd()).then(() => {
-        done();
-      });
+      log.trace('script source path: %s', src);
+
+      await runShellCommand('tslint', [src], process.cwd(), log);
+      log.info('end');
+      done();
     } else {
+      log.trace('skip script tslint');
       done();
     }
   } catch (e) {
-    console.error(e);
-    throw Error('task failure');
+    log.error('failure: %s\n', e.stack || e.message);
   }
 });
 
-gulp.task('lint:script:es', (done) => {
+gulp.task('lint:script:es', async (done) => {
+  const log = logger.create('[lint:script:es]');
   try {
     const config = readConfig();
 
     if (config.compiler.scriptPreprocessor !== 'typescript') {
-      console.log(chalk.blue('[ES Lint]'));
+      log.info('start');
+
       const src = path.join(config.source, '**/*.{js,mjs}');
-      runShellCommand('eslint', [src], process.cwd()).then(() => {
-        done();
-      });
+      log.trace('script source path: %s', src);
+
+      await runShellCommand('eslint', [src], process.cwd(), log);
+      log.info('end');
+      done();
     } else {
+      log.trace('skip script eslint');
       done();
     }
   } catch (e) {
-    console.error(e);
-    throw Error('task failure');
+    log.error('failure: %s\n', e.stack || e.message);
   }
 });
 
