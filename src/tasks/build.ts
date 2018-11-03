@@ -1,12 +1,16 @@
-import gulp from 'gulp';
 import path from 'path';
-import chalk from 'chalk';
+import gulp from 'gulp';
 import gulpFile from 'gulp-file';
-import merge from 'lodash/merge';
-import rollupUglify from '../plugins/rollup-plugin-uglify-es';
-import mergeStream from 'merge-stream';
 import chmod from 'gulp-chmod';
+import merge from 'lodash/merge';
+import mergeStream from 'merge-stream';
+import { RollupFileOptions } from 'rollup';
 
+import rollupUglify from '../plugins/rollup-plugin-uglify-es';
+import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
+
+import { PackageConfig } from '../model/package-config';
+import logger from '../common/logger';
 import { readConfig, readPackageData } from './meta';
 import {
   buildPlugin,
@@ -20,12 +24,10 @@ import {
   rollupStyleBuildPlugin
 } from './build-util';
 
-import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
-import { PackageConfig } from '../model/package-config';
-import { RollupFileOptions } from 'rollup';
-
-gulp.task('build:copy:essentials', () => {
+gulp.task('build:copy:essentials', async () => {
+  const log = logger.create('[build:copy:essentials]');
   try {
+    log.trace('start');
     const packageJson = readPackageData();
     const config = readConfig();
 
@@ -94,20 +96,20 @@ gulp.task('build:copy:essentials', () => {
       allowEmpty: true
     })
       .on('error', (e) => {
-        console.error(e);
-        throw Error('task failure');
+        log.error('copy source missing: %s\n', e.stack || e.message);
       })
       .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
       .pipe(gulp.dest(path.join(process.cwd(), config.dist)));
 
     if (config.compiler.buildMode !== 'node-cli') {
-      return packageFlatEssentials;
+      return packageFlatEssentials.on('finish', () => {
+        log.trace('finish');
+      });
     }
 
     const packageBin = gulp.src([path.join(process.cwd(), '.packer/bin.hbs')])
       .on('error', (e) => {
-        console.error(e);
-        throw Error('task failure');
+        log.error('bin source missing: %s\n', e.stack || e.message);
       })
       .pipe(gulpHbsRuntime({
         packageName: packageJson.name
@@ -128,18 +130,19 @@ gulp.task('build:copy:essentials', () => {
           read: true,
           write: true
         }
-      })) // Grand read and execute permission.
+      })) // Grant read and execute permission.
       .pipe(gulp.dest(path.join(process.cwd(), config.dist, 'bin')));
 
     return mergeStream(packageFlatEssentials, packageBin);
   } catch (e) {
-    console.error(e);
-    throw Error('task failure');
+    log.error('failure: %s\n', e.stack || e.message);
   }
 });
 
 gulp.task('build:bundle', async () => {
+  const log = logger.create('[build:bundle]');
   try {
+    log.trace(' start');
     const typescript = require('typescript');
     const config = readConfig();
     const packageJson = readPackageData();
@@ -166,7 +169,8 @@ gulp.task('build:bundle', async () => {
       ]
     });
 
-    await bundleBuild(flatConfig, 'FLAT');
+    log.trace('flat bundle rollup config:\n%o', flatConfig);
+    await bundleBuild(flatConfig, 'flat', log);
 
     if (config.output.minBundle) {
       // minified flat bundle.
@@ -193,7 +197,8 @@ gulp.task('build:bundle', async () => {
         ]
       });
 
-      await bundleBuild(minifiedFlatConfig, 'FLAT MIN');
+      log.trace('flat minified bundle rollup config:\n%o', minifiedFlatConfig);
+      await bundleBuild(minifiedFlatConfig, 'flat minified', log);
     }
 
     if (config.output.es5) {
@@ -212,7 +217,8 @@ gulp.task('build:bundle', async () => {
         ]
       });
 
-      await bundleBuild(es5config, 'ES5');
+      log.trace('es5 bundle rollup config:\n%o', es5config);
+      await bundleBuild(es5config, 'es5', log);
     }
 
     if (config.output.esnext) {
@@ -231,12 +237,13 @@ gulp.task('build:bundle', async () => {
         ]
       });
 
-      await bundleBuild(esnextConfig, 'ESNEXT');
+      log.trace('esnext bundle rollup config:\n%o', esnextConfig);
+      await bundleBuild(esnextConfig, 'esnext', log);
     }
+
+    log.trace( 'end');
   } catch (e) {
-    console.log(chalk.red('[build:bundle] failure'));
-    console.error(e);
-    throw Error('task failure');
+    log.error('failure: %s\n', e.stack || e.message);
   }
 });
 
