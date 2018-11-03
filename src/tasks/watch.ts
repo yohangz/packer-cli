@@ -5,7 +5,7 @@ import rollupLivereload from 'rollup-plugin-livereload';
 import merge from 'lodash/merge';
 import rollupProgress from 'rollup-plugin-progress';
 import { RollupWatchOptions, watch } from 'rollup';
-import chalk from 'chalk';
+
 import {
   buildPlugin,
   extractBundleExternals,
@@ -18,8 +18,10 @@ import {
 
 import { readConfig, readPackageData } from './meta';
 import { makeRelativeDirPath } from './util';
+import logger from '../common/logger';
 
 gulp.task('build:watch', async () => {
+  const log = logger.create('[test]');
   try {
     const typescript = require('typescript');
     const config = readConfig();
@@ -31,6 +33,7 @@ gulp.task('build:watch', async () => {
 
     let rollupServePlugins = [];
     if (config.watch.serve && config.output.format !== 'cjs') {
+      log.trace('set serve plugins');
       rollupServePlugins = [
         rollupServe({
           contentBase: [
@@ -71,29 +74,27 @@ gulp.task('build:watch', async () => {
         exclude: ['node_modules/**']
       }
     });
+    log.trace('rollup config:\n%o', watchConfig);
 
     const watcher = await watch([watchConfig]);
     watcher.on('event', (event) => {
       switch (event.code) {
         case 'START':
-          console.log(chalk.blue('[WATCH] ') + chalk.yellow('bundling start'));
+          log.info('%s - %s', 'watch', 'bundling start');
           break;
         case 'END':
-          console.log(chalk.blue('[WATCH] ') + chalk.yellow('bundling end'));
+          log.info('%s - %s', 'watch', 'bundling end');
           break;
         case 'ERROR':
-          console.log(chalk.blue('[WATCH] ') + chalk.red('bundling failure'));
-          console.log(event.error);
+          log.error('%s - %s\n%o', 'watch', 'bundling failure', event.error);
           break;
         case 'FATAL':
-          console.log(chalk.blue('[WATCH] ') + chalk.red('bundling crashed'));
-          console.log(event);
+          log.error('%s - %s\n%o', 'watch', 'bundling crashed', event);
           break;
       }
     });
-  } catch (error) {
-    console.log(chalk.blue('[WATCH] ') + chalk.red('watch task failure'));
-    console.error(error);
+  } catch (e) {
+    log.error('failure: %s\n', e.stack || e.message);
   }
 });
 
