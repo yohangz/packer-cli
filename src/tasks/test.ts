@@ -1,14 +1,17 @@
 import gulp from 'gulp';
 import path from 'path';
 import chalk from 'chalk';
-import { rollup, RollupFileOptions, RollupWatchOptions, watch } from 'rollup';
-import rollupProgress from 'rollup-plugin-progress';
 import merge from 'lodash/merge';
 import fs from 'fs';
 import glob from 'glob';
+import { rollup, RollupFileOptions, RollupWatchOptions, watch } from 'rollup';
+import rollupProgress from 'rollup-plugin-progress';
+
 import { args, makeRelativeDirPath, runShellCommand } from './util';
 import { readConfig, readPackageData } from './meta';
 import { parseScriptPreprocessorExtension } from './parser';
+import { PackerConfig } from '../model/packer-config';
+import { Logger } from '../common/logger';
 import {
   buildPlugin,
   extractBundleExternals,
@@ -17,31 +20,31 @@ import {
   preBundlePlugins, resolvePlugins,
   rollupStyleBuildPlugin
 } from './build-util';
-import { PackerConfig } from '../model/packer-config';
+import logger from '../common/logger';
 
-const runNodeUnitTest = (config: PackerConfig): void => {
+const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void> => {
   if (args.includes('--coverage')) {
     switch (config.testFramework) {
       case 'jasmine':
-        runShellCommand('nyc', ['jasmine', 'JASMINE_CONFIG_PATH=jasmine.json'], process.cwd());
+        await runShellCommand('nyc', ['jasmine', 'JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
         break;
       case 'mocha':
-        runShellCommand('nyc', ['mocha', path.join(config.tmp, 'test/index.spec.js')], process.cwd());
+        await runShellCommand('nyc', ['mocha', path.join(config.tmp, 'test/index.spec.js')], process.cwd(), log);
         break;
     }
   } else {
     switch (config.testFramework) {
       case 'jasmine':
-        runShellCommand('jasmine', ['JASMINE_CONFIG_PATH=jasmine.json'], process.cwd());
+        await runShellCommand('jasmine', ['JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
         break;
       case 'mocha':
-        runShellCommand('mocha', [path.join(config.tmp, 'test/index.spec.js')], process.cwd());
+        await runShellCommand('mocha', [path.join(config.tmp, 'test/index.spec.js')], process.cwd(), log);
         break;
     }
   }
 };
 
-const buildUnitTestSource = async (config: PackerConfig, srcFile: string): Promise<void> => {
+const buildUnitTestSource = async (config: PackerConfig, srcFile: string, log: Logger): Promise<void> => {
   const typescript = require('typescript');
   const packageJson = readPackageData();
   const banner = getBanner(config, packageJson);
@@ -63,38 +66,37 @@ const buildUnitTestSource = async (config: PackerConfig, srcFile: string): Promi
       ...resolvePlugins(config),
       ...buildPlugin('bundle', false, false, config, typescript),
       rollupProgress()
-    ],
-
+    ]
   });
 
   if (process.env.CI) {
+    log.trace('rollup CI config:\n%o', rollupConfig);
     const bundle = await rollup(rollupConfig);
     await bundle.write(rollupConfig.output);
-    runNodeUnitTest(config);
+    await runNodeUnitTest(config, log);
   } else {
     const rollupWatchConfig: RollupWatchOptions = merge({}, rollupConfig, {
       watch: {
         exclude: ['node_modules/**']
       }
     });
+    log.trace('rollup config:\n%o', rollupWatchConfig);
 
     const watcher = await watch([rollupWatchConfig]);
-    watcher.on('event', (event) => {
+    watcher.on('event', async (event) => {
       switch (event.code) {
         case 'START':
-          console.log(chalk.blue('[WATCH] ') + chalk.yellow('bundling start'));
+          log.info('%s - %s', 'watch', 'bundling start');
           break;
         case 'END':
-          console.log(chalk.blue('[WATCH] ') + chalk.yellow('bundling end'));
-          runNodeUnitTest(config);
+          log.info('%s - %s', 'watch', 'bundling end');
+          await runNodeUnitTest(config, log);
           break;
         case 'ERROR':
-          console.log(chalk.blue('[WATCH] ') + chalk.red('bundling failure'));
-          console.log(event.error);
+          log.error('%s - %s\n%o', 'watch', 'bundling failure', event.error);
           break;
         case 'FATAL':
-          console.log(chalk.blue('[WATCH] ') + chalk.red('bundling crashed'));
-          console.log(event);
+          log.error('%s - %s\n%o', 'watch', 'bundling crashed', event);
           break;
       }
     });
@@ -102,20 +104,24 @@ const buildUnitTestSource = async (config: PackerConfig, srcFile: string): Promi
 };
 
 gulp.task('test', async () => {
+  const log = logger.create('[test]');
   try {
+    log.trace('start');
     const config = readConfig();
     if (config.compiler.buildMode === 'browser') {
+      log.trace('start test suite execution via karma');
       const karma = require('karma');
 
       const server = new karma.Server({
         configFile: path.join(process.cwd(), 'karma.conf.js')
       }, (exitCode) => {
-        console.log(chalk.blue(`Karma has exited with ${exitCode}`));
+        log.info('Karma has exited with %n', exitCode);
         process.exit(exitCode);
       });
 
       server.start();
     } else {
+      log.trace('start test suite execution node');
       makeRelativeDirPath(config.tmp, 'test');
 
       let masterSpecCode = '';
@@ -124,14 +130,16 @@ gulp.task('test', async () => {
       files.forEach((file) => {
         masterSpecCode += `import '${file}';\n`;
       });
+      log.trace('combined test spec code:\n%s', masterSpecCode);
 
       const srcFile = path.join(process.cwd(), config.tmp, `test/index.spec.${fileExtension}`);
+      log.trace('combined test spec file path:\n%s', srcFile);
+
       fs.writeFileSync(srcFile, masterSpecCode);
 
-      await buildUnitTestSource(config, srcFile);
+      await buildUnitTestSource(config, srcFile, log);
     }
   } catch (e) {
-    console.error(e);
-    throw Error('task failure');
+    log.error('failure: %s\n', e.stack || e.message);
   }
 });
