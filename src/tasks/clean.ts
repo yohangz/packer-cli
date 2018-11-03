@@ -6,36 +6,32 @@ import { readConfig } from './meta';
 import logger from '../common/logger';
 
 gulp.task('tmp:clean', async () => {
+  const log = logger.create('[tmp:clean]');
   try {
-    logger.trace('[tmp:clean] start');
+    log.trace('start');
     const config = readConfig();
     return gulp.src([path.join(process.cwd(), config.tmp)], {
         allowEmpty: true,
         read: false
       })
-      .pipe(clean())
-      .on('end', () => {
-        logger.trace('[tmp:clean] end');
-      });
+      .pipe(clean());
   } catch (e) {
-    logger.error('[tmp:clean] task failure:\n', e.stack || e.message);
+    log.error('task failure:\n', e.stack || e.message);
   }
 });
 
 gulp.task('build:clean', async () => {
+  const log = logger.create('[build:clean]');
   try {
-    logger.trace('[build:clean] start');
+    log.trace('start');
     const config = readConfig();
     return gulp.src([path.join(process.cwd(), config.dist)], {
         allowEmpty: true,
         read: false
       })
-      .pipe(clean())
-      .on('end', () => {
-        logger.trace('[build:clean] end');
-      });
+      .pipe(clean());
   } catch (e) {
-    logger.error('[tmp:clean] task failure:\n', e.message, e.stack);
+    log.error('task failure:\n', e.message, e.stack);
   }
 });
 
