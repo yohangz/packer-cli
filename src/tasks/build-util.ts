@@ -18,9 +18,12 @@ import rollupProgress from 'rollup-plugin-progress';
 import rollupFilesize from 'rollup-plugin-filesize';
 
 import chalk from 'chalk';
+
 import { readBabelConfig, readBannerTemplate } from './meta';
 import { PackageConfig } from '../model/package-config';
 import { PackerConfig } from '../model/packer-config';
+import logger, { Logger } from '../common/logger';
+import { LogLevel } from '../model/log-level';
 
 export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
   if (config.license.banner) {
@@ -147,27 +150,25 @@ export const preBundlePlugins = (config: PackerConfig) => {
 };
 
 export const postBundlePlugins = () => {
-  return [
-    rollupProgress(),
-    rollupFilesize({
-      render: (options, size, gzippedSize) => {
-        return chalk.yellow(`Bundle size: ${chalk.red(size)}, Gzipped size: ${chalk.red(gzippedSize)}`);
-      }
-    })
-  ];
+  if (logger.level <= LogLevel.INFO) {
+    return [
+      rollupProgress(),
+      rollupFilesize({
+        render: (options, size, gzippedSize) => {
+          return chalk.yellow(`bundle size: ${chalk.red(size)}, gzipped size: ${chalk.red(gzippedSize)}`);
+        }
+      })
+    ];
+  }
+
+  return [];
 };
 
-export const bundleBuild = async (config: RollupFileOptions, type: string) => {
-  try {
-    console.log(chalk.blue(`${type} bundle build start`));
-    const bundle = await rollup(config);
-    await bundle.write(config.output);
-    console.log(chalk.blue(`${type} bundle build end`));
-  } catch (error) {
-    console.log(chalk.red(`${type} bundle build Failure`));
-    console.log(error);
-    throw error;
-  }
+export const bundleBuild = async (config: RollupFileOptions, type: string, log: Logger) => {
+  log.info('%s bundle build start', type);
+  const bundle = await rollup(config);
+  await bundle.write(config.output);
+  log.info('%s bundle build end', type);
 };
 
 export const extractBundleExternals = (config: PackerConfig) => {

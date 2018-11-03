@@ -1,10 +1,12 @@
 import path from 'path';
 import fs from 'fs';
+import chalk from 'chalk';
 import * as inspector from 'schema-inspector';
 
 import { PackerConfig } from '../model/packer-config';
 import { PackageConfig } from '../model/package-config';
 import { BabelConfig } from '../model/babel-config';
+import { Logger } from '../common/logger';
 
 const packerSchema = {
   type: 'object',
@@ -246,15 +248,21 @@ const packerSchema = {
   }
 };
 
+let configData: PackerConfig = null;
+
 export const readConfig = (): PackerConfig => {
+  if (configData) {
+    return configData;
+  }
+
   const packerConfig = require(path.join(process.cwd(), '.packerrc.json'));
   const validation = inspector.validate(packerSchema, packerConfig);
   if (!validation.valid) {
     throw new Error(validation.format());
   }
 
-  const result = inspector.sanitize(validation, packerConfig);
-  return result.data;
+  configData = inspector.sanitize(validation, packerConfig).data;
+  return configData;
 };
 
 export const readPackageData = (): PackageConfig => {
@@ -275,4 +283,14 @@ export const readBannerTemplate = (): string => {
 
 export const readSummary = (): string => {
   return fs.readFileSync(path.join(__dirname, '../resources/dynamic/packer-help.txt'), 'utf8');
+};
+
+export const isValidProject = (log: Logger): boolean => {
+  const hasPackerConfig = fs.existsSync(path.join(process.cwd(), '.packerrc.json'));
+  if (!hasPackerConfig) {
+    log.warn('Current directory does not contain packer config.\n%s "%s %s"',
+      chalk.reset('Generate new project via'), chalk.blue('packer generate'), chalk.green('<project name>'));
+  }
+
+  return hasPackerConfig;
 };
