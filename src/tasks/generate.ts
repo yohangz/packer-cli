@@ -7,6 +7,8 @@ import path from 'path';
 import mergeStream from 'merge-stream';
 
 import { args } from './util';
+import logger from '../common/logger';
+
 import { parseStylePreprocessorExtension } from './parser';
 import {
   assetCopy,
@@ -24,9 +26,12 @@ import {
 } from './generate-util';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
+import chalk from 'chalk';
 
-gulp.task('generate', (done) => {
+gulp.task('generate', async (done) => {
+  const log = logger.create('[generate]');
   try {
+    log.trace('start');
     const questions: Questions = [
       {
         message: 'Give us a small description about the library (optional)?',
@@ -213,8 +218,8 @@ gulp.task('generate', (done) => {
     ];
 
     if (args.length < 2) {
-      console.log('Please provide a library name to generate the project');
-      console.log('npx packer-cli generate my-library');
+      log.error('Please provide a library name to generate the project\n%s',
+        chalk.blue('npx packer-cli generate my-library'));
       done();
       return;
     }
@@ -222,43 +227,42 @@ gulp.task('generate', (done) => {
     const packageName = args[1];
     const packageNameValidity = npmValidate(packageName);
     if (!packageNameValidity.validForNewPackages) {
-      console.log(packageNameValidity.errors.join('\n'));
+      log.error(packageNameValidity.errors.join('\n'));
       done();
       return;
     }
 
-    inquirer.prompt(questions).then((options: PackerOptions) => {
-      const packerConfig = getPackerConfig(options);
-      const packageConfig = getPackageConfig(options, packageName);
-      const projectDir = path.join(process.cwd(), packageName);
-      const styleExt = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
+    const options: PackerOptions = await inquirer.prompt<PackerOptions>(questions);
+    const packerConfig = getPackerConfig(options);
+    const packageConfig = getPackageConfig(options, packageName);
+    const projectDir = path.join(process.cwd(), packageName);
+    const styleExt = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
 
-      const merged = mergeStream(assetCopy(projectDir), templateCopy(projectDir));
+    const merged = mergeStream(assetCopy(projectDir, log), templateCopy(projectDir, log));
 
-      if (packerConfig.compiler.styleSupport) {
-        merged.add(styleCopy(styleExt, projectDir));
-      }
+    if (packerConfig.compiler.styleSupport) {
+      merged.add(styleCopy(styleExt, projectDir, log));
+    }
 
-      if (packerConfig.compiler.buildMode !== 'node-cli') {
-        merged.add(demoCopy(packerConfig, packageName, projectDir));
-        merged.add(demoHelperScriptCopy(projectDir));
-      }
+    if (packerConfig.compiler.buildMode !== 'node-cli') {
+      merged.add(demoCopy(packerConfig, packageName, projectDir, log));
+      merged.add(demoHelperScriptCopy(projectDir, log));
+    }
 
-      merged.add([
-        sourceCopy(packerConfig, styleExt, projectDir),
-        licenseCopy(options, packerConfig, projectDir),
-        readmeCopy(packageConfig, projectDir),
-        babelConfigCopy(packerConfig, projectDir),
-        copyGitIgnore(projectDir),
-        copyPackerAssets(projectDir),
-        configCopy(packageConfig, packerConfig, options.isYarn, projectDir)
-      ]);
+    merged.add([
+      sourceCopy(packerConfig, styleExt, projectDir, log),
+      licenseCopy(options, packerConfig, projectDir, log),
+      readmeCopy(packageConfig, projectDir, log),
+      babelConfigCopy(packerConfig, projectDir, log),
+      copyGitIgnore(projectDir, log),
+      copyPackerAssets(projectDir, log),
+      configCopy(packageConfig, packerConfig, options.isYarn, projectDir, log)
+    ]);
 
-      merged.on('end', () => {
-        done();
-      });
+    merged.on('finish', () => {
+      done();
     });
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    log.error('task failure\n%s', e.stack || e.message);
   }
 });
