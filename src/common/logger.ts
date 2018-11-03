@@ -2,48 +2,58 @@ import chalk from 'chalk';
 import { args } from '../tasks/util';
 import { LogLevel } from '../model/log-level';
 
+const getLogLvel = (): LogLevel => {
+  let logLevel = LogLevel.INFO;
+  if (args.includes('--info')) {
+    logLevel = LogLevel.INFO;
+  } else if (args.includes('--error')) {
+    logLevel = LogLevel.ERROR;
+  } else if (args.includes('--warn')) {
+    logLevel = LogLevel.WARN;
+  } else if (args.includes('--trace')) {
+    logLevel = LogLevel.TRACE;
+  } else if (args.includes('--silent')) {
+    logLevel = LogLevel.SILENT;
+  }
+
+  return logLevel;
+};
+
 export class Logger {
-  private readonly level: LogLevel;
+  public static readonly level: LogLevel = getLogLvel();
+  public static create(taskName: string): Logger {
+    return new Logger(taskName);
+  }
 
-  public constructor() {
-    if (args.includes('--info')) {
-      this.level = LogLevel.INFO;
-    } else if (args.includes('--error')) {
-      this.level = LogLevel.ERROR;
-    } else if (args.includes('--warn')) {
-      this.level = LogLevel.WARN;
-    } else if (args.includes('--trace')) {
-      this.level = LogLevel.TRACE;
-    } else if (args.includes('--silent')) {
-      this.level = LogLevel.SILENT;
-    } else {
-      this.level = LogLevel.ERROR;
+  private readonly taskName: string;
+
+  private constructor(taskName: string) {
+    this.taskName = taskName ? `${chalk.green(taskName)} ` : '';
+  }
+
+  public error(message: string, ...optionalParams: any[]): void {
+    if (Logger.level <= LogLevel.ERROR) {
+      console.log(`${this.taskName}${chalk.red(message)}`, ...optionalParams);
     }
   }
 
-  public error(message?: any, ...optionalParams: any[]): void {
-    if (this.level <= LogLevel.ERROR) {
-      console.error(chalk.red(message), ...optionalParams);
+  public warn(message: string, ...optionalParams: any[]): void {
+    if (Logger.level <= LogLevel.WARN) {
+      console.log(`${this.taskName}${chalk.yellow(message)}`, ...optionalParams);
     }
   }
 
-  public warn(message?: any, ...optionalParams: any[]): void {
-    if (this.level <= LogLevel.WARN) {
-      console.warn(chalk.yellow(message), ...optionalParams);
+  public info(message: string, ...optionalParams: any[]): void {
+    if (Logger.level <= LogLevel.INFO) {
+      console.log(`${this.taskName}${chalk.blue(message)}`, ...optionalParams);
     }
   }
 
-  public info(message?: any, ...optionalParams: any[]): void {
-    if (this.level <= LogLevel.INFO) {
-      console.info(chalk.blue(message), ...optionalParams);
-    }
-  }
-
-  public trace(message?: any, ...optionalParams: any[]): void {
-    if (this.level <= LogLevel.TRACE) {
-      console.info(chalk.gray(message), ...optionalParams);
+  public trace(message: string, ...optionalParams: any[]): void {
+    if (Logger.level <= LogLevel.TRACE) {
+      console.log(`${this.taskName}${message}`, ...optionalParams);
     }
   }
 }
 
-export default new Logger();
+export default Logger;
