@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { args } from '../tasks/util';
 import { LogLevel } from '../model/log-level';
 
-const getLogLvel = (): LogLevel => {
+const getLogLevel = (): LogLevel => {
   let logLevel = LogLevel.INFO;
   if (args.includes('--info')) {
     logLevel = LogLevel.INFO;
@@ -20,7 +20,7 @@ const getLogLvel = (): LogLevel => {
 };
 
 export class Logger {
-  public static readonly level: LogLevel = getLogLvel();
+  public static readonly level: LogLevel = getLogLevel();
   public static create(taskName: string): Logger {
     return new Logger(taskName);
   }
