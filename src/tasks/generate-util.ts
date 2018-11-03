@@ -15,6 +15,7 @@ import { ScriptPreprocessor } from '../model/script-preprocessor';
 import { BuildMode } from '../model/build-mode';
 import { PackerOptions } from '../model/packer-options';
 import { PackageConfig } from '../model/package-config';
+import { Logger } from '../common/logger';
 
 import ReadWriteStream = NodeJS.ReadWriteStream;
 
@@ -85,7 +86,6 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
     ],
     testFramework: (options.testFramework || 'jasmine') as TestFramework,
     watch: {
-      // scriptDir: '.tmp/watch',
       demoDir: 'demo/watch',
       helperDir: 'demo/helper',
       open: true,
@@ -198,237 +198,259 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
   return packageConfig;
 };
 
-export const styleCopy = (styleExt: string, projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${styleExt}`)
-    ])
-      .pipe(gulp.dest(path.join(projectDir, 'src/style')));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const styleCopy = (styleExt: string, projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy styles');
+
+  const styleGlob = path.join(__dirname, '../resources/dynamic/example/common/style', `**/*.${styleExt}`);
+  log.trace('style glob: %s', styleGlob);
+
+  return gulp.src([
+    styleGlob
+  ])
+    .pipe(gulp.dest(path.join(projectDir, 'src/style')));
 };
 
-export const templateCopy = (projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/example/common/templates/**/*')
-    ])
-      .pipe(gulp.dest(path.join(projectDir, 'src/templates')));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const templateCopy = (projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy templates');
+
+  const templatePath = path.join(__dirname, '../resources/dynamic/example/common/templates/**/*');
+  log.trace('template path: %s', templatePath);
+
+  return gulp.src([
+    templatePath
+  ])
+    .pipe(gulp.dest(path.join(projectDir, 'src/templates')));
 };
 
-export const assetCopy = (projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/example/common/assets/**/*')
-    ])
-      .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const assetCopy = (projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy assets');
+
+  const assetsPath  = path.join(__dirname, '../resources/dynamic/example/common/assets/**/*');
+  log.trace('assets path: %s', assetsPath);
+
+  return gulp.src([
+    assetsPath
+  ])
+    .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
 };
 
-export const sourceCopy = (packerConfig: PackerConfig, styleExt: string, projectDir: string): ReadWriteStream => {
-  try {
-    const jasmine = packerConfig.testFramework === 'jasmine';
-    const scriptExtension = parseScriptPreprocessorExtension(packerConfig.compiler.scriptPreprocessor);
-    const styleExtension = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
+export const sourceCopy = (packerConfig: PackerConfig, styleExt: string, projectDir: string,
+                           log: Logger): ReadWriteStream => {
+  log.trace('copy source');
+  const jasmine = packerConfig.testFramework === 'jasmine';
+  const scriptExtension = parseScriptPreprocessorExtension(packerConfig.compiler.scriptPreprocessor);
+  const styleExtension = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
 
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/example', scriptExtension, '**/*')
-    ])
-      .pipe(gulpHbsRuntime({
-        styleExt: styleExtension,
-        isJasmine: jasmine,
-        styleSupport: packerConfig.compiler.styleSupport,
-        cliProject: packerConfig.compiler.buildMode === 'node-cli'
-      }, {
-        replaceExt: ''
-      }))
-      .pipe(gulp.dest(path.join(projectDir, 'src')));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+  log.trace('script extension: "%s"\nstyle extension:\n "%s"', scriptExtension, styleExtension);
+
+  const exampleGlob = path.join(__dirname, '../resources/dynamic/example', scriptExtension, '**/*');
+  log.trace('example glob: %s', exampleGlob);
+
+  const templateData = {
+    styleExt: styleExtension,
+      isJasmine: jasmine,
+    styleSupport: packerConfig.compiler.styleSupport,
+    cliProject: packerConfig.compiler.buildMode === 'node-cli'
+  };
+  log.trace('template data: %o', templateData);
+
+  return gulp.src([
+    exampleGlob
+  ])
+    .pipe(gulpHbsRuntime(templateData, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(path.join(projectDir, 'src')));
 };
 
-export const licenseCopy = (packageConfig: PackerOptions, packerConfig: PackerConfig, projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/license', `${packerConfig.license}.hbs`)
-    ])
-      .on('error', (e) => {
-        console.error(e);
-        throw Error('task failure');
-      })
-      .pipe(gulpHbsRuntime({
-        year: packageConfig.year,
-        author: packageConfig.author
-      }, {
-        rename: 'LICENSE'
-      }))
-      .pipe(gulp.dest(projectDir));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const licenseCopy = (packageConfig: PackerOptions, packerConfig: PackerConfig,
+                            projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy license file');
+  const licenseFilePath = path.join(__dirname, '../resources/dynamic/license', `${packerConfig.license}.hbs`);
+  log.trace('license file path: %s', licenseFilePath);
+
+  const templateData = {
+    year: packageConfig.year,
+    author: packageConfig.author
+  };
+  log.trace('template data: %o', templateData);
+
+  return gulp.src([
+    licenseFilePath
+  ])
+    .on('error', (e) => {
+      log.error('missing license file template: %s\n', e.stack || e.message);
+    })
+    .pipe(gulpHbsRuntime(templateData, {
+      rename: 'LICENSE'
+    }))
+    .pipe(gulp.dest(projectDir));
 };
 
-export const readmeCopy = (packageConfig: PackageConfig, projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/README.md.hbs')
-    ])
-      .on('error', (e) => {
-        console.error(e);
-        throw Error('task failure');
-      })
-      .pipe(gulpHbsRuntime({
-        packageName: packageConfig.name,
-        packageDescription: packageConfig.description
-      }, {
-        replaceExt: ''
-      }))
-      .pipe(gulp.dest(projectDir));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const readmeCopy = (packageConfig: PackageConfig, projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy base dynamic and static config');
+
+  const templateData = {
+    packageName: packageConfig.name,
+    packageDescription: packageConfig.description
+  };
+  log.trace('template data: %o', templateData);
+
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/README.md.hbs')
+  ])
+    .on('error', (e) => {
+      log.error('missing README.md template: %s\n', e.stack || e.message);
+    })
+    .pipe(gulpHbsRuntime(templateData, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(projectDir));
 };
 
-export const demoHelperScriptCopy = (projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/demo/helper/**/*')
-    ])
-      .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const demoHelperScriptCopy = (projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy demo helper scripts');
+  return gulp.src([
+    path.join(__dirname, '../resources/dynamic/demo/helper/**/*')
+  ])
+    .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
 };
 
-export const demoCopy = (packerConfig: PackerConfig, packageName: string, projectDir: string): ReadWriteStream => {
-  try {
-    const isAmd = packerConfig.output.format === 'amd';
-    const isIife = packerConfig.output.format === 'umd'
-      || packerConfig.output.format === 'iife';
-    const isSystem = packerConfig.output.format === 'system';
-    const templateGlob = packerConfig.compiler.buildMode === 'browser' ? '*.html.hbs' : '*.js.hbs';
+export const demoCopy = (packerConfig: PackerConfig, packageName: string, projectDir: string,
+                         log: Logger): ReadWriteStream => {
+  log.trace('copy demo resources');
+  const isAmd = packerConfig.output.format === 'amd';
+  const isIife = packerConfig.output.format === 'umd'
+    || packerConfig.output.format === 'iife';
+  const isSystem = packerConfig.output.format === 'system';
+  const templateGlob = packerConfig.compiler.buildMode === 'browser' ? '*.html.hbs' : '*.js.hbs';
+  const demoTemplateGlob = path.join(__dirname, '../resources/dynamic/demo/**', templateGlob);
+  log.trace('demo template glob: %s', demoTemplateGlob);
 
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/demo/**', templateGlob)
-    ])
-      .pipe(gulpHbsRuntime({
-        projectName: packageName,
-        inlineStyle: packerConfig.output.inlineStyle,
-        namespace: packerConfig.output.namespace,
-        watchDir: path.join(packerConfig.tmp, 'watch'),
-        distDir: packerConfig.dist,
-        require: isAmd,
-        iife: isIife,
-        system: isSystem,
-        amdModule: packerConfig.output.amd.id
-      }, {
-        replaceExt: ''
-      }))
-      .pipe(gulp.dest(path.join(projectDir, 'demo')));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+  const templateData = {
+    projectName: packageName,
+    inlineStyle: packerConfig.output.inlineStyle,
+    namespace: packerConfig.output.namespace,
+    watchDir: path.join(packerConfig.tmp, 'watch'),
+    distDir: packerConfig.dist,
+    require: isAmd,
+    iife: isIife,
+    system: isSystem,
+    amdModule: packerConfig.output.amd.id
+  };
+  log.trace('template data: %o', templateData);
+
+  return gulp.src([
+    demoTemplateGlob
+  ])
+    .pipe(gulpHbsRuntime(templateData, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(path.join(projectDir, 'demo')));
 };
 
-export const babelConfigCopy = (packerConfig: PackerConfig, projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/babel/.*.hbs')
-    ])
-      .pipe(gulpHbsRuntime({
-        browserCompliant: packerConfig.compiler.buildMode === 'browser',
-      }, {
-        replaceExt: ''
-      }))
-      .pipe(gulp.dest(projectDir));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const babelConfigCopy = (packerConfig: PackerConfig, projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy babel config');
+  const babelConfigGlob = path.join(__dirname, '../resources/dynamic/babel/.*.hbs');
+  log.trace('babel config glob: %s', babelConfigGlob);
+
+  const templateData = {
+    browserCompliant: packerConfig.compiler.buildMode === 'browser',
+  };
+  log.trace('template data: %o', templateData);
+
+  return gulp.src([
+    babelConfigGlob
+  ])
+    .pipe(gulpHbsRuntime(templateData, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(projectDir));
 };
 
-export const copyGitIgnore = (projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/.gitignore.hbs')
-    ])
-      .on('error', (e) => {
-        console.error(e);
-        throw Error('task failure');
-      })
-      .pipe(gulpHbsRuntime({}, {
-        replaceExt: ''
-      }))
-      .pipe(gulp.dest(projectDir));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const copyGitIgnore = (projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy gitignore');
+  const gitignore = path.join(__dirname, '../resources/dynamic/.gitignore.hbs');
+  log.trace('.gitignore.hbs path: %s', gitignore);
+
+  return gulp.src([
+    gitignore
+  ])
+    .on('error', (e) => {
+      log.error('missing .gitignore template: %s\n', e.stack || e.message);
+    })
+    .pipe(gulpHbsRuntime({}, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(projectDir));
 };
 
-export const copyPackerAssets = (projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/packer/banner.hbs'),
-      path.join(__dirname, '../resources/dynamic/packer/bin.hbs')
-    ])
-      .on('error', (e) => {
-        console.error(e);
-        throw Error('task failure');
-      })
-      .pipe(gulp.dest(path.join(projectDir, '.packer')));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const copyPackerAssets = (projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy packer assets');
+  const banner = path.join(__dirname, '../resources/dynamic/packer/banner.hbs');
+  log.trace('banner template path: %s', banner);
+
+  const bin = path.join(__dirname, '../resources/dynamic/packer/bin.hbs');
+  log.trace('bin template path: %s', bin);
+
+  return gulp.src([
+    banner,
+    bin
+  ])
+    .on('error', (e) => {
+      log.error('missing packer asset: %s\n', e.stack || e.message);
+    })
+    .pipe(gulp.dest(path.join(projectDir, '.packer')));
 };
 
-export const configCopy = (packageConfig: PackageConfig,
-                           packerConfig: PackerConfig,
-                           isYarn: boolean,
-                           projectDir: string): ReadWriteStream => {
-  try {
-    return gulp.src([
-      path.join(__dirname, '../resources/static/.editorconfig'),
-      path.join(__dirname, '../resources/static/.eslintrc.yml'),
-      path.join(__dirname, '../resources/static/.stylelintrc.json'),
-      path.join(__dirname, '../resources/static/.travis.yml'),
-      path.join(__dirname, '../resources/static/jasmine.json'),
-      path.join(__dirname, '../resources/static/karma.conf.js'),
-      path.join(__dirname, '../resources/static/tsconfig.json'),
-      path.join(__dirname, '../resources/static/tslint.json'),
-    ])
-      .on('error', (e) => {
-        console.error(e);
-        throw Error('task failure');
-      })
-      .pipe(gulpFile('.packerrc.json', JSON.stringify(packerConfig, null, 2)))
-      .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
-      .on('end', () => {
-        if (!args.includes('--skipInstall')) {
-          runShellCommand(isYarn ? 'yarn' : 'npm', ['install'], projectDir).then(() => {
-            console.log('📦 package generated 🚀');
-          });
-        }
-      })
-      .pipe(gulp.dest(projectDir));
-  } catch (e) {
-    console.error(e);
-    throw Error('task failure');
-  }
+export const configCopy = (packageConfig: PackageConfig, packerConfig: PackerConfig, isYarn: boolean,
+                           projectDir: string, log: Logger): ReadWriteStream => {
+  log.trace('copy base dynamic and static config');
+  const editorConfig = path.join(__dirname, '../resources/static/.editorconfig');
+  log.trace('.editorconfig path: %s', editorConfig);
+
+  const eslintrc = path.join(__dirname, '../resources/static/.eslintrc.yml');
+  log.trace('eslintrc.yml path: %s', eslintrc);
+
+  const stylelintrc = path.join(__dirname, '../resources/static/.stylelintrc.json');
+  log.trace('.stylelintrc.json path: %s', stylelintrc);
+
+  const travis = path.join(__dirname, '../resources/static/.travis.yml');
+  log.trace('.travis.yml path: %s', travis);
+
+  const jasmine = path.join(__dirname, '../resources/static/jasmine.json');
+  log.trace('jasmine.json path: %s', jasmine);
+
+  const karma = path.join(__dirname, '../resources/static/karma.conf.js');
+  log.trace('karma.conf.js path: %s', karma);
+
+  const tsconfig = path.join(__dirname, '../resources/static/tsconfig.json');
+  log.trace('tsconfig.json path: %s', tsconfig);
+
+  const tslint = path.join(__dirname, '../resources/static/tslint.json');
+  log.trace('tslint.json path: %s', tslint);
+
+  return gulp.src([
+    editorConfig,
+    eslintrc,
+    stylelintrc,
+    travis,
+    jasmine,
+    karma,
+    tsconfig,
+    tslint
+  ])
+    .on('error', (e) => {
+      log.error('missing config file: %s\n', e.stack || e.message);
+    })
+    .pipe(gulpFile('.packerrc.json', JSON.stringify(packerConfig, null, 2)))
+    .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
+    .on('finish', () => {
+      if (!args.includes('--skipInstall')) {
+        runShellCommand(isYarn ? 'yarn' : 'npm', ['install'], projectDir, log).then(() => {
+          log.info('📦 package generated 🚀');
+        });
+      }
+    })
+    .pipe(gulp.dest(projectDir));
 };
