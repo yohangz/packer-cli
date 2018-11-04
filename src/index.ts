@@ -12,7 +12,7 @@ import { args } from './tasks/util';
 import logger from './common/logger';
 
 import karmaPackerPlugin from './plugins/karma-packer-plugin';
-import { isValidProject, readSummary } from './tasks/meta';
+import { isValidProject, readBanner, readSummary } from './tasks/meta';
 import chalk from 'chalk';
 
 const log = logger.create('');
@@ -27,6 +27,7 @@ switch (args[0]) {
     });
     break;
   case 'generate':
+    console.log(chalk.red(readBanner()));
     gulp.series('generate')(() => {
       // no implementation
     });

@@ -285,6 +285,10 @@ export const readSummary = (): string => {
   return fs.readFileSync(path.join(__dirname, '../resources/dynamic/packer-help.txt'), 'utf8');
 };
 
+export const readBanner = (): string => {
+  return fs.readFileSync(path.join(__dirname, '../resources/dynamic/banner.txt'), 'utf8');
+};
+
 export const isValidProject = (log: Logger): boolean => {
   const hasPackerConfig = fs.existsSync(path.join(process.cwd(), '.packerrc.json'));
   if (!hasPackerConfig) {
