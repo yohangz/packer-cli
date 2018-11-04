@@ -1,10 +1,11 @@
 import gulp from 'gulp';
-import rollupServe from 'rollup-plugin-serve';
-import path from 'path';
-import rollupLivereload from 'rollup-plugin-livereload';
 import merge from 'lodash/merge';
-import rollupProgress from 'rollup-plugin-progress';
+import path from 'path';
+
 import { RollupWatchOptions, watch } from 'rollup';
+import rollupServe from 'rollup-plugin-serve';
+import rollupLivereload from 'rollup-plugin-livereload';
+import rollupProgress from 'rollup-plugin-progress';
 
 import {
   buildPlugin,

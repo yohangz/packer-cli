@@ -1,9 +1,9 @@
 import gulp from 'gulp';
 import path from 'path';
-import chalk from 'chalk';
 import merge from 'lodash/merge';
 import fs from 'fs';
 import glob from 'glob';
+
 import { rollup, RollupFileOptions, RollupWatchOptions, watch } from 'rollup';
 import rollupProgress from 'rollup-plugin-progress';
 
