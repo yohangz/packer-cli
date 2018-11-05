@@ -13,9 +13,9 @@ export interface PackerOptions {
   scriptPreprocessor: ScriptPreprocessor;
   styleSupport: boolean;
   stylePreprocessor: StylePreprocessor;
-  bundleStyles: string;
-  browserCompliant: string;
-  cliProject: string;
+  bundleStyles: boolean;
+  browserCompliant: boolean;
+  cliProject: boolean;
   bundleFormat: BrowserBundleFormat|NodeBundleFormat;
   amdId: string;
   namespace: string;

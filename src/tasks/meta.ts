@@ -16,7 +16,7 @@ class MetaData {
   private cliPackageConfig: PackageConfig;
   private babelConfig: {
     [key: string]: BabelConfig
-  };
+  } = {};
   private bannerTemplate: string;
   private packerHelpSummary: string;
   private packerBanner: string;

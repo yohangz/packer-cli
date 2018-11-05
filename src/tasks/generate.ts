@@ -13,16 +13,24 @@ import { parseStylePreprocessorExtension } from './parser';
 import {
   assetCopy,
   babelConfigCopy,
-  configCopy, copyGitIgnore, copyPackerAssets,
+  commonConfigCopy,
+  copyGitIgnore,
+  copyPackerAssets,
   demoCopy,
-  demoHelperScriptCopy,
+  demoHelperRequireJsCopy,
+  demoHelperSystemJsCopy,
+  eslintConfigCopy,
   getPackageConfig,
   getPackerConfig,
+  jasmineConfigCopy,
+  karmaConfigCopy,
   licenseCopy,
   readmeCopy,
   sourceCopy,
   styleCopy,
-  templateCopy
+  styleLintConfigCopy,
+  templateCopy,
+  typescriptConfigCopy
 } from './generate-util';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
@@ -239,6 +247,7 @@ export default function init() {
       const projectDir = path.join(process.cwd(), packageName);
       const styleExt = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
 
+      // project example and demo copy tasks start
       const merged = mergeStream(assetCopy(projectDir, log), templateCopy(projectDir, log));
 
       if (packerConfig.compiler.styleSupport) {
@@ -247,17 +256,46 @@ export default function init() {
 
       if (packerConfig.compiler.buildMode !== 'node-cli') {
         merged.add(demoCopy(packerConfig, packageName, projectDir, log));
-        merged.add(demoHelperScriptCopy(projectDir, log));
+      }
+
+      if (packerConfig.compiler.buildMode === 'browser') {
+        if (packerConfig.output.format === 'system') {
+          merged.add(demoHelperSystemJsCopy(projectDir, log));
+        }
+
+        if (packerConfig.output.format === 'amd') {
+          merged.add(demoHelperRequireJsCopy(projectDir, log));
+        }
+      }
+
+      merged.add(sourceCopy(packerConfig, styleExt, projectDir, log));
+      // project example and demo copy tasks end
+
+      if (packerConfig.compiler.scriptPreprocessor === 'typescript') {
+        typescriptConfigCopy(projectDir, log);
+      } else {
+        eslintConfigCopy(projectDir, log);
+      }
+
+      if (packerConfig.compiler.buildMode === 'browser') {
+        karmaConfigCopy(projectDir, log);
+      } else {
+        if (packerConfig.testFramework === 'jasmine') {
+          jasmineConfigCopy(projectDir, log);
+        }
+      }
+
+      if (packerConfig.compiler.styleSupport) {
+        styleLintConfigCopy(projectDir, log);
       }
 
       merged.add([
-        sourceCopy(packerConfig, styleExt, projectDir, log),
         licenseCopy(options, packerConfig, projectDir, log),
         readmeCopy(packageConfig, projectDir, log),
         babelConfigCopy(packerConfig, projectDir, log),
         copyGitIgnore(projectDir, log),
         copyPackerAssets(projectDir, log),
-        configCopy(packageConfig, packerConfig, options.isYarn, projectDir, log)
+        commonConfigCopy(packageConfig, packerConfig, options.isYarn, projectDir, log)
       ]);
 
       merged.on('finish', () => {

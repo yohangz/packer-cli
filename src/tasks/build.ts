@@ -257,7 +257,6 @@ export default function init() {
       }
 
       await Promise.all(buildTasks);
-
       log.trace('end');
     } catch (e) {
       log.error('failure: %s\n', e.stack || e.message);
