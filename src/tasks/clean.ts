@@ -2,7 +2,7 @@ import gulp from 'gulp';
 import clean from 'gulp-clean';
 import path from 'path';
 
-import { readConfig } from './meta';
+import { meta } from './meta';
 import logger from '../common/logger';
 
 export default function init() {
@@ -10,7 +10,7 @@ export default function init() {
     const log = logger.create('[tmp:clean]');
     try {
       log.trace('start');
-      const config = readConfig(log);
+      const config = meta.readPackerConfig(log);
       return gulp.src([path.join(process.cwd(), config.tmp)], {
         allowEmpty: true,
         read: false
@@ -25,7 +25,7 @@ export default function init() {
     const log = logger.create('[build:clean]');
     try {
       log.trace('start');
-      const config = readConfig(log);
+      const config = meta.readPackerConfig(log);
       return gulp.src([path.join(process.cwd(), config.dist)], {
         allowEmpty: true,
         read: false

@@ -19,7 +19,7 @@ import rollupFilesize from 'rollup-plugin-filesize';
 
 import chalk from 'chalk';
 
-import { readBabelConfig, readBannerTemplate } from './meta';
+import { meta } from './meta';
 import { PackageConfig } from '../model/package-config';
 import { PackerConfig } from '../model/packer-config';
 import logger, { Logger } from '../common/logger';
@@ -27,7 +27,7 @@ import { LogLevel } from '../model/log-level';
 
 export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
   if (config.license.banner) {
-    const bannerTemplate = readBannerTemplate();
+    const bannerTemplate = meta.readBannerTemplate();
     return handlebars.compile(bannerTemplate)({
       config,
       pkg: packageJson
@@ -124,7 +124,7 @@ export const buildPlugin = (packageModule: string,
     plugins.push(rollupTypescript(buildConf));
   }
 
-  const babelConfig = readBabelConfig(packageModule);
+  const babelConfig = meta.readBabelConfig(packageModule);
   plugins.push(rollupBabel({
     babelrc: false,
     exclude: 'node_modules/**',

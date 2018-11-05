@@ -1,7 +1,7 @@
 import gulp from 'gulp';
 import path from 'path';
 
-import { readConfig } from './meta';
+import { meta } from './meta';
 import { runShellCommand } from './util';
 import logger from '../common/logger';
 
@@ -9,7 +9,7 @@ export default function init() {
   gulp.task('lint:style', async () => {
     const log = logger.create('[lint:style]');
     try {
-      const config = readConfig(log);
+      const config = meta.readPackerConfig(log);
 
       if (config.compiler.styleSupport) {
         log.info('start');
@@ -30,7 +30,7 @@ export default function init() {
   gulp.task('lint:script:ts', async () => {
     const log = logger.create('[lint:script:ts]');
     try {
-      const config = readConfig(log);
+      const config = meta.readPackerConfig(log);
 
       if (config.compiler.scriptPreprocessor === 'typescript') {
         log.info('start');
@@ -51,7 +51,7 @@ export default function init() {
   gulp.task('lint:script:es', async () => {
     const log = logger.create('[lint:script:es]');
     try {
-      const config = readConfig(log);
+      const config = meta.readPackerConfig(log);
 
       if (config.compiler.scriptPreprocessor !== 'typescript') {
         log.info('start');

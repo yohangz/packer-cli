@@ -7,7 +7,7 @@ import rollupProgress from 'rollup-plugin-progress';
 import { PackerConfig } from '../model/packer-config';
 import { Logger } from '../common/logger';
 import { args, runShellCommand } from './util';
-import { readPackageData } from './meta';
+import { meta } from './meta';
 import {
   buildPlugin,
   extractBundleExternals,
@@ -41,7 +41,7 @@ const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void>
 
 export const buildUnitTestSource = async (config: PackerConfig, srcFile: string, log: Logger): Promise<void> => {
   const typescript = require('typescript');
-  const packageJson = readPackageData();
+  const packageJson = meta.readPackageData();
   const banner = getBanner(config, packageJson);
   const baseConfig = getBaseConfig(config, packageJson, banner);
 

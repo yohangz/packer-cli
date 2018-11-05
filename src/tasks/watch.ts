@@ -17,7 +17,7 @@ import {
   rollupStyleBuildPlugin
 } from './build-util';
 
-import { readConfig, readPackageData } from './meta';
+import { meta } from './meta';
 import { makeRelativeDirPath } from './util';
 import logger from '../common/logger';
 
@@ -26,8 +26,8 @@ export default function init() {
     const log = logger.create('[test]');
     try {
       const typescript = require('typescript');
-      const config = readConfig(log);
-      const packageJson = readPackageData();
+      const config = meta.readPackerConfig(log);
+      const packageJson = meta.readPackageData();
       const banner = getBanner(config, packageJson);
       const baseConfig = getBaseConfig(config, packageJson, banner);
 

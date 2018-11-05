@@ -10,7 +10,7 @@ import initWatch from './tasks/watch';
 import initVersion from './tasks/version';
 import { args } from './tasks/util';
 
-import { isValidProject, readBanner, readSummary } from './tasks/meta';
+import { meta } from './tasks/meta';
 import logger from './common/logger';
 
 export const initPacker = () => {
@@ -26,7 +26,7 @@ export const initPacker = () => {
 
     switch (args[0]) {
       case '--help':
-        console.log(readSummary());
+        console.log(meta.readPackerHelpSummary());
         break;
       case '--version':
         gulp.series('version')(() => {
@@ -34,27 +34,27 @@ export const initPacker = () => {
         });
         break;
       case 'generate':
-        console.log(chalk.red(readBanner()));
+        console.log(chalk.red(meta.readPackerBanner()));
         gulp.series('generate')(() => {
           // no implementation
         });
         break;
       case 'build':
-        if (isValidProject(log)) {
+        if (meta.isValidProject(log)) {
           gulp.series('build')(() => {
             // no implementation
           });
         }
         break;
       case 'watch':
-        if (isValidProject(log)) {
+        if (meta.isValidProject(log)) {
           gulp.series('watch')(() => {
             // no implementation
           });
         }
         break;
       case 'test':
-        if (isValidProject(log)) {
+        if (meta.isValidProject(log)) {
           gulp.series('test')(() => {
             // no implementation
           });
@@ -66,7 +66,7 @@ export const initPacker = () => {
         });
         break;
       case 'lint': {
-        if (isValidProject(log)) {
+        if (meta.isValidProject(log)) {
           if (args.includes('--style')) {
             gulp.series('lint:style')(() => {
               // no implementation

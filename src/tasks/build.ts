@@ -10,7 +10,7 @@ import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 
 import { PackageConfig } from '../model/package-config';
 import logger from '../common/logger';
-import { readConfig, readPackageData } from './meta';
+import { meta } from './meta';
 import {
   buildPlugin,
   bundleBuild,
@@ -28,8 +28,8 @@ export default function init() {
     const log = logger.create('[build:copy:essentials]');
     try {
       log.trace('start');
-      const packageJson = readPackageData();
-      const config = readConfig(log);
+      const packageJson = meta.readPackageData();
+      const config = meta.readPackerConfig(log);
 
       const targetPackage: PackageConfig = {};
       const fieldsToCopy = [
@@ -110,8 +110,8 @@ export default function init() {
     const log = logger.create('[build:copy:bin]');
     try {
       log.trace('start');
-      const packageJson = readPackageData();
-      const config = readConfig(log);
+      const packageJson = meta.readPackageData();
+      const config = meta.readPackerConfig(log);
 
       if (config.compiler.buildMode !== 'node-cli') {
         log.trace('not a cli project: bin copy abort');
@@ -159,8 +159,8 @@ export default function init() {
     try {
       log.trace(' start');
       const typescript = require('typescript');
-      const config = readConfig(log);
-      const packageJson = readPackageData();
+      const config = meta.readPackerConfig(log);
+      const packageJson = meta.readPackageData();
       const banner = getBanner(config, packageJson);
       const baseConfig = getBaseConfig(config, packageJson, banner);
       const externals = extractBundleExternals(config);

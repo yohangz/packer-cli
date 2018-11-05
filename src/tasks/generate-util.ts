@@ -1,4 +1,4 @@
-import { readCLIPackageData } from './meta';
+import { meta } from './meta';
 import { parseScriptPreprocessorExtension, parseLicenseType, parseStylePreprocessorExtension } from './parser';
 import path from 'path';
 import gulp from 'gulp';
@@ -103,7 +103,7 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
 };
 
 export const getPackageConfig = (options: PackerOptions, packageName: string): PackageConfig => {
-  const cliPackageData = readCLIPackageData();
+  const cliPackageData = meta.readCLIPackageData();
 
   let projectAuthor = '';
   if (options.author && options.email) {

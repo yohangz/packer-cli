@@ -4,7 +4,7 @@ import fs from 'fs';
 import glob from 'glob';
 
 import { makeRelativeDirPath } from './util';
-import { readConfig } from './meta';
+import { meta } from './meta';
 import { parseScriptPreprocessorExtension } from './parser';
 import logger from '../common/logger';
 import { buildUnitTestSource } from './test-util';
@@ -14,7 +14,7 @@ export default function init() {
     const log = logger.create('[test]');
     try {
       log.trace('start');
-      const config = readConfig(log);
+      const config = meta.readPackerConfig(log);
       if (config.compiler.buildMode === 'browser') {
         log.trace('start test suite execution via karma');
         const karma = require('karma');
