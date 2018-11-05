@@ -6,10 +6,10 @@ import { runShellCommand } from './util';
 import logger from '../common/logger';
 
 export default function init() {
-  gulp.task('lint:style', async (done) => {
+  gulp.task('lint:style', async () => {
     const log = logger.create('[lint:style]');
     try {
-      const config = readConfig();
+      const config = readConfig(log);
 
       if (config.compiler.styleSupport) {
         log.info('start');
@@ -19,20 +19,18 @@ export default function init() {
 
         await runShellCommand('stylelint', [src], process.cwd(), log);
         log.info('end');
-        done();
       } else {
         log.trace('skip style lint');
-        done();
       }
     } catch (e) {
       log.error('failure: %s\n', e.stack || e.message);
     }
   });
 
-  gulp.task('lint:script:ts', async (done) => {
+  gulp.task('lint:script:ts', async () => {
     const log = logger.create('[lint:script:ts]');
     try {
-      const config = readConfig();
+      const config = readConfig(log);
 
       if (config.compiler.scriptPreprocessor === 'typescript') {
         log.info('start');
@@ -42,20 +40,18 @@ export default function init() {
 
         await runShellCommand('tslint', [src], process.cwd(), log);
         log.info('end');
-        done();
       } else {
         log.trace('skip script tslint');
-        done();
       }
     } catch (e) {
       log.error('failure: %s\n', e.stack || e.message);
     }
   });
 
-  gulp.task('lint:script:es', async (done) => {
+  gulp.task('lint:script:es', async () => {
     const log = logger.create('[lint:script:es]');
     try {
-      const config = readConfig();
+      const config = readConfig(log);
 
       if (config.compiler.scriptPreprocessor !== 'typescript') {
         log.info('start');
@@ -65,10 +61,8 @@ export default function init() {
 
         await runShellCommand('eslint', [src], process.cwd(), log);
         log.info('end');
-        done();
       } else {
         log.trace('skip script eslint');
-        done();
       }
     } catch (e) {
       log.error('failure: %s\n', e.stack || e.message);

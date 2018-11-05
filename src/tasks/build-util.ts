@@ -149,13 +149,14 @@ export const preBundlePlugins = (config: PackerConfig) => {
   ];
 };
 
-export const postBundlePlugins = () => {
+export const postBundlePlugins = (task: string, type: string) => {
   if (logger.level <= LogLevel.INFO) {
     return [
       rollupProgress(),
       rollupFilesize({
         render: (options, size, gzippedSize) => {
-          return chalk.yellow(`bundle size: ${chalk.red(size)}, gzipped size: ${chalk.red(gzippedSize)}`);
+          return chalk.yellow(
+            `${chalk.green(task)} ${type} bundle size: ${chalk.red(size)}, gzipped size: ${chalk.red(gzippedSize)}`);
         }
       })
     ];
@@ -164,7 +165,7 @@ export const postBundlePlugins = () => {
   return [];
 };
 
-export const bundleBuild = async (config: RollupFileOptions, type: string, log: Logger) => {
+export const bundleBuild = async (config: RollupFileOptions, type: string, log: Logger): Promise<void> => {
   log.info('%s bundle build start', type);
   const bundle = await rollup(config);
   await bundle.write(config.output);

@@ -6,11 +6,11 @@ import { readConfig } from './meta';
 import logger from '../common/logger';
 
 export default function init() {
-  gulp.task('tmp:clean', async () => {
+  gulp.task('tmp:clean', () => {
     const log = logger.create('[tmp:clean]');
     try {
       log.trace('start');
-      const config = readConfig();
+      const config = readConfig(log);
       return gulp.src([path.join(process.cwd(), config.tmp)], {
         allowEmpty: true,
         read: false
@@ -21,11 +21,11 @@ export default function init() {
     }
   });
 
-  gulp.task('build:clean', async () => {
+  gulp.task('build:clean',  () => {
     const log = logger.create('[build:clean]');
     try {
       log.trace('start');
-      const config = readConfig();
+      const config = readConfig(log);
       return gulp.src([path.join(process.cwd(), config.dist)], {
         allowEmpty: true,
         read: false
@@ -36,5 +36,5 @@ export default function init() {
     }
   });
 
-  gulp.task('clean', gulp.series('tmp:clean', 'build:clean'));
-};
+  gulp.task('clean', gulp.parallel('tmp:clean', 'build:clean'));
+}

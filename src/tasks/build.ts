@@ -3,7 +3,6 @@ import gulp from 'gulp';
 import gulpFile from 'gulp-file';
 import chmod from 'gulp-chmod';
 import merge from 'lodash/merge';
-import mergeStream from 'merge-stream';
 import { RollupFileOptions } from 'rollup';
 
 import rollupUglify from '../plugins/rollup-plugin-uglify-es';
@@ -25,12 +24,12 @@ import {
 } from './build-util';
 
 export default function init() {
-  gulp.task('build:copy:essentials', async () => {
+  gulp.task('build:copy:essentials', () => {
     const log = logger.create('[build:copy:essentials]');
     try {
       log.trace('start');
       const packageJson = readPackageData();
-      const config = readConfig();
+      const config = readConfig(log);
 
       const targetPackage: PackageConfig = {};
       const fieldsToCopy = [
@@ -91,24 +90,36 @@ export default function init() {
       }
 
       // copy the needed additional files in the 'dist' folder
-      const packageFlatEssentials = gulp.src((config.copy || []).map((copyFile: string) => {
+      return gulp.src((config.copy || []).map((copyFile: string) => {
         return path.join(process.cwd(), copyFile);
-      }), {
-        allowEmpty: true
-      })
+      }))
         .on('error', (e) => {
           log.error('copy source missing: %s\n', e.stack || e.message);
         })
         .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
-        .pipe(gulp.dest(path.join(process.cwd(), config.dist)));
+        .pipe(gulp.dest(path.join(process.cwd(), config.dist)))
+        .on('finish', () => {
+          log.trace('end');
+        });
+    } catch (e) {
+      log.error('failure: %s\n', e.stack || e.message);
+    }
+  });
+
+  gulp.task('build:copy:bin', () => {
+    const log = logger.create('[build:copy:bin]');
+    try {
+      log.trace('start');
+      const packageJson = readPackageData();
+      const config = readConfig(log);
 
       if (config.compiler.buildMode !== 'node-cli') {
-        return packageFlatEssentials.on('finish', () => {
-          log.trace('finish');
-        });
+        log.trace('not a cli project: bin copy abort');
+        log.trace('start');
+        return;
       }
 
-      const packageBin = gulp.src([path.join(process.cwd(), '.packer/bin.hbs')])
+      return gulp.src([path.join(process.cwd(), '.packer/bin.hbs')])
         .on('error', (e) => {
           log.error('bin source missing: %s\n', e.stack || e.message);
         })
@@ -132,25 +143,28 @@ export default function init() {
             write: true
           }
         })) // Grant read and execute permission.
-        .pipe(gulp.dest(path.join(process.cwd(), config.dist, 'bin')));
-
-      return mergeStream(packageFlatEssentials, packageBin);
+        .pipe(gulp.dest(path.join(process.cwd(), config.dist, 'bin')))
+        .on('finish', () => {
+          log.trace('end');
+        });
     } catch (e) {
       log.error('failure: %s\n', e.stack || e.message);
     }
   });
+
+  gulp.task('build:copy', gulp.parallel('build:copy:essentials', 'build:copy:bin'));
 
   gulp.task('build:bundle', async () => {
     const log = logger.create('[build:bundle]');
     try {
       log.trace(' start');
       const typescript = require('typescript');
-      const config = readConfig();
+      const config = readConfig(log);
       const packageJson = readPackageData();
       const banner = getBanner(config, packageJson);
       const baseConfig = getBaseConfig(config, packageJson, banner);
       const externals = extractBundleExternals(config);
-
+      const buildTasks: Array<Promise<void>> = [];
       // flat bundle.
       const flatConfig: RollupFileOptions = merge({}, baseConfig, {
         external: externals,
@@ -166,12 +180,12 @@ export default function init() {
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           ...buildPlugin('bundle', true, true, config, typescript),
-          ...postBundlePlugins()
+          ...postBundlePlugins('[build:bundle]', 'flat')
         ]
       });
 
       log.trace('flat bundle rollup config:\n%o', flatConfig);
-      await bundleBuild(flatConfig, 'flat', log);
+      buildTasks.push(bundleBuild(flatConfig, 'flat', log));
 
       if (config.output.minBundle) {
         // minified flat bundle.
@@ -194,12 +208,12 @@ export default function init() {
                 comments: /@preserve|@license/
               }
             }),
-            ...postBundlePlugins()
+            ...postBundlePlugins('[build:bundle]', 'flat minified')
           ]
         });
 
         log.trace('flat minified bundle rollup config:\n%o', minifiedFlatConfig);
-        await bundleBuild(minifiedFlatConfig, 'flat minified', log);
+        buildTasks.push(bundleBuild(minifiedFlatConfig, 'flat minified', log));
       }
 
       if (config.output.es5) {
@@ -214,12 +228,12 @@ export default function init() {
             rollupStyleBuildPlugin(config, packageJson, false, true, false),
             ...preBundlePlugins(config),
             ...buildPlugin('es5', false, true, config, typescript),
-            ...postBundlePlugins()
+            ...postBundlePlugins('[build:bundle]', 'es5')
           ]
         });
 
         log.trace('es5 bundle rollup config:\n%o', es5config);
-        await bundleBuild(es5config, 'es5', log);
+        buildTasks.push(bundleBuild(es5config, 'es5', log));
       }
 
       if (config.output.esnext) {
@@ -234,13 +248,15 @@ export default function init() {
             rollupStyleBuildPlugin(config, packageJson, false, true, false),
             ...preBundlePlugins(config),
             ...buildPlugin('esnext', false, true, config, typescript),
-            ...postBundlePlugins()
+            ...postBundlePlugins('[build:bundle]', 'esnext')
           ]
         });
 
         log.trace('esnext bundle rollup config:\n%o', esnextConfig);
-        await bundleBuild(esnextConfig, 'esnext', log);
+        buildTasks.push(bundleBuild(esnextConfig, 'esnext', log));
       }
+
+      await Promise.all(buildTasks);
 
       log.trace('end');
     } catch (e) {
@@ -248,5 +264,5 @@ export default function init() {
     }
   });
 
-  gulp.task('build', gulp.series('build:clean', 'build:copy:essentials', 'build:bundle'));
+  gulp.task('build', gulp.series('build:clean', gulp.parallel('build:copy', 'build:bundle')));
 }

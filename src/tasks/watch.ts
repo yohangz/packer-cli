@@ -26,7 +26,7 @@ export default function init() {
     const log = logger.create('[test]');
     try {
       const typescript = require('typescript');
-      const config = readConfig();
+      const config = readConfig(log);
       const packageJson = readPackageData();
       const banner = getBanner(config, packageJson);
       const baseConfig = getBaseConfig(config, packageJson, banner);

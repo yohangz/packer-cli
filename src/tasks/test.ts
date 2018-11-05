@@ -14,7 +14,7 @@ export default function init() {
     const log = logger.create('[test]');
     try {
       log.trace('start');
-      const config = readConfig();
+      const config = readConfig(log);
       if (config.compiler.buildMode === 'browser') {
         log.trace('start test suite execution via karma');
         const karma = require('karma');
