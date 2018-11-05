@@ -409,7 +409,7 @@ export const demoCopy = (packerConfig: PackerConfig, packageName: string, projec
 
   const templateData = {
     projectName: packageName,
-    inlineStyle: packerConfig.output.inlineStyle,
+    includeStyles: packerConfig.compiler.styleSupport && packerConfig.output.inlineStyle,
     namespace: packerConfig.output.namespace,
     watchDir: path.join(packerConfig.tmp, 'watch'),
     distDir: packerConfig.dist,
