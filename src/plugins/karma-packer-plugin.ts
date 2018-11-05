@@ -7,7 +7,7 @@ import { buildPlugin, extractBundleExternals, preBundlePlugins, resolvePlugins }
 import { args } from '../tasks/util';
 import { parseScriptPreprocessorExtension } from '../tasks/parser';
 
-export default function karmaPackerPlugin() {
+export function karmaPackerPlugin() {
   const typescript = require('typescript');
   const config = require(path.join(process.cwd(), '.packerrc.json'));
 

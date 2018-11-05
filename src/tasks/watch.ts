@@ -21,82 +21,84 @@ import { readConfig, readPackageData } from './meta';
 import { makeRelativeDirPath } from './util';
 import logger from '../common/logger';
 
-gulp.task('build:watch', async () => {
-  const log = logger.create('[test]');
-  try {
-    const typescript = require('typescript');
-    const config = readConfig();
-    const packageJson = readPackageData();
-    const banner = getBanner(config, packageJson);
-    const baseConfig = getBaseConfig(config, packageJson, banner);
+export default function init() {
+  gulp.task('build:watch', async () => {
+    const log = logger.create('[test]');
+    try {
+      const typescript = require('typescript');
+      const config = readConfig();
+      const packageJson = readPackageData();
+      const banner = getBanner(config, packageJson);
+      const baseConfig = getBaseConfig(config, packageJson, banner);
 
-    makeRelativeDirPath(config.tmp, 'watch');
+      makeRelativeDirPath(config.tmp, 'watch');
 
-    let rollupServePlugins = [];
-    if (config.watch.serve && config.output.format !== 'cjs') {
-      log.trace('set serve plugins');
-      rollupServePlugins = [
-        rollupServe({
-          contentBase: [
-            path.join(process.cwd(), config.tmp, 'watch'),
-            path.join(process.cwd(), config.watch.demoDir),
-            path.join(process.cwd(), config.watch.helperDir)
-          ],
-          open: config.watch.open,
-          port: config.watch.port
-        }),
-        rollupLivereload({
-          watch: [
-            path.join(process.cwd(), config.tmp, 'watch'),
-            path.join(process.cwd(), config.watch.demoDir)
-          ]
-        })
-      ];
+      let rollupServePlugins = [];
+      if (config.watch.serve && config.output.format !== 'cjs') {
+        log.trace('set serve plugins');
+        rollupServePlugins = [
+          rollupServe({
+            contentBase: [
+              path.join(process.cwd(), config.tmp, 'watch'),
+              path.join(process.cwd(), config.watch.demoDir),
+              path.join(process.cwd(), config.watch.helperDir)
+            ],
+            open: config.watch.open,
+            port: config.watch.port
+          }),
+          rollupLivereload({
+            watch: [
+              path.join(process.cwd(), config.tmp, 'watch'),
+              path.join(process.cwd(), config.watch.demoDir)
+            ]
+          })
+        ];
+      }
+
+      const externals = extractBundleExternals(config);
+      const watchConfig: RollupWatchOptions = merge({}, baseConfig, {
+        external: externals,
+        output: {
+          file: path.join(process.cwd(), config.tmp, 'watch', `${packageJson.name}.js`),
+          format: config.output.format,
+          globals: config.bundle.globals,
+          name: config.output.namespace
+        },
+        plugins: [
+          rollupStyleBuildPlugin(config, packageJson, true, false, true),
+          ...preBundlePlugins(config),
+          ...resolvePlugins(config),
+          ...buildPlugin('bundle', false, false, config, typescript),
+          ...rollupServePlugins,
+          rollupProgress()
+        ],
+        watch: {
+          exclude: ['node_modules/**']
+        }
+      });
+      log.trace('rollup config:\n%o', watchConfig);
+
+      const watcher = await watch([watchConfig]);
+      watcher.on('event', (event) => {
+        switch (event.code) {
+          case 'START':
+            log.info('%s - %s', 'watch', 'bundling start');
+            break;
+          case 'END':
+            log.info('%s - %s', 'watch', 'bundling end');
+            break;
+          case 'ERROR':
+            log.error('%s - %s\n%o', 'watch', 'bundling failure', event.error);
+            break;
+          case 'FATAL':
+            log.error('%s - %s\n%o', 'watch', 'bundling crashed', event);
+            break;
+        }
+      });
+    } catch (e) {
+      log.error('failure: %s\n', e.stack || e.message);
     }
+  });
 
-    const externals = extractBundleExternals(config);
-    const watchConfig: RollupWatchOptions = merge({}, baseConfig, {
-      external: externals,
-      output: {
-        file: path.join(process.cwd(), config.tmp, 'watch', `${packageJson.name}.js`),
-        format: config.output.format,
-        globals: config.bundle.globals,
-        name: config.output.namespace
-      },
-      plugins: [
-        rollupStyleBuildPlugin(config, packageJson, true, false, true),
-        ...preBundlePlugins(config),
-        ...resolvePlugins(config),
-        ...buildPlugin('bundle', false, false, config, typescript),
-        ...rollupServePlugins,
-        rollupProgress()
-      ],
-      watch: {
-        exclude: ['node_modules/**']
-      }
-    });
-    log.trace('rollup config:\n%o', watchConfig);
-
-    const watcher = await watch([watchConfig]);
-    watcher.on('event', (event) => {
-      switch (event.code) {
-        case 'START':
-          log.info('%s - %s', 'watch', 'bundling start');
-          break;
-        case 'END':
-          log.info('%s - %s', 'watch', 'bundling end');
-          break;
-        case 'ERROR':
-          log.error('%s - %s\n%o', 'watch', 'bundling failure', event.error);
-          break;
-        case 'FATAL':
-          log.error('%s - %s\n%o', 'watch', 'bundling crashed', event);
-          break;
-      }
-    });
-  } catch (e) {
-    log.error('failure: %s\n', e.stack || e.message);
-  }
-});
-
-gulp.task('watch', gulp.series('tmp:clean', 'build:watch'));
+  gulp.task('watch', gulp.series('tmp:clean', 'build:watch'));
+}

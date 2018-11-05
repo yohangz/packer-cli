@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 
-require('../bundle/{{packageName}}.js');
+const { initPacker } = require('../bundle/{{packageName}}.js');
+initPacker();
