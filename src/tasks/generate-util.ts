@@ -1,10 +1,11 @@
 import { meta } from './meta';
-import { parseScriptPreprocessorExtension, parseLicenseType, parseStylePreprocessorExtension } from './parser';
 import path from 'path';
 import gulp from 'gulp';
-import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 import gulpFile from 'gulp-file';
-import { runShellCommand, args } from './util';
+import { TaskFunction } from 'undertaker';
+import ReadWriteStream = NodeJS.ReadWriteStream;
+
+import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 import { DependencyMap } from '../model/dependency-map';
 import { TestFramework } from '../model/test-framework';
 import { StylePreprocessor } from '../model/style-preprocessor';
@@ -16,9 +17,7 @@ import { BuildMode } from '../model/build-mode';
 import { PackerOptions } from '../model/packer-options';
 import { PackageConfig } from '../model/package-config';
 import { Logger } from '../common/logger';
-
-import ReadWriteStream = NodeJS.ReadWriteStream;
-import { TaskFunction } from 'undertaker';
+import { parseScriptPreprocessorExtension, parseLicenseType, parseStylePreprocessorExtension } from './parser';
 
 export const getPackerConfig = (options: PackerOptions): PackerConfig => {
   const entryFile = 'index.' + parseScriptPreprocessorExtension(options.scriptPreprocessor);
