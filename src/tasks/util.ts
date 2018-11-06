@@ -1,7 +1,6 @@
 import { spawn, SpawnOptions, StdioOptions } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import froOwn from 'lodash/forOwn';
 
 import { Logger } from '../common/logger';
 

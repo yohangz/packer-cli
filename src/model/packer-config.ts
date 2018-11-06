@@ -32,7 +32,8 @@ export interface PackerConfig {
     buildMode: BuildMode,
     scriptPreprocessor: ScriptPreprocessor,
     stylePreprocessor: StylePreprocessor,
-    styleSupport: boolean
+    styleSupport: boolean,
+    concurrentBuild: boolean
   };
   assetPaths: string[];
   copy: string[];

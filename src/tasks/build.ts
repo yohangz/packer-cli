@@ -256,7 +256,13 @@ export default function init() {
         buildTasks.push(bundleBuild(esnextConfig, 'esnext', log));
       }
 
-      await Promise.all(buildTasks);
+      if (config.compiler.concurrentBuild) {
+        await Promise.all(buildTasks);
+      } else {
+        for (const task of buildTasks) {
+          await task;
+        }
+      }
       log.trace('end');
     } catch (e) {
       log.error('failure: %s\n', e.stack || e.message);

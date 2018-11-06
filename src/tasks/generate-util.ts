@@ -60,7 +60,8 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
       buildMode: bundleBuildMode,
       scriptPreprocessor: String(options.scriptPreprocessor) as ScriptPreprocessor,
       stylePreprocessor: (options.stylePreprocessor || 'none') as StylePreprocessor,
-      styleSupport: Boolean(options.styleSupport)
+      styleSupport: Boolean(options.styleSupport),
+      concurrentBuild: true
     },
     assetPaths: [
       'src/assets'
@@ -75,7 +76,7 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
         'assert'
       ],
       globals: {},
-      mapExternals: true
+      mapExternals: false
     },
     ignore: [],
     replacePatterns: [

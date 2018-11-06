@@ -32,7 +32,7 @@ class MetaData {
       log.warn('malformed packer config (.packerrc):\n%s', validation.format());
     }
 
-    this.packerConfig = inspector.sanitize(validation, packerConfig).data;
+    this.packerConfig = inspector.sanitize(packerSchema, packerConfig).data;
     return this.packerConfig;
   }
 

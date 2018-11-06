@@ -104,6 +104,7 @@ export const buildPlugin = (packageModule: string, generateDefinition: boolean, 
       check,
       tsconfig: `tsconfig.json`,
       typescript: tsPackage,
+      clean: config.compiler.concurrentBuild,
       cacheRoot: path.join(process.cwd(), config.tmp, '.rts2_cache')
     };
 

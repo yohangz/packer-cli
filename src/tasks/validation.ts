@@ -117,6 +117,11 @@ export const packerSchema = {
           type: 'boolean',
           optional: false,
           def: true
+        },
+        concurrentBuild: {
+          type: 'boolean',
+          optional: false,
+          def: true
         }
       }
     },
