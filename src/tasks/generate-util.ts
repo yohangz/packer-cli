@@ -18,6 +18,7 @@ import { PackageConfig } from '../model/package-config';
 import { Logger } from '../common/logger';
 
 import ReadWriteStream = NodeJS.ReadWriteStream;
+import { TaskFunction } from 'undertaker';
 
 export const getPackerConfig = (options: PackerOptions): PackerConfig => {
   const entryFile = 'index.' + parseScriptPreprocessorExtension(options.scriptPreprocessor);
@@ -128,6 +129,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       'lint:script': 'packer lint --script',
       'build': 'packer build',
       'watch': 'packer watch',
+      'start': 'npm run watch',
       'test': 'packer test',
       'test:coverage': 'packer test --coverage',
       'test:ci': 'CI=true packer test',
@@ -147,15 +149,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       tslib: '^1.9.3'
     },
     devDependencies: {},
-    private: false,
-    nyc: {
-      'reporter': [
-        'lcov',
-        'text-summary',
-        'html'
-      ],
-      'temp-dir': '.tmp/nyc_output'
-    }
+    private: false
   };
 
   let devDependencies: {
@@ -223,6 +217,15 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       }, devDependencies);
     }
   } else {
+    packageConfig.nyc = {
+      'reporter': [
+        'lcov',
+        'text-summary',
+        'html'
+      ],
+        'temp-dir': '.tmp/nyc_output'
+    };
+
     devDependencies = Object.assign({
       nyc: '^13.1.0'
     }, devDependencies);
@@ -570,12 +573,11 @@ export const commonConfigCopy = (packageConfig: PackageConfig, packerConfig: Pac
     })
     .pipe(gulpFile('.packerrc.json', JSON.stringify(packerConfig, null, 2)))
     .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
-    .on('finish', () => {
-      if (!args.includes('--skipInstall')) {
-        runShellCommand(isYarn ? 'yarn' : 'npm', ['install'], projectDir, log).then(() => {
-          log.info('📦 package generated 🚀');
-        });
-      }
-    })
     .pipe(gulp.dest(projectDir));
+};
+
+export const taskGulpify = (task: (...args: any[]) => ReadWriteStream, ...data: any[]): TaskFunction => {
+  return () => {
+    return task.apply(null, data);
+  };
 };

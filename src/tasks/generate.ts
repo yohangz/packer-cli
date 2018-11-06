@@ -4,9 +4,10 @@ import isUrl from 'validator/lib/isURL';
 import npmValidate from 'validate-npm-package-name';
 import inquirer, { Questions } from 'inquirer';
 import path from 'path';
-import mergeStream from 'merge-stream';
+import chalk from 'chalk';
+import { TaskFunction } from 'undertaker';
 
-import { args } from './util';
+import { args, runShellCommand } from './util';
 import logger from '../common/logger';
 
 import { parseStylePreprocessorExtension } from './parser';
@@ -28,16 +29,15 @@ import {
   readmeCopy,
   sourceCopy,
   styleCopy,
-  styleLintConfigCopy,
+  styleLintConfigCopy, taskGulpify,
   templateCopy,
   typescriptConfigCopy
 } from './generate-util';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
-import chalk from 'chalk';
 
 export default function init() {
-  gulp.task('generate', async (done) => {
+  gulp.task('generate', async () => {
     const log = logger.create('[generate]');
     try {
       log.trace('start');
@@ -229,7 +229,6 @@ export default function init() {
       if (args.length < 2) {
         log.error('Please provide a library name to generate the project\n%s',
           chalk.blue('npx packer-cli generate my-library'));
-        done();
         return;
       }
 
@@ -237,7 +236,6 @@ export default function init() {
       const packageNameValidity = npmValidate(packageName);
       if (!packageNameValidity.validForNewPackages) {
         log.error(packageNameValidity.errors.join('\n'));
-        done();
         return;
       }
 
@@ -247,59 +245,62 @@ export default function init() {
       const projectDir = path.join(process.cwd(), packageName);
       const styleExt = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
 
-      // project example and demo copy tasks start
-      const merged = mergeStream(assetCopy(projectDir, log), templateCopy(projectDir, log));
+      const tasks: TaskFunction[] = [];
+      tasks.push(taskGulpify(assetCopy, projectDir, log));
+      tasks.push(taskGulpify(templateCopy, projectDir, log));
 
       if (packerConfig.compiler.styleSupport) {
-        merged.add(styleCopy(styleExt, projectDir, log));
+        tasks.push(taskGulpify(styleCopy, styleExt, projectDir, log));
       }
 
       if (packerConfig.compiler.buildMode !== 'node-cli') {
-        merged.add(demoCopy(packerConfig, packageName, projectDir, log));
+        tasks.push(taskGulpify(demoCopy, packerConfig, packageName, projectDir, log));
       }
 
       if (packerConfig.compiler.buildMode === 'browser') {
         if (packerConfig.output.format === 'system') {
-          merged.add(demoHelperSystemJsCopy(projectDir, log));
+          tasks.push(taskGulpify(demoHelperSystemJsCopy, projectDir, log));
         }
 
         if (packerConfig.output.format === 'amd') {
-          merged.add(demoHelperRequireJsCopy(projectDir, log));
+          tasks.push(taskGulpify(demoHelperRequireJsCopy, projectDir, log));
         }
       }
 
-      merged.add(sourceCopy(packerConfig, styleExt, projectDir, log));
-      // project example and demo copy tasks end
+      tasks.push(taskGulpify(sourceCopy, packerConfig, styleExt, projectDir, log));
 
       if (packerConfig.compiler.scriptPreprocessor === 'typescript') {
-        typescriptConfigCopy(projectDir, log);
+        tasks.push(taskGulpify(typescriptConfigCopy, projectDir, log));
       } else {
-        eslintConfigCopy(projectDir, log);
+        tasks.push(taskGulpify(eslintConfigCopy, projectDir, log));
       }
 
       if (packerConfig.compiler.buildMode === 'browser') {
-        karmaConfigCopy(projectDir, log);
+        tasks.push(taskGulpify(karmaConfigCopy, projectDir, log));
       } else {
         if (packerConfig.testFramework === 'jasmine') {
-          jasmineConfigCopy(projectDir, log);
+          tasks.push(taskGulpify(jasmineConfigCopy, projectDir, log));
         }
       }
 
       if (packerConfig.compiler.styleSupport) {
-        styleLintConfigCopy(projectDir, log);
+        tasks.push(taskGulpify(styleLintConfigCopy, projectDir, log));
       }
 
-      merged.add([
-        licenseCopy(options, packerConfig, projectDir, log),
-        readmeCopy(packageConfig, projectDir, log),
-        babelConfigCopy(packerConfig, projectDir, log),
-        copyGitIgnore(projectDir, log),
-        copyPackerAssets(projectDir, log),
-        commonConfigCopy(packageConfig, packerConfig, options.isYarn, projectDir, log)
-      ]);
+      tasks.push(taskGulpify(licenseCopy, options, packerConfig, projectDir, log));
+      tasks.push(taskGulpify(readmeCopy, packageConfig, projectDir, log));
+      tasks.push(taskGulpify(babelConfigCopy, packerConfig, projectDir, log));
+      tasks.push(taskGulpify(copyGitIgnore, projectDir, log));
+      tasks.push(taskGulpify(copyPackerAssets, projectDir, log));
+      tasks.push(taskGulpify(commonConfigCopy, packageConfig, packerConfig, options.isYarn, projectDir, log));
 
-      merged.on('finish', () => {
-        done();
+      await gulp.series([gulp.parallel(tasks), async () => {
+        if (!args.includes('--skipInstall') || !args.includes('-sk')) {
+          await runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir, log);
+          log.info('📦 package generated 🚀');
+        }
+      }])(() => {
+        // No implementation
       });
     } catch (e) {
       log.error('task failure\n%s', e.stack || e.message);
