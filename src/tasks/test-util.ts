@@ -18,7 +18,7 @@ import {
 } from './build-util';
 
 const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void> => {
-  if (args.includes('--coverage')) {
+  if (args.includes('--coverage') || args.includes('-c')) {
     switch (config.testFramework) {
       case 'jasmine':
         await runShellCommand('nyc', ['jasmine', 'JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);

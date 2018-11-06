@@ -26,20 +26,24 @@ export const initPacker = () => {
 
     switch (args[0]) {
       case '--help':
+      case '-h':
         console.log(meta.readPackerHelpSummary());
         break;
       case '--version':
+      case '-v':
         gulp.series('version')(() => {
           // no implementation
         });
         break;
       case 'generate':
+      case 'g':
         console.log(chalk.red(meta.readPackerBanner()));
         gulp.series('generate')(() => {
           // no implementation
         });
         break;
       case 'build':
+      case 'b':
         if (meta.isValidProject(log)) {
           gulp.series('build')(() => {
             // no implementation
@@ -47,6 +51,7 @@ export const initPacker = () => {
         }
         break;
       case 'watch':
+      case 'w':
         if (meta.isValidProject(log)) {
           gulp.series('watch')(() => {
             // no implementation
@@ -54,6 +59,7 @@ export const initPacker = () => {
         }
         break;
       case 'test':
+      case 't':
         if (meta.isValidProject(log)) {
           gulp.series('test')(() => {
             // no implementation
@@ -61,18 +67,20 @@ export const initPacker = () => {
         }
         break;
       case 'clean':
+      case 'c':
         gulp.series('clean')(() => {
           // no implementation
         });
         break;
-      case 'lint': {
+      case 'lint':
+      case 'l': {
         if (meta.isValidProject(log)) {
-          if (args.includes('--style')) {
+          if (args.includes('--style') || args.includes('-st')) {
             gulp.series('lint:style')(() => {
               // no implementation
             });
             break;
-          } else if (args.includes('--script')) {
+          } else if (args.includes('--script') || args.includes('-sc')) {
             gulp.series('lint:script')(() => {
               // no implementation
             });

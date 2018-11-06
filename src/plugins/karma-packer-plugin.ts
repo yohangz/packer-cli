@@ -31,7 +31,7 @@ export function karmaPackerPlugin() {
     packerPreprocess[testGlob] = ['rollup'];
 
     let coveragePlugins = [];
-    if (args.includes('--coverage')) {
+    if (args.includes('--coverage') || args.includes('-c')) {
       log.trace('identified as coverage task');
       coveragePlugins = [
         rollupIstanbul({
