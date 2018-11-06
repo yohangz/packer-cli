@@ -166,10 +166,10 @@ export const postBundlePlugins = (task: string, type: string) => {
 };
 
 export const bundleBuild = async (config: RollupFileOptions, type: string, log: Logger): Promise<void> => {
-  log.info('%s bundle build start', type);
+  log.trace('%s bundle build start', type);
   const bundle = await rollup(config);
   await bundle.write(config.output);
-  log.info('%s bundle build end', type);
+  log.trace('%s bundle build end', type);
 };
 
 export const extractBundleExternals = (config: PackerConfig) => {
