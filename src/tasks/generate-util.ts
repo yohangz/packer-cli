@@ -79,7 +79,7 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
       mapExternals: true
     },
     ignore: [],
-    pathReplacePatterns: [
+    replacePatterns: [
       {
         replace: './config/replace-config',
         test: './config/base-config'

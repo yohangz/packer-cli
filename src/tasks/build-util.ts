@@ -77,7 +77,7 @@ export const rollupStyleBuildPlugin = (config: PackerConfig,
 
 export const rollupReplacePlugin = (config: PackerConfig) => {
   return rollupReplace({
-    patterns: config.pathReplacePatterns
+    patterns: config.replacePatterns
   });
 };
 
@@ -96,10 +96,7 @@ export const resolvePlugins = (config: PackerConfig) => {
   ];
 };
 
-export const buildPlugin = (packageModule: string,
-                            generateDefinition: boolean,
-                            check: boolean,
-                            config: PackerConfig,
+export const buildPlugin = (packageModule: string, generateDefinition: boolean, check: boolean, config: PackerConfig,
                             tsPackage: boolean) => {
   const plugins = [];
   if (config.compiler.scriptPreprocessor  === 'typescript') {

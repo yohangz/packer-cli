@@ -44,7 +44,7 @@ export interface PackerConfig {
     mapExternals: boolean;
   };
   ignore: string[];
-  pathReplacePatterns: PathReplacePattern[];
+  replacePatterns: PathReplacePattern[];
   testFramework: TestFramework;
   watch: {
     demoDir: string,
