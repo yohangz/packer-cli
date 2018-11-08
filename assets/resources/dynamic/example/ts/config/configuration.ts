@@ -4,15 +4,17 @@ export interface Badge {
   redirectUrl: string;
 }
 
+export interface BadgeData {
+  buildStatus: Badge;
+  license: Badge;
+  npmVersion: Badge;
+}
+
 export interface Configuration {
   title: string;
   logo: string;
   tagLine: string;
   configType: string;
   githubUrl: string;
-  badges: {
-    buildStatus: Badge;
-    license: Badge;
-    npmVersion: Badge;
-  }
+  badges: BadgeData;
 }
