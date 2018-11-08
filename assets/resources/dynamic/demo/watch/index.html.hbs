@@ -4,47 +4,81 @@
     <meta charset="UTF-8">
     <title>Watch Demo</title>
 {{#unless includeStyles}}
-    <link rel="stylesheet" href="styles/{{projectName}}.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="styles/{{projectName}}.css" />
 {{/unless}}
 </head>
 <body>
   <div class="container"></div>
 {{#if require}}
-  <script src="require.js"></script>
+  <script src="require.min.js"></script>
   <script>
     require.config({
       baseUrl: '.',
       paths: {
+        {{#if reactLib}}
+          'react': 'react.production.min',
+          'react-dom': 'react-dom.production.min',
+        {{/if}}
         '{{amdModule}}': '{{projectName}}'
       }
     });
 
+    {{#unless reactLib}}
     require(['{{amdModule}}'], function (lib) {
       var main = new lib.Main();
       main.render('.container');
-    })
+    });
+    {{else}}
+    require(['{{amdModule}}', 'react', 'react-dom'], function (lib, React, ReactDOM) {
+      ReactDOM.render(React.createElement(lib.Home, null),
+        document.querySelectorAll('.container')[0]);
+
+    });
+    {{/unless}}
   </script>
 {{/if}}
 {{#if iife}}
+{{#if reactLib}}
+  <script src="react.min.js"></script>
+  <script src="react-dom.min.js"></script>
+{{/if}}
   <script src="{{projectName}}.js"></script>
   <script type="application/javascript">
+  {{#unless reactLib}}
     var main = new window.{{namespace}}.Main();
     main.render('.container');
+  {{else}}
+    window.ReactDOM.render(window.React.createElement(window.{{namespace}}.Home, null),
+      document.querySelectorAll('.container')[0]);
+  {{/unless}}
   </script>
 {{/if}}
 {{#if system}}
-  <script src="system.js"></script>
+  <script src="system.min.js"></script>
+  {{#if reactLib}}
+  <script src="react.production.min.js"></script>
+  <script src="react-dom.production.min.js"></script>
+  {{/if}}
+  <script src="{{projectName}}.js"></script>
   <script>
-    window.System.config({
-      bundles: {
-        '{{projectName}}.js': ['{{namespace}}']
+  {{#if reactLib}}
+    System.config({
+      map: {
+        'react': 'react.production.min.js',
+        'react-dom': 'react-dom.production.min.js'
       }
     });
+  {{/if}}
 
-    window.System.import('{{namespace}}')
+    System.import('{{namespace}}')
       .then(function (lib) {
-        var main = new lib.Main();
-        main.render('.container');
+        {{#if reactLib}}
+          window.ReactDOM.render(window.React.createElement(lib.Home, null),
+            document.querySelectorAll('.container')[0]);
+        {{else}}
+          var main = new lib.Main();
+          main.render('.container');
+        {{/if}}
       }, function (e) {
         console.error(e)
       });

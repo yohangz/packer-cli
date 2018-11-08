@@ -5,7 +5,8 @@
     "sourceMap": true,
     "noImplicitAny": false,
     "preserveConstEnums": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "jsx": "preserve"
   },
   "include": [
     "src/**/*"

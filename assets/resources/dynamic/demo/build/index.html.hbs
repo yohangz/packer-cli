@@ -10,41 +10,74 @@
 <body>
   <div class="container"></div>
 {{#if require}}
-  <script src="../helper/require.js"></script>
+  <script src="../helper/require.min.js"></script>
   <script>
     require.config({
-      baseUrl: '../../{{distDir}}/bundle',
+      baseUrl: '../../',
       paths: {
-        '{{amdModule}}': '{{projectName}}'
+      {{#if reactLib}}
+        'react': 'node_modules/react/umd/react.production.min',
+        'react-dom': 'node_modules/react-dom/umd/react-dom.production.min',
+      {{/if}}
+        '{{amdModule}}': '{{distDir}}/bundle/{{projectName}}'
       }
     });
 
+    {{#if reactLib}}
+    require(['{{amdModule}}', 'react', 'react-dom'], function (lib, React, ReactDOM) {
+      ReactDOM.render(React.createElement(lib.Home, null),
+        document.querySelectorAll('.container')[0]);
+    });
+    {{else}}
     require(['{{amdModule}}'], function (lib) {
       var main = new lib.Main();
       main.render('.container');
     });
+    {{/if}}
   </script>
 {{/if}}
 {{#if iife}}
+{{#if reactLib}}
+  <script src="../../node_modules/react/umd/react.production.min.js"></script>
+  <script src="../../node_modules/react-dom/umd/react-dom.production.min.js"></script>
+{{/if}}
   <script src="../../{{distDir}}/bundle/{{projectName}}.js"></script>
   <script type="application/javascript">
+  {{#unless reactLib}}
     var main = new window.{{namespace}}.Main();
     main.render('.container');
+  {{else}}
+    window.ReactDOM.render(window.React.createElement(window.{{namespace}}.Home, null),
+      document.querySelectorAll('.container')[0]);
+  {{/unless}}
   </script>
 {{/if}}
 {{#if system}}
-  <script src="../helper/system.js"></script>
+  <script src="../helper/system.min.js"></script>
+{{#if reactLib}}
+  <script src="../../node_modules/react/umd/react.production.min.js"></script>
+  <script src="../../node_modules/react-dom/umd/react-dom.production.min.js"></script>
+{{/if}}
+  <script src="../../{{distDir}}/bundle/{{projectName}}.js"></script>
   <script>
-    window.System.config({
-      bundles: {
-        '../../{{distDir}}/bundle/{{projectName}}.js': ['{{namespace}}']
+  {{#if reactLib}}
+    System.config({
+      map: {
+        'react': '../../node_modules/react/umd/react.production.min.js',
+        'react-dom': '../../node_modules/react-dom/umd/react-dom.production.min.js'
       }
     });
+  {{/if}}
 
-    window.System.import('{{namespace}}')
+    System.import('{{namespace}}')
       .then(function (lib) {
-        var main = new lib.Main();
-        main.render('.container');
+        {{#if reactLib}}
+          window.ReactDOM.render(window.React.createElement(lib.Home, null),
+            document.querySelectorAll('.container')[0]);
+        {{else}}
+          var main = new lib.Main();
+          main.render('.container');
+        {{/if}}
       }, function (e) {
         console.error(e)
       });

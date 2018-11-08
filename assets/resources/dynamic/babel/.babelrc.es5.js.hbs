@@ -3,19 +3,25 @@ module.exports = {
     [
       '@babel/preset-env',
       {
+        modules: false,
         targets: {
           esmodules: false
         },
         useBuiltIns: 'usage'
       }
+    ],
+{{#if reactLib}}
+    [
+      '@babel/preset-react'
     ]
+{{/if}}
   ],
   plugins: [
     [
       '@babel/plugin-transform-runtime',
       {
-        corejs: false,
-        helpers: false,
+        corejs: 2,
+        helpers: true,
         regenerator: true,
         useESModules: false
       }
