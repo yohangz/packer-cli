@@ -3290,6 +3290,10 @@ glob-to-regexp@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/glob-to-regexp/-/glob-to-regexp-0.3.0.tgz#8c5a1494d2066c570cc3bfe4496175acc4d502ab"
 
+glob-to-regexp@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/glob-to-regexp/-/glob-to-regexp-0.4.0.tgz#49bd677b1671022bd10921c3788f23cdebf9c7e6"
+
 glob-watcher@^5.0.0:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/glob-watcher/-/glob-watcher-5.0.1.tgz#239aaa621b6bd843b288fdf6b155f50963c7d7ea"
@@ -6849,9 +6853,17 @@ rollup-plugin-hbs@^1.0.3:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/rollup-plugin-hbs/-/rollup-plugin-hbs-1.1.0.tgz#7ceb97a6de9a1eab7ca2c465d4c53e5b519c8efc"
 
+rollup-plugin-hbs@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-hbs/-/rollup-plugin-hbs-1.2.0.tgz#b0f5115ddb06db62a2f5e35697ead299cefd1acd"
+
 rollup-plugin-ignore-import@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/rollup-plugin-ignore-import/-/rollup-plugin-ignore-import-1.0.2.tgz#5c5b5a9fffd826b3520792d590fb02c1ccdc56c1"
+
+rollup-plugin-ignore-import@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-ignore-import/-/rollup-plugin-ignore-import-1.1.0.tgz#c73d425ff778f8b99205f9ff9a7dc4cdfc401539"
 
 rollup-plugin-ignore@^1.0.3:
   version "1.0.4"

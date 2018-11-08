@@ -23,4 +23,5 @@ export interface PackerOptions {
   year: string;
   license: string;
   isYarn: boolean;
+  reactLib: boolean;
 }

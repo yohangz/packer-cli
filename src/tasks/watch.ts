@@ -34,6 +34,7 @@ export default function init() {
       makeRelativeDirPath(config.tmp, 'watch');
 
       let rollupServePlugins = [];
+      const additionalServeDir = config.watch.serveDir.map((dir: string) => path.join(process.cwd(), dir));
       if (config.watch.serve && config.output.format !== 'cjs') {
         log.trace('set serve plugins');
         rollupServePlugins = [
@@ -41,7 +42,8 @@ export default function init() {
             contentBase: [
               path.join(process.cwd(), config.tmp, 'watch'),
               path.join(process.cwd(), config.watch.demoDir),
-              path.join(process.cwd(), config.watch.helperDir)
+              path.join(process.cwd(), config.watch.helperDir),
+              ...additionalServeDir
             ],
             open: config.watch.open,
             port: config.watch.port

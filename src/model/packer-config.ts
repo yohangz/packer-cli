@@ -50,6 +50,7 @@ export interface PackerConfig {
   watch: {
     demoDir: string,
     helperDir: string,
+    serveDir: string[],
     open: boolean,
     port: number,
     serve: boolean

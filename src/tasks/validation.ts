@@ -23,13 +23,13 @@ export const packerSchema = {
         amd: {
           type: 'object',
           properties: {
-            entry: {
-              type: 'define',
+            define: {
+              type: 'string',
               optional: false,
               def: ''
             },
-            source: {
-              type: 'id',
+            id: {
+              type: 'string',
               optional: false,
               def: ''
             },
@@ -188,6 +188,11 @@ export const packerSchema = {
           type: 'string',
           optional: false,
           def: 'demo/helper'
+        },
+        serveDir: {
+          type: 'array',
+          optional: false,
+          def: []
         },
         open: {
           type: 'boolean',

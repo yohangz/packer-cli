@@ -66,6 +66,7 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 - [x] Library summary banner generation
 - [x] Library dependency license extraction
 - [x] Node CLI project support
+- [x] JSX and TSX support
 
 # Usage
 
@@ -206,8 +207,8 @@ npm run release
 ├── /demo/                      # Demo source content (applicable if serve mode is enabled in config)
 │   ├── /build/                 # Build demo page and assets
 │   ├── /helper/                # Watch and build demo helper scripts
-│   │   ├── require.js          # RequireJS static artifact
-│   │   └── system.js           # SystemJS static artifact
+│   │   ├── require.min.js      # RequireJS static artifact
+│   │   └── system.min.js       # SystemJS static artifact
 │   └── /watch/                 # Watch demo page and assets
 ├── /src/                       # Library source of the project
 ├── /node_modules/              # Node modules directory

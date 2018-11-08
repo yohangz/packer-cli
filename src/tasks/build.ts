@@ -8,12 +8,13 @@ import { RollupFileOptions } from 'rollup';
 import rollupUglify from '../plugins/rollup-plugin-uglify-es';
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 
+
 import { PackageConfig } from '../model/package-config';
 import logger from '../common/logger';
 import { meta } from './meta';
 import {
   buildPlugin,
-  bundleBuild,
+  bundleBuild, externalFilter,
   extractBundleExternals,
   getBanner,
   getBaseConfig,
@@ -219,7 +220,7 @@ export default function init() {
       if (config.output.es5) {
         // FESM+ES5 flat module bundle.
         const es5config: RollupFileOptions = merge({}, baseConfig, {
-          external: config.bundle.externals,
+          external: externalFilter(config),
           output: {
             file: path.join(process.cwd(), config.dist, 'fesm5', `${packageJson.name}.js`),
             format: 'esm'
@@ -239,7 +240,7 @@ export default function init() {
       if (config.output.esnext) {
         // FESM+ESNEXT flat module bundle.
         const esnextConfig: RollupFileOptions = merge({}, baseConfig, {
-          external: config.bundle.externals,
+          external: externalFilter(config),
           output: {
             file: path.join(process.cwd(), config.dist, 'fesmnext', `${packageJson.name}.js`),
             format: 'esm'

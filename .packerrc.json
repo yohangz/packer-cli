@@ -81,7 +81,9 @@
       "@babel/runtime/helpers/defineProperty",
       "@babel/runtime/regenerator",
       "schema-inspector",
-      "glob"
+      "glob",
+      "rollup-pluginutils",
+      "@babel/core"
     ],
     "globals": {},
     "mapExternals": false

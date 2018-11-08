@@ -1,5 +1,7 @@
 import path from 'path';
 import handlebars from 'handlebars';
+import glob from 'glob-to-regexp';
+import chalk from 'chalk';
 
 import { rollup, RollupFileOptions } from 'rollup';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
@@ -16,8 +18,6 @@ import rollupHandlebars from 'rollup-plugin-hbs';
 import rollupImage from 'rollup-plugin-img';
 import rollupProgress from 'rollup-plugin-progress';
 import rollupFilesize from 'rollup-plugin-filesize';
-
-import chalk from 'chalk';
 
 import { meta } from './meta';
 import { PackageConfig } from '../model/package-config';
@@ -126,7 +126,7 @@ export const buildPlugin = (packageModule: string, generateDefinition: boolean, 
   plugins.push(rollupBabel({
     babelrc: false,
     exclude: 'node_modules/**',
-    extensions: [ '.js', '.jsx', '.es6', '.es', '.mjs', '.ts', 'tsx' ],
+    extensions: [ '.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx' ],
     plugins: babelConfig.plugins || [],
     presets: babelConfig.presets || [],
     runtimeHelpers: true
@@ -170,6 +170,13 @@ export const bundleBuild = async (config: RollupFileOptions, type: string, log: 
   log.trace('%s bundle build end', type);
 };
 
+export const externalFilter = (config: PackerConfig) => {
+  const filter = config.bundle.externals.map((external) => glob(external));
+  return (id: string) => {
+    return filter.some((include) => include.test(id));
+  };
+};
+
 export const extractBundleExternals = (config: PackerConfig) => {
-  return config.bundle.mapExternals ? Object.keys(config.bundle.globals) : config.bundle.externals;
+  return config.bundle.mapExternals ? Object.keys(config.bundle.globals) : externalFilter(config);
 };

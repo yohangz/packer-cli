@@ -138,6 +138,15 @@ export default function init() {
           }
         },
         {
+          default: false,
+          message: 'Are you building a react library?',
+          name: 'reactLib',
+          type: 'confirm',
+          when: (answers) => {
+            return answers.browserCompliant;
+          }
+        },
+        {
           choices: [
             'umd',
             'amd',
@@ -254,7 +263,7 @@ export default function init() {
       }
 
       if (packerConfig.compiler.buildMode !== 'node-cli') {
-        tasks.push(taskGulpify(demoCopy, packerConfig, packageName, projectDir, log));
+        tasks.push(taskGulpify(demoCopy, options, packerConfig, packageName, projectDir, log));
       }
 
       if (packerConfig.compiler.buildMode === 'browser') {
@@ -267,7 +276,7 @@ export default function init() {
         }
       }
 
-      tasks.push(taskGulpify(sourceCopy, packerConfig, styleExt, projectDir, log));
+      tasks.push(taskGulpify(sourceCopy, options, packerConfig, styleExt, projectDir, log));
 
       if (packerConfig.compiler.scriptPreprocessor === 'typescript') {
         tasks.push(taskGulpify(typescriptConfigCopy, projectDir, log));
@@ -289,7 +298,7 @@ export default function init() {
 
       tasks.push(taskGulpify(licenseCopy, options, packerConfig, projectDir, log));
       tasks.push(taskGulpify(readmeCopy, packageConfig, projectDir, log));
-      tasks.push(taskGulpify(babelConfigCopy, packerConfig, projectDir, log));
+      tasks.push(taskGulpify(babelConfigCopy, options, packerConfig, projectDir, log));
       tasks.push(taskGulpify(copyGitIgnore, projectDir, log));
       tasks.push(taskGulpify(copyPackerAssets, projectDir, log));
       tasks.push(taskGulpify(commonConfigCopy, packageConfig, packerConfig, options.isYarn, projectDir, log));

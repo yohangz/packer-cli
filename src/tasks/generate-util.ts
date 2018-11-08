@@ -35,6 +35,33 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
     bundleBuildMode = 'node';
   }
 
+  let globalDependencies = {};
+  const additionalServeDir = [];
+  const externalsDependencies = [
+    'regenerator-runtime/**',
+    '@babel/runtime/**',
+    '@babel/runtime-corejs2/**'
+  ];
+
+  if (options.testFramework === 'mocha') {
+    externalsDependencies.push('assert');
+  }
+
+  if (options.reactLib) {
+    globalDependencies = {
+      'react': 'React',
+      'react-dom': 'ReactDOM'
+    };
+
+    externalsDependencies.push('react', 'react-dom');
+    additionalServeDir.push(
+      'node_modules/react/umd',
+      'node_modules/react-dom/umd'
+    );
+  } else {
+    externalsDependencies.push('handlebars/runtime');
+  }
+
   return {
     entry: entryFile,
     source: 'src',
@@ -71,12 +98,9 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
       'LICENSE'
     ],
     bundle: {
-      externals: [
-        'handlebars/runtime',
-        'assert'
-      ],
-      globals: {},
-      mapExternals: false
+      externals: externalsDependencies,
+      globals: globalDependencies,
+      mapExternals: true
     },
     ignore: [],
     replacePatterns: [
@@ -89,6 +113,7 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
     watch: {
       demoDir: 'demo/watch',
       helperDir: 'demo/helper',
+      serveDir: additionalServeDir,
       open: true,
       port: 4000,
       serve: true
@@ -144,27 +169,44 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
     repository: projectRepository,
     license: parseLicenseType(options.license),
     homepage: options.website || projectUrl,
-    dependencies: {
-      handlebars: '^4.0.11',
-      tslib: '^1.9.3'
-    },
+    dependencies: {},
     devDependencies: {},
     private: false
   };
 
-  let devDependencies: {
-    [key: string]: string;
-  } = {};
+  let dependencies = {
+    '@babel/runtime-corejs2': '^7.1.5'
+  };
+
+  let devDependencies = {};
 
   devDependencies = Object.assign({
     '@babel/polyfill': '^7.0.0',
     '@babel/preset-env': '^7.1.0',
     '@babel/register': '^7.0.0',
-    '@babel/runtime': '^7.1.0',
     '@babel/plugin-transform-runtime': '^7.1.0'
   }, devDependencies);
 
+  if (options.reactLib) {
+    devDependencies = Object.assign({
+      '@babel/preset-react': '^7.0.0'
+    }, devDependencies);
+
+    dependencies =  Object.assign({
+      'react': '^16.6.1',
+      'react-dom': '^16.6.1'
+    }, dependencies);
+  } else {
+    dependencies =  Object.assign({
+      handlebars: '^4.0.11'
+    }, dependencies);
+  }
+
   if (options.scriptPreprocessor === 'typescript') {
+    dependencies =  Object.assign({
+      tslib: '^1.9.3'
+    }, dependencies);
+
     devDependencies = Object.assign({
       typescript: '^3.1.1'
     }, devDependencies);
@@ -179,6 +221,13 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       devDependencies = Object.assign({
         '@types/assert': '^1.4.0',
         '@types/mocha': '^5.2.5'
+      }, devDependencies);
+    }
+
+    if (options.reactLib) {
+      devDependencies = Object.assign({
+        '@types/react': '^16.4.18',
+        '@types/react-dom': '^16.0.9',
       }, devDependencies);
     }
   } else {
@@ -223,7 +272,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
         'text-summary',
         'html'
       ],
-        'temp-dir': '.tmp/nyc_output'
+      'temp-dir': '.tmp/nyc_output'
     };
 
     devDependencies = Object.assign({
@@ -252,6 +301,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
 
   devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;
 
+  packageConfig.dependencies = dependencies;
   packageConfig.devDependencies = devDependencies;
   if (options.cliProject) {
     packageConfig.bin = {
@@ -298,8 +348,8 @@ export const assetCopy = (projectDir: string, log: Logger): ReadWriteStream => {
     .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
 };
 
-export const sourceCopy = (packerConfig: PackerConfig, styleExt: string, projectDir: string,
-                           log: Logger): ReadWriteStream => {
+export const sourceCopy = (packerOptions: PackerOptions, packerConfig: PackerConfig, styleExt: string,
+                           projectDir: string, log: Logger): ReadWriteStream => {
   log.trace('copy source');
   const jasmine = packerConfig.testFramework === 'jasmine';
   const scriptExtension = parseScriptPreprocessorExtension(packerConfig.compiler.scriptPreprocessor);
@@ -307,14 +357,21 @@ export const sourceCopy = (packerConfig: PackerConfig, styleExt: string, project
 
   log.trace('script extension: "%s"\nstyle extension:\n "%s"', scriptExtension, styleExtension);
 
-  const exampleGlob = path.join(__dirname, '../resources/dynamic/example', scriptExtension, '**/*');
+  const fileExtensions = [ scriptExtension, 'hbs' ];
+  if (packerOptions.reactLib) {
+    fileExtensions.push(`,${scriptExtension}x`);
+  }
+
+  const exampleGlob = path.join(__dirname, '../resources/dynamic/example', scriptExtension,
+    `**/*.{${fileExtensions.join(',')}}`);
   log.trace('example glob: %s', exampleGlob);
 
   const templateData = {
     styleExt: styleExtension,
-      isJasmine: jasmine,
+    isJasmine: jasmine,
     styleSupport: packerConfig.compiler.styleSupport,
-    cliProject: packerConfig.compiler.buildMode === 'node-cli'
+    cliProject: packerConfig.compiler.buildMode === 'node-cli',
+    reactLib: packerOptions.reactLib
   };
   log.trace('template data: %o', templateData);
 
@@ -374,9 +431,9 @@ export const readmeCopy = (packageConfig: PackageConfig, projectDir: string, log
 };
 
 export const demoHelperRequireJsCopy = (projectDir: string, log: Logger): ReadWriteStream => {
-  log.trace('copy demo helper require.js');
-  const srcPath = path.join(__dirname, '../resources/dynamic/demo/helper/require.js');
-  log.trace('require.js path: %s', srcPath);
+  log.trace('copy demo helper require.min.js');
+  const srcPath = path.join(__dirname, '../resources/dynamic/demo/helper/require.min.js');
+  log.trace('require.min.js path: %s', srcPath);
   return gulp.src([
     srcPath
   ])
@@ -387,9 +444,9 @@ export const demoHelperRequireJsCopy = (projectDir: string, log: Logger): ReadWr
 };
 
 export const demoHelperSystemJsCopy = (projectDir: string, log: Logger): ReadWriteStream => {
-  log.trace('copy demo helper system.js');
-  const srcPath = path.join(__dirname, '../resources/dynamic/demo/helper/system.js');
-  log.trace('require.js path: %s', srcPath);
+  log.trace('copy demo helper system.min.js');
+  const srcPath = path.join(__dirname, '../resources/dynamic/demo/helper/system.min.js');
+  log.trace('require.min.js path: %s', srcPath);
   return gulp.src([
     srcPath
   ])
@@ -399,8 +456,8 @@ export const demoHelperSystemJsCopy = (projectDir: string, log: Logger): ReadWri
     .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
 };
 
-export const demoCopy = (packerConfig: PackerConfig, packageName: string, projectDir: string,
-                         log: Logger): ReadWriteStream => {
+export const demoCopy = (packerOptions: PackerOptions, packerConfig: PackerConfig, packageName: string,
+                         projectDir: string, log: Logger): ReadWriteStream => {
   log.trace('copy demo resources');
   const isAmd = packerConfig.output.format === 'amd';
   const isIife = packerConfig.output.format === 'umd'
@@ -419,7 +476,8 @@ export const demoCopy = (packerConfig: PackerConfig, packageName: string, projec
     require: isAmd,
     iife: isIife,
     system: isSystem,
-    amdModule: packerConfig.output.amd.id
+    amdModule: packerConfig.output.amd.id,
+    reactLib: packerOptions.reactLib
   };
   log.trace('template data: %o', templateData);
 
@@ -432,13 +490,15 @@ export const demoCopy = (packerConfig: PackerConfig, packageName: string, projec
     .pipe(gulp.dest(path.join(projectDir, 'demo')));
 };
 
-export const babelConfigCopy = (packerConfig: PackerConfig, projectDir: string, log: Logger): ReadWriteStream => {
+export const babelConfigCopy = (packerOptions: PackerOptions, packerConfig: PackerConfig, projectDir: string,
+                                log: Logger): ReadWriteStream => {
   log.trace('copy babel config');
   const babelConfigGlob = path.join(__dirname, '../resources/dynamic/babel/.*.hbs');
   log.trace('babel config glob: %s', babelConfigGlob);
 
   const templateData = {
     browserCompliant: packerConfig.compiler.buildMode === 'browser',
+    reactLib: packerOptions.reactLib
   };
   log.trace('template data: %o', templateData);
 
