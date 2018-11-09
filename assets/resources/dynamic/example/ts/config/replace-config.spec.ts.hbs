@@ -1,7 +1,7 @@
 import { conf } from './replace-config';
-{{#unless isJasmine}}
+{{#if isMocha}}
 import assert from 'assert';
-{{/unless}}
+{{/if}}
 
 {{#if isJasmine}}
 describe('replace configuration test suite', () => {
@@ -13,7 +13,8 @@ describe('replace configuration test suite', () => {
     expect(conf.configType).toBe('REPLACE');
   });
 });
-{{else}}
+{{/if}}
+{{#if isMocha}}
 describe('replace configuration test suite', () => {
   it('title is required', () => {
     assert.equal(conf.title, 'Packer CLI');
@@ -21,6 +22,17 @@ describe('replace configuration test suite', () => {
 
   it('config type should be replace', () => {
     assert.equal(conf.configType, 'REPLACE');
+  });
+});
+{{/if}}
+{{#if ieJest}}
+describe('replace configuration test suite', () => {
+  test('title is required', () => {
+    expect(conf.title).toBe('Packer CLI');
+  });
+
+  test('config type should be replace', () => {
+    expect(conf.configType).toBe('REPLACE');
   });
 });
 {{/if}}

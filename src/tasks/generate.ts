@@ -24,12 +24,14 @@ import {
   getPackageConfig,
   getPackerConfig,
   jasmineConfigCopy,
+  jestConfigCopy,
   karmaConfigCopy,
   licenseCopy,
   readmeCopy,
   sourceCopy,
   styleCopy,
-  styleLintConfigCopy, taskGulpify,
+  styleLintConfigCopy,
+  taskGulpify,
   templateCopy,
   typescriptConfigCopy
 } from './generate-util';
@@ -194,7 +196,8 @@ export default function init() {
         {
           choices: [
             'jasmine',
-            'mocha'
+            'mocha',
+            'jest'
           ],
           default: 0,
           message: 'Which unit test framework do you want to use?',
@@ -285,11 +288,17 @@ export default function init() {
       }
 
       if (packerConfig.compiler.buildMode === 'browser') {
-        tasks.push(taskGulpify(karmaConfigCopy, projectDir, log));
+        if (packerConfig.testFramework !== 'jest') {
+          tasks.push(taskGulpify(karmaConfigCopy, projectDir, log));
+        }
       } else {
         if (packerConfig.testFramework === 'jasmine') {
           tasks.push(taskGulpify(jasmineConfigCopy, projectDir, log));
         }
+      }
+
+      if (packerConfig.testFramework === 'jest') {
+        tasks.push(taskGulpify(jestConfigCopy, projectDir, log));
       }
 
       if (packerConfig.compiler.styleSupport) {

@@ -38,24 +38,14 @@ export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
   }
 };
 
-export const rollupOnWarn = (task: string, type: string) => {
-  return (warning, warn) => {
-    const customWarn = {
-      ...warning,
-      message: chalk.green(task) + ' ' + chalk.yellow(`${type} bundle: ${warning}`)
-    };
-
-    warn(customWarn);
-  };
-};
-
-export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, banner: string) => {
+export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, banner: string,
+                              sourceMap?: boolean|string) => {
   return {
     input: path.join(config.source, config.entry),
     output: {
       banner,
       name: packageJson.name,
-      sourcemap: config.output.sourceMap
+      sourcemap: typeof sourceMap !== 'undefined' ? sourceMap : config.output.sourceMap
     }
   };
 };

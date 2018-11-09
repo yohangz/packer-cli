@@ -1,7 +1,7 @@
 import path from 'path';
 import merge from 'lodash/merge';
 
-import { rollup, RollupFileOptions, RollupWatchOptions, watch } from 'rollup';
+import { ModuleFormat, rollup, RollupFileOptions, RollupWatchOptions, watch } from 'rollup';
 import rollupProgress from 'rollup-plugin-progress';
 
 import { PackerConfig } from '../model/packer-config';
@@ -13,29 +13,40 @@ import {
   extractBundleExternals,
   getBanner,
   getBaseConfig,
-  preBundlePlugins, resolvePlugins,
+  preBundlePlugins,
+  resolvePlugins,
   rollupStyleBuildPlugin
 } from './build-util';
 
 const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void> => {
-  if (args.includes('--coverage') || args.includes('-c')) {
-    switch (config.testFramework) {
-      case 'jasmine':
-        await runShellCommand('nyc', ['jasmine', 'JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
-        break;
-      case 'mocha':
-        await runShellCommand('nyc', ['mocha', path.join(config.tmp, 'test/index.spec.js')], process.cwd(), log);
-        break;
+  try {
+    if (args.includes('--coverage') || args.includes('-c')) {
+      switch (config.testFramework) {
+        case 'jasmine':
+          await runShellCommand('nyc', ['jasmine', 'JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
+          break;
+        case 'mocha':
+          await runShellCommand('nyc', ['mocha', path.join(config.tmp, 'test/index.spec.js')], process.cwd(), log);
+          break;
+        case 'jest':
+          await runShellCommand('jest', ['--config=jest.config.js', '--coverage'], process.cwd(), log);
+          break;
+      }
+    } else {
+      switch (config.testFramework) {
+        case 'jasmine':
+          await runShellCommand('jasmine', ['JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
+          break;
+        case 'mocha':
+          await runShellCommand('mocha', [path.join(config.tmp, 'test/index.spec.js')], process.cwd(), log);
+          break;
+        case 'jest':
+          await runShellCommand('jest', ['--config=jest.config.js'], process.cwd(), log);
+          break;
+      }
     }
-  } else {
-    switch (config.testFramework) {
-      case 'jasmine':
-        await runShellCommand('jasmine', ['JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
-        break;
-      case 'mocha':
-        await runShellCommand('mocha', [path.join(config.tmp, 'test/index.spec.js')], process.cwd(), log);
-        break;
-    }
+  } catch (e) {
+    console.log(e);
   }
 };
 
@@ -43,7 +54,7 @@ export const buildUnitTestSource = async (config: PackerConfig, srcFile: string,
   const typescript = require('typescript');
   const packageJson = meta.readPackageData();
   const banner = getBanner(config, packageJson);
-  const baseConfig = getBaseConfig(config, packageJson, banner);
+  const baseConfig = getBaseConfig(config, packageJson, banner, 'inline');
 
   const externals = extractBundleExternals(config);
   const rollupConfig: RollupFileOptions = merge({}, baseConfig, {
@@ -51,7 +62,7 @@ export const buildUnitTestSource = async (config: PackerConfig, srcFile: string,
     external: externals,
     output: {
       file: path.join(process.cwd(), config.tmp, 'test/index.spec.js'),
-      format: 'cjs',
+      format: 'cjs' as ModuleFormat,
       globals: config.bundle.globals,
       name: config.output.namespace
     },

@@ -173,7 +173,7 @@ export const packerSchema = {
       type: 'string',
       optional: false,
       def: 'jasmine',
-      pattern: /^(jasmine|mocha)$/
+      pattern: /^(jasmine|mocha|jest)$/
     },
     watch: {
       type: 'object',

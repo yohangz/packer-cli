@@ -100,6 +100,7 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
     "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "jasmine": "^3.3.0",
     "jasmine-core": "^3.1.0",
     "nyc": "^13.1.0",

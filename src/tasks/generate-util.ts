@@ -211,6 +211,12 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       typescript: '^3.1.1'
     }, devDependencies);
 
+    if (options.testFramework === 'jest') {
+      devDependencies = Object.assign({
+        '@types/jest': '^23.3.9'
+      }, devDependencies);
+    }
+
     if (options.testFramework === 'jasmine') {
       devDependencies = Object.assign({
         '@types/jasmine': '^2.8.8'
@@ -236,58 +242,65 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       'eslint-config-standard': '*',
       'eslint-plugin-import': '>=2.13.0',
       'eslint-plugin-node': '>=7.0.0',
-      'eslint-plugin-promise': '>=4.0.0'
+      'eslint-plugin-promise': '>=4.0.0',
+      'eslint-plugin-standard': '>=4.0.0'
     }, devDependencies);
   }
 
-  if (options.browserCompliant) {
+  if (options.testFramework === 'jest') {
     devDependencies = Object.assign({
-      'puppeteer': '^1.5.0',
-      'karma': '^3.0.0',
-      'karma-chrome-launcher': '^2.2.0',
-      'karma-coverage': '^1.1.2'
+      jest: '^23.6.0'
     }, devDependencies);
-
-    if (options.testFramework === 'jasmine') {
-      devDependencies = Object.assign({
-        'jasmine-core': '^3.1.0',
-        'karma-jasmine': '^1.1.2',
-        'karma-jasmine-html-reporter': '^1.1.0'
-      }, devDependencies);
-    }
-
-    if (options.testFramework === 'mocha') {
-      devDependencies = Object.assign({
-        'karma-mocha': '^1.3.0',
-        'mocha': '^5.2.0',
-        'assert': '^1.4.1'
-      }, devDependencies);
-    }
   } else {
-    packageConfig.nyc = {
-      'reporter': [
-        'lcov',
-        'text-summary',
-        'html'
-      ],
-      'temp-dir': '.tmp/nyc_output'
-    };
-
-    devDependencies = Object.assign({
-      nyc: '^13.1.0'
-    }, devDependencies);
-
-    if (options.testFramework === 'jasmine') {
+    if (options.browserCompliant) {
       devDependencies = Object.assign({
-        jasmine: '^3.3.0'
+        'puppeteer': '^1.5.0',
+        'karma': '^3.0.0',
+        'karma-chrome-launcher': '^2.2.0',
+        'karma-coverage': '^1.1.2'
       }, devDependencies);
-    }
 
-    if (options.testFramework === 'mocha') {
+      if (options.testFramework === 'jasmine') {
+        devDependencies = Object.assign({
+          'jasmine-core': '^3.1.0',
+          'karma-jasmine': '^1.1.2',
+          'karma-jasmine-html-reporter': '^1.1.0'
+        }, devDependencies);
+      }
+
+      if (options.testFramework === 'mocha') {
+        devDependencies = Object.assign({
+          'karma-mocha': '^1.3.0',
+          'mocha': '^5.2.0',
+          'assert': '^1.4.1'
+        }, devDependencies);
+      }
+    } else {
+      packageConfig.nyc = {
+        'reporter': [
+          'lcov',
+          'text-summary',
+          'html'
+        ],
+        'temp-dir': '.tmp/nyc_output'
+      };
+
       devDependencies = Object.assign({
-        mocha: '^5.2.0',
-        assert: '^1.4.1'
+        nyc: '^13.1.0'
       }, devDependencies);
+
+      if (options.testFramework === 'jasmine') {
+        devDependencies = Object.assign({
+          jasmine: '^3.3.0'
+        }, devDependencies);
+      }
+
+      if (options.testFramework === 'mocha') {
+        devDependencies = Object.assign({
+          mocha: '^5.2.0',
+          assert: '^1.4.1'
+        }, devDependencies);
+      }
     }
   }
 
@@ -350,6 +363,8 @@ export const sourceCopy = (packerOptions: PackerOptions, packerConfig: PackerCon
                            projectDir: string, log: Logger): ReadWriteStream => {
   log.trace('copy source');
   const jasmine = packerConfig.testFramework === 'jasmine';
+  const mocha = packerConfig.testFramework === 'mocha';
+  const jest = packerConfig.testFramework === 'jest';
   const scriptExtension = parseScriptPreprocessorExtension(packerConfig.compiler.scriptPreprocessor);
   const styleExtension = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
 
@@ -367,6 +382,8 @@ export const sourceCopy = (packerOptions: PackerOptions, packerConfig: PackerCon
   const templateData = {
     styleExt: styleExtension,
     isJasmine: jasmine,
+    isMocha: mocha,
+    isJest: jest,
     styleSupport: packerConfig.compiler.styleSupport,
     cliProject: packerConfig.compiler.buildMode === 'node-cli',
     reactLib: packerOptions.reactLib
@@ -580,6 +597,19 @@ export const jasmineConfigCopy = (projectDir: string, log: Logger): ReadWriteStr
 
   return gulp.src([
     jasmine
+  ])
+    .on('error', (e) => {
+      log.error('missing config file: %s\n', e.stack || e.message);
+    })
+    .pipe(gulp.dest(projectDir));
+};
+
+export const jestConfigCopy = (projectDir: string, log: Logger): ReadWriteStream =>  {
+  const jest = path.join(__dirname, '../resources/static/jest.config.js');
+  log.trace('jest.config.js path: %s', jest);
+
+  return gulp.src([
+    jest
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);

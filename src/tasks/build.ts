@@ -3,7 +3,7 @@ import gulp from 'gulp';
 import gulpFile from 'gulp-file';
 import chmod from 'gulp-chmod';
 import merge from 'lodash/merge';
-import { RollupFileOptions } from 'rollup';
+import { ModuleFormat, RollupFileOptions } from 'rollup';
 
 import rollupUglify from '../plugins/rollup-plugin-uglify-es';
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
@@ -21,7 +21,6 @@ import {
   postBundlePlugins,
   preBundlePlugins,
   resolvePlugins,
-  rollupOnWarn,
   rollupStyleBuildPlugin
 } from './build-util';
 
@@ -169,7 +168,6 @@ export default function init() {
       const buildTasks: Array<Promise<void>> = [];
       // flat bundle.
       const flatConfig: RollupFileOptions = merge({}, baseConfig, {
-        onwarn: rollupOnWarn('[build:bundle]', 'flat'),
         external: externals,
         output: {
           amd: config.output.amd,
@@ -193,7 +191,6 @@ export default function init() {
       if (config.output.minBundle) {
         // minified flat bundle.
         const minifiedFlatConfig: RollupFileOptions = merge({}, baseConfig, {
-          onwarn: rollupOnWarn('[build:bundle]', 'flat minified'),
           external: externals,
           output: {
             amd: config.output.amd,
@@ -223,11 +220,10 @@ export default function init() {
       if (config.output.es5) {
         // FESM+ES5 flat module bundle.
         const es5config: RollupFileOptions = merge({}, baseConfig, {
-          onwarn: rollupOnWarn('[build:bundle]', 'es5'),
           external: externalFilter(config),
           output: {
             file: path.join(process.cwd(), config.dist, 'fesm5', `${packageJson.name}.js`),
-            format: 'esm'
+            format: 'esm' as ModuleFormat
           },
           plugins: [
             rollupStyleBuildPlugin(config, packageJson, false, true, false),
@@ -245,11 +241,10 @@ export default function init() {
       if (config.output.esnext) {
         // FESM+ESNEXT flat module bundle.
         const esnextConfig: RollupFileOptions = merge({}, baseConfig, {
-          onwarn: rollupOnWarn('[build:bundle]', 'esnext'),
           external: externalFilter(config),
           output: {
             file: path.join(process.cwd(), config.dist, 'fesmnext', `${packageJson.name}.js`),
-            format: 'esm'
+            format: 'esm' as ModuleFormat
           },
           plugins: [
             rollupStyleBuildPlugin(config, packageJson, false, true, false),

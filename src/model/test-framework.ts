@@ -1,1 +1,1 @@
-export type TestFramework = 'jasmine' | 'mocha';
+export type TestFramework = 'jasmine' | 'mocha' | 'jest';

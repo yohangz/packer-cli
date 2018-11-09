@@ -23,13 +23,13 @@ import logger from '../common/logger';
 
 export default function init() {
   gulp.task('build:watch', async () => {
-    const log = logger.create('[test]');
+    const log = logger.create('[watch]');
     try {
       const typescript = require('typescript');
       const config = meta.readPackerConfig(log);
       const packageJson = meta.readPackageData();
       const banner = getBanner(config, packageJson);
-      const baseConfig = getBaseConfig(config, packageJson, banner);
+      const baseConfig = getBaseConfig(config, packageJson, banner, 'inline');
 
       makeRelativeDirPath(config.tmp, 'watch');
 

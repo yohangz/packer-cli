@@ -15,7 +15,7 @@ export default function init() {
     try {
       log.trace('start');
       const config = meta.readPackerConfig(log);
-      if (config.compiler.buildMode === 'browser') {
+      if (config.compiler.buildMode === 'browser' && config.testFramework !== 'jest') {
         log.trace('start test suite execution via karma');
         const karma = require('karma');
 
