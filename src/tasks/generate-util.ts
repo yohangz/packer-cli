@@ -236,9 +236,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       'eslint-config-standard': '*',
       'eslint-plugin-import': '>=2.13.0',
       'eslint-plugin-node': '>=7.0.0',
-      'eslint-plugin-promise': '>=4.0.0',
-      'eslint-plugin-standard': '>=4.0.0',
-      'uglify-es': '^3.3.9'
+      'eslint-plugin-promise': '>=4.0.0'
     }, devDependencies);
   }
 
