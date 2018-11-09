@@ -18,6 +18,9 @@ import rollupHandlebars from 'rollup-plugin-hbs';
 import rollupImage from 'rollup-plugin-img';
 import rollupProgress from 'rollup-plugin-progress';
 import rollupFilesize from 'rollup-plugin-filesize';
+import rollupBuiltins from 'rollup-plugin-node-builtins';
+import rollupGlobals from 'rollup-plugin-node-globals';
+import rollupJson from 'rollup-plugin-json';
 
 import { meta } from './meta';
 import { PackageConfig } from '../model/package-config';
@@ -33,6 +36,17 @@ export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
       pkg: packageJson
     });
   }
+};
+
+export const rollupOnWarn = (task: string, type: string) => {
+  return (warning, warn) => {
+    const customWarn = {
+      ...warning,
+      message: chalk.green(task) + ' ' + chalk.yellow(`${type} bundle: ${warning}`)
+    };
+
+    warn(customWarn);
+  };
 };
 
 export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, banner: string) => {
@@ -82,7 +96,7 @@ export const rollupReplacePlugin = (config: PackerConfig) => {
 };
 
 export const resolvePlugins = (config: PackerConfig) => {
-  return [
+  const plugins = [
     rollupIgnore(config.ignore),
     rollupResolve({
       browser: true,
@@ -92,8 +106,18 @@ export const resolvePlugins = (config: PackerConfig) => {
     }),
     rollupCommonjs({
       include: 'node_modules/**'
-    })
+    }),
+    rollupJson()
   ];
+
+  if (config.compiler.buildMode === 'browser') {
+    plugins.push(
+      rollupGlobals(),
+      rollupBuiltins()
+    );
+  }
+
+  return plugins;
 };
 
 export const buildPlugin = (packageModule: string, generateDefinition: boolean, check: boolean, config: PackerConfig,

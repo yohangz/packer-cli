@@ -21,6 +21,7 @@ import {
   postBundlePlugins,
   preBundlePlugins,
   resolvePlugins,
+  rollupOnWarn,
   rollupStyleBuildPlugin
 } from './build-util';
 
@@ -168,6 +169,7 @@ export default function init() {
       const buildTasks: Array<Promise<void>> = [];
       // flat bundle.
       const flatConfig: RollupFileOptions = merge({}, baseConfig, {
+        onwarn: rollupOnWarn('[build:bundle]', 'flat'),
         external: externals,
         output: {
           amd: config.output.amd,
@@ -185,12 +187,13 @@ export default function init() {
         ]
       });
 
-      log.trace('flat bundle rollup config:\n%o', flatConfig);
+      log.trace('flat bundle rollu6p config:\n%o', flatConfig);
       buildTasks.push(bundleBuild(flatConfig, 'flat', log));
 
       if (config.output.minBundle) {
         // minified flat bundle.
         const minifiedFlatConfig: RollupFileOptions = merge({}, baseConfig, {
+          onwarn: rollupOnWarn('[build:bundle]', 'flat minified'),
           external: externals,
           output: {
             amd: config.output.amd,
@@ -220,6 +223,7 @@ export default function init() {
       if (config.output.es5) {
         // FESM+ES5 flat module bundle.
         const es5config: RollupFileOptions = merge({}, baseConfig, {
+          onwarn: rollupOnWarn('[build:bundle]', 'es5'),
           external: externalFilter(config),
           output: {
             file: path.join(process.cwd(), config.dist, 'fesm5', `${packageJson.name}.js`),
@@ -228,6 +232,7 @@ export default function init() {
           plugins: [
             rollupStyleBuildPlugin(config, packageJson, false, true, false),
             ...preBundlePlugins(config),
+            ...resolvePlugins(config),
             ...buildPlugin('es5', false, true, config, typescript),
             ...postBundlePlugins('[build:bundle]', 'es5')
           ]
@@ -240,6 +245,7 @@ export default function init() {
       if (config.output.esnext) {
         // FESM+ESNEXT flat module bundle.
         const esnextConfig: RollupFileOptions = merge({}, baseConfig, {
+          onwarn: rollupOnWarn('[build:bundle]', 'esnext'),
           external: externalFilter(config),
           output: {
             file: path.join(process.cwd(), config.dist, 'fesmnext', `${packageJson.name}.js`),
@@ -248,6 +254,7 @@ export default function init() {
           plugins: [
             rollupStyleBuildPlugin(config, packageJson, false, true, false),
             ...preBundlePlugins(config),
+            ...resolvePlugins(config),
             ...buildPlugin('esnext', false, true, config, typescript),
             ...postBundlePlugins('[build:bundle]', 'esnext')
           ]
