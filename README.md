@@ -38,6 +38,8 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 [![Karma](https://image.ibb.co/hq8i69/karma.png)](https://karma-runner.github.io)
 [![SASS](https://image.ibb.co/jBLwR9/sass.png)](https://sass-lang.com/)
 [![Typescript](https://image.ibb.co/fjR369/typescript.png)](https://www.typescriptlang.org/)
+[![React](https://image.ibb.co/j9xLFA/react.png)](https://reactjs.org/)
+[![Jest](https://image.ibb.co/dLBQhq/jest.png)](https://jestjs.io/)
 
 - [x] Managed build configuration
 - [x] Encapsulated build process
