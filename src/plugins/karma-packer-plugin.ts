@@ -23,7 +23,7 @@ export function karmaPackerPlugin() {
     }
 
     const config = inspector.sanitize(validation, packerConfig).data;
-    const testGlob = path.join(config.source,
+    const testGlob: string = path.join(config.source,
       '**/*.spec.' + parseScriptPreprocessorExtension(config.compiler.scriptPreprocessor));
     log.trace('test glob: %s', testGlob);
 
@@ -35,7 +35,7 @@ export function karmaPackerPlugin() {
       log.trace('identified as coverage task');
       coveragePlugins = [
         rollupIstanbul({
-          exclude: [testGlob, 'node_modules/**']
+          exclude: [ testGlob, 'node_modules/**' ]
         })
       ];
     }

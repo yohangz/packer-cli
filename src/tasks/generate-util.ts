@@ -80,6 +80,7 @@ export const getPackerConfig = (options: PackerOptions): PackerConfig => {
       imageInlineLimit: 1000000,
       inlineStyle: Boolean(options.bundleStyles),
       stylesDir: 'styles',
+      imageDir: 'images',
       namespace: options.namespace || '',
       sourceMap: true
     },

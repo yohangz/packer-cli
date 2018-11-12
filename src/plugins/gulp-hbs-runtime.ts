@@ -1,39 +1,45 @@
-import through from 'through2';
+import through, { TransformCallback } from 'through2';
 import PluginError from 'plugin-error';
 import handlebars from 'handlebars';
 import path from 'path';
+import * as stream from 'stream';
 
-export default function gulpHbsRuntime(data, options) {
-  return through.obj((file, enc, cb) => {
+export interface GulpHandlebarsOptions {
+  replaceExt?: string;
+  rename?: string;
+}
+
+export default function gulpHbsRuntime(data: any, options?: GulpHandlebarsOptions): stream.Transform {
+  return through.obj((chunk: any, enc: string, callback: TransformCallback): void => {
     try {
-      if (file.isNull() || file.extname !== '.hbs') {
-        return cb(null, file);
+      if (chunk.isNull() || chunk.extname !== '.hbs') {
+        return callback(null, chunk);
       }
 
-      const template = handlebars.compile(String(file.contents));
+      const template = handlebars.compile(String(chunk.contents));
       const renderedTemplate = template(data);
 
-      if (file.isBuffer()) {
-        file.contents = Buffer.from(renderedTemplate);
+      if (chunk.isBuffer()) {
+        chunk.contents = Buffer.from(renderedTemplate);
       }
 
-      if (file.isStream()) {
-        const stream = through();
-        stream.write(renderedTemplate);
-        file.contents = stream;
+      if (chunk.isStream()) {
+        const fileStream = through();
+        fileStream.write(renderedTemplate);
+        chunk.contents = fileStream;
       }
 
       if (options) {
         if (typeof options.replaceExt !== 'undefined') {
-          file.path = file.path.replace('.hbs', options.replaceExt);
+          chunk.path = chunk.path.replace('.hbs', options.replaceExt);
         }
 
         if (typeof options.rename !== 'undefined') {
-          file.path = path.join(path.dirname(file.path), options.rename);
+          chunk.path = path.join(path.dirname(chunk.path), options.rename);
         }
       }
 
-      cb(null, file);
+      callback(null, chunk);
     } catch (err) {
       console.error(err);
       throw new PluginError('gulp-hbs-runtime', 'Data parse failure!');

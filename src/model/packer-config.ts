@@ -25,6 +25,7 @@ export interface PackerConfig {
     imageInlineLimit: number;
     inlineStyle: boolean;
     stylesDir: string;
+    imageDir: string;
     namespace: string;
     sourceMap: boolean | 'inline'
   };

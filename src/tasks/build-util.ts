@@ -156,7 +156,8 @@ export const preBundlePlugins = (config: PackerConfig) => {
     rollupImage({
       exclude: 'node_modules/**',
       extensions: /\.(png|jpg|jpeg|gif|svg)$/,
-      limit: config.output.imageInlineLimit
+      limit: config.output.imageInlineLimit,
+      output: path.join(config.dist, config.output.imageDir)
     })
   ];
 };
@@ -166,7 +167,7 @@ export const postBundlePlugins = (task: string, type: string) => {
     return [
       rollupProgress(),
       rollupFilesize({
-        render: (options, size, gzippedSize) => {
+        render: (options: any, size: string, gzippedSize: string): string => {
           return chalk.yellow(
             `${chalk.green(task)} ${type} bundle size: ${chalk.red(size)}, gzipped size: ${chalk.red(gzippedSize)}`);
         }
