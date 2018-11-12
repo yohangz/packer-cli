@@ -20,13 +20,14 @@ import {
 
 const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void> => {
   try {
+    const specBundlePath = path.join(config.tmp, 'test/index.bundled.spec.js');
     if (args.includes('--coverage') || args.includes('-c')) {
       switch (config.testFramework) {
         case 'jasmine':
           await runShellCommand('nyc', ['jasmine', 'JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
           break;
         case 'mocha':
-          await runShellCommand('nyc', ['mocha', path.join(config.tmp, 'test/index.spec.js')], process.cwd(), log);
+          await runShellCommand('nyc', ['mocha', specBundlePath], process.cwd(), log);
           break;
         case 'jest':
           await runShellCommand('jest', ['--config=jest.config.js', '--coverage'], process.cwd(), log);
@@ -38,7 +39,7 @@ const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void>
           await runShellCommand('jasmine', ['JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
           break;
         case 'mocha':
-          await runShellCommand('mocha', [path.join(config.tmp, 'test/index.spec.js')], process.cwd(), log);
+          await runShellCommand('mocha', [specBundlePath], process.cwd(), log);
           break;
         case 'jest':
           await runShellCommand('jest', ['--config=jest.config.js'], process.cwd(), log);
@@ -61,7 +62,7 @@ export const buildUnitTestSource = async (config: PackerConfig, srcFile: string,
     input: srcFile,
     external: externals,
     output: {
-      file: path.join(process.cwd(), config.tmp, 'test/index.spec.js'),
+      file: path.join(process.cwd(), config.tmp, 'test/index.bundled.spec.js'),
       format: 'cjs' as ModuleFormat,
       globals: config.bundle.globals,
       name: config.output.namespace
