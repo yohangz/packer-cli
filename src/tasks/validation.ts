@@ -78,6 +78,11 @@ export const packerSchema = {
           optional: false,
           def: 'styles'
         },
+        imageDir: {
+          type: 'string',
+          optional: false,
+          def: 'images'
+        },
         namespace: {
           type: 'string',
           optional: false,
