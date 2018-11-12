@@ -253,12 +253,13 @@ Build configuration can be updated after project generation via ``.packerrc.json
   "entry": "index.ts",
   "source": "src",
   "dist": "dist",
+  "tmp": ".tmp",
   "output": {
     "amd": {
       "define": "",
       "id": ""
     },
-    "dependencyMapMode": "mapDependency",
+    "dependencyMapMode": "cross-map-peer-dependency",
     "esnext": true,
     "es5": true,
     "minBundle": true,
@@ -273,7 +274,8 @@ Build configuration can be updated after project generation via ``.packerrc.json
     "buildMode": "browser",
     "scriptPreprocessor": "typescript",
     "stylePreprocessor": "scss",
-    "styleSupport": true
+    "styleSupport": true,
+    "concurrentBuild": true
   },
   "assetPaths": [
     "src/assets"
@@ -284,6 +286,9 @@ Build configuration can be updated after project generation via ``.packerrc.json
   ],
   "bundle": {
     "externals": [
+      "regenerator-runtime/**",
+      "@babel/runtime/**",
+      "@babel/runtime-corejs2/**",
       "handlebars/runtime"
     ],
     "globals": {},
@@ -300,9 +305,9 @@ Build configuration can be updated after project generation via ``.packerrc.json
   "watch": {
     "demoDir": "demo/watch",
     "helperDir": "demo/helper",
+    "serveDir": [],
     "open": true,
     "port": 4000,
-    "scriptDir": ".tmp",
     "serve": true
   },
   "license": {
@@ -331,8 +336,8 @@ Build configuration can be updated after project generation via ``.packerrc.json
 |                               |                   | "map-dependency" - Map project dependencies to target dependencies                                                                                                                                             |
 |                               |                   | "map-peer-dependency" - Map project peer dependencies to target peerDependencies                                                                                                                               |
 |                               |                   | "all" - Map both peerDependencies and dependencies to target peerDependencies and dependencies                                                                                                                 |
-| output.es5                    | boolean           | Generate flat ES5 module build artifacts based on ``.babelrc.es5.js``                                                                                                                                          |
-| output.esnext                 | boolean           | Generate flat ESNext module build artifacts based on ``.babelrc.esnext.js``                                                                                                                                    |
+| output.esnext                 | boolean           | Generate flat ESNext module build artifacts based on ``.babelrc.esnext.js``  
+| output.es5                    | boolean           | Generate flat ES5 module build artifacts based on ``.babelrc.es5.js``                                                                                                                                          |                                                                                                                                  |
 | output.minBundle              | boolean           | Generate minified flat bundle build artifact                                                                                                                                                                   |
 | output.format                	| string           	| Browser compliant bundle modules formats (based on ``.babelrc.bundle.js``)                                                                                                                                     |
 |                               |                   | "umd" – Universal Module Definition, works as amd, cjs and iife all in one                                                                                                                                     |
@@ -368,8 +373,9 @@ Build configuration can be updated after project generation via ``.packerrc.json
 | replacePatterns.replace 	    | string           	| Path to replace                                                                  	                                                                                                                             |
 | testFramework                 | string            | Support "Jasmine" and "Mocha" test framework options                                                                                                                                                           |
 | watch                       	| object           	| watch mode configuration object                                                  	                                                                                                                             |
-| watch.helperDir               | string           	| watch build helper library directory                                                                                                                                                                           |
 | watch.demoDir                 | string           	| watch demo page dir                                                              	                                                                                                                             |
+| watch.helperDir               | string           	| watch build helper library directory                                                                                                                                                                           |
+| watch.serverDir               | string           	| watch server dir                                                              	                                                                                                                             |
 | watch.port                  	| number           	| watch server port                                                                	                                                                                                                             |
 | watch.serve                  	| boolean          	| Serve project via browser on watch mode                                                                                                                                                                        |
 | watch.open                  	| boolean          	| open browser automatically on watch mode                                                      	                                                                                                               |
