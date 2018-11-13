@@ -15,11 +15,11 @@
     require.config({
       baseUrl: '.',
       paths: {
-        {{#if reactLib}}
-          'react': 'react.production.min',
-          'react-dom': 'react-dom.production.min',
-        {{/if}}
-        '{{amdModule}}': '{{projectName}}'
+      {{#if reactLib}}
+        'react': 'react.production.min',
+        'react-dom': 'react-dom.production.min',
+      {{/if}}
+        '{{amdModule}}': '{{projectName}}.{{format}}'
       }
     });
 
@@ -42,7 +42,7 @@
   <script src="react.min.js"></script>
   <script src="react-dom.min.js"></script>
 {{/if}}
-  <script src="{{projectName}}.js"></script>
+  <script src="{{projectName}}.{{format}}.js"></script>
   <script type="application/javascript">
   {{#unless reactLib}}
     var main = new window.{{namespace}}.Main();
@@ -59,7 +59,7 @@
   <script src="react.production.min.js"></script>
   <script src="react-dom.production.min.js"></script>
   {{/if}}
-  <script src="{{projectName}}.js"></script>
+  <script src="{{projectName}}.{{format}}.js"></script>
   <script>
   {{#if reactLib}}
     System.config({

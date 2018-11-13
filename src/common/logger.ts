@@ -25,7 +25,7 @@ export class Logger {
     return new Logger(taskName);
   }
 
-  private readonly taskName: string;
+  public readonly taskName: string;
 
   private constructor(taskName: string) {
     this.taskName = taskName ? `${chalk.green(taskName)} ` : '';

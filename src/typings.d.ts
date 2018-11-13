@@ -50,7 +50,7 @@ declare interface RollupPluginProgressOptions {
 }
 
 declare module 'rollup-plugin-progress' {
-  export default function(options?: RollupPluginProgressOptions): Plugin;
+  export default function(options?: RollupPluginProgressOptions): any;
 }
 
 declare interface RollupPluginIstanbulOptions {
@@ -60,7 +60,7 @@ declare interface RollupPluginIstanbulOptions {
 }
 
 declare module 'rollup-plugin-istanbul' {
-  export default function(options?: RollupPluginIstanbulOptions): Plugin;
+  export default function(options?: RollupPluginIstanbulOptions): any;
 }
 
 declare module 'karma-rollup-preprocessor';
@@ -70,7 +70,7 @@ declare interface RollupPluginIgnoreImportOptions {
 }
 
 declare module 'rollup-plugin-ignore-import' {
-  export default function(options: RollupPluginIgnoreImportOptions): Plugin;
+  export default function(options: RollupPluginIgnoreImportOptions): any;
 }
 
 declare module 'glob-to-regexp' {
@@ -107,7 +107,7 @@ declare interface RollupPluginPostCssOptions {
 }
 
 declare module 'rollup-plugin-postcss' {
-  export default function(options?: RollupPluginPostCssOptions): Plugin;
+  export default function(options?: RollupPluginPostCssOptions): any;
 }
 
 declare interface PostCssImageInnerOptions {
@@ -148,11 +148,11 @@ declare interface RollupPluginRenameOptions {
 }
 
 declare module 'rollup-plugin-re' {
-  export default function(options?: RollupPluginRenameOptions): Plugin;
+  export default function(options?: RollupPluginRenameOptions): any;
 }
 
 declare module 'rollup-plugin-ignore' {
-  export default function(modules: string[]): Plugin;
+  export default function(modules: string[]): any;
 }
 
 declare interface RollupPluginNodeResolveOptions {
@@ -171,7 +171,7 @@ declare interface RollupPluginNodeResolveOptions {
 }
 
 declare module 'rollup-plugin-node-resolve' {
-  export default function(options?: RollupPluginNodeResolveOptions): Plugin;
+  export default function(options?: RollupPluginNodeResolveOptions): any;
 }
 
 declare interface RollupPluginCommonjsOptions {
@@ -187,7 +187,7 @@ declare interface RollupPluginCommonjsOptions {
 }
 
 declare module 'rollup-plugin-commonjs' {
-  export default function(options?: RollupPluginCommonjsOptions): Plugin;
+  export default function(options?: RollupPluginCommonjsOptions): any;
 }
 
 declare enum RollupPluginTypescriptVerbosity {
@@ -215,7 +215,7 @@ declare interface RollupPluginTypescriptOptions {
 }
 
 declare module 'rollup-plugin-typescript2' {
-  export default function(options?: RollupPluginTypescriptOptions): Plugin;
+  export default function(options?: RollupPluginTypescriptOptions): any;
 }
 
 declare interface RollupPluginBabelOptions {
@@ -231,7 +231,7 @@ declare interface RollupPluginBabelOptions {
 }
 
 declare module 'rollup-plugin-babel' {
-  export default function(options?: RollupPluginBabelOptions): Plugin;
+  export default function(options?: RollupPluginBabelOptions): any;
 }
 
 declare interface RollupPluginHbsOptions {
@@ -247,7 +247,7 @@ declare interface RollupPluginHbsOptions {
 }
 
 declare module 'rollup-plugin-hbs' {
-  export default function(options?: RollupPluginHbsOptions): Plugin;
+  export default function(options?: RollupPluginHbsOptions): any;
 }
 
 declare interface RollupPluginImageOptions {
@@ -259,7 +259,14 @@ declare interface RollupPluginImageOptions {
 }
 
 declare module 'rollup-plugin-img' {
-  export default function(options?: RollupPluginImageOptions): Plugin;
+  export default function(options?: RollupPluginImageOptions): any;
+}
+
+declare interface RollupPluginFileSizeData {
+  minSize: string;
+  gzipSize: string;
+  brotliSize: string;
+  bundleSize: string;
 }
 
 declare interface RollupPluginFileSizeOptions {
@@ -267,16 +274,16 @@ declare interface RollupPluginFileSizeOptions {
   showGzippedSize?: boolean;
   showBrotliSize?: boolean;
   format?: object;
-  render?: (options: any, size: string, gzippedSize: string) => string;
+  render?: (options: any, bundle: any, size: RollupPluginFileSizeData) => string;
   theme?: 'dark' | 'light';
 }
 
 declare module 'rollup-plugin-filesize' {
-  export default function(options?: RollupPluginFileSizeOptions): Plugin;
+  export default function(options?: RollupPluginFileSizeOptions): any;
 }
 
 declare module 'rollup-plugin-node-builtins' {
-  export default function(options?: { crypto?: boolean; }): Plugin;
+  export default function(options?: { crypto?: boolean; }): any;
 }
 
 declare interface RollupPluginNodeGlobalOptions {
@@ -289,7 +296,7 @@ declare interface RollupPluginNodeGlobalOptions {
 }
 
 declare module 'rollup-plugin-node-globals' {
-  export default function(options?: RollupPluginNodeGlobalOptions): Plugin;
+  export default function(options?: RollupPluginNodeGlobalOptions): any;
 }
 
 declare interface RollupPluginJsonOptions {
@@ -302,7 +309,7 @@ declare interface RollupPluginJsonOptions {
 }
 
 declare module 'rollup-plugin-json' {
-  export default function(options?: RollupPluginJsonOptions): Plugin;
+  export default function(options?: RollupPluginJsonOptions): any;
 }
 
 declare interface RollupPluginServeOptions {
@@ -322,7 +329,7 @@ declare interface RollupPluginServeOptions {
 }
 
 declare module 'rollup-plugin-serve' {
-  export default function(options?: RollupPluginServeOptions): Plugin;
+  export default function(options?: RollupPluginServeOptions): any;
 }
 
 declare interface RollupPluginLiveReloadOptions {
@@ -332,5 +339,5 @@ declare interface RollupPluginLiveReloadOptions {
 }
 
 declare module 'rollup-plugin-livereload' {
-  export default function(options?: string | RollupPluginLiveReloadOptions): Plugin;
+  export default function(options?: string | RollupPluginLiveReloadOptions): any;
 }

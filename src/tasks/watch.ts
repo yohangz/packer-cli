@@ -61,7 +61,7 @@ export default function init() {
       const watchConfig: RollupWatchOptions = merge({}, baseConfig, {
         external: externals,
         output: {
-          file: path.join(process.cwd(), config.tmp, 'watch', `${packageJson.name}.js`),
+          file: path.join(process.cwd(), config.tmp, 'watch', `${packageJson.name}.${config.output.format}.js`),
           format: config.output.format,
           globals: config.bundle.globals,
           name: config.output.namespace

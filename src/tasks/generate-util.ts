@@ -492,6 +492,7 @@ export const demoCopy = (packerOptions: PackerOptions, packerConfig: PackerConfi
     require: isAmd,
     iife: isIife,
     system: isSystem,
+    format: packerConfig.output.format,
     amdModule: packerConfig.output.amd.id,
     reactLib: packerOptions.reactLib
   };

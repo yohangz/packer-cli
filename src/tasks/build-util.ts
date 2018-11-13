@@ -2,6 +2,9 @@ import path from 'path';
 import handlebars from 'handlebars';
 import glob from 'glob-to-regexp';
 import chalk from 'chalk';
+import * as Terser from 'terser';
+
+import codeFrameColumns from '@babel/code-frame';
 
 import { rollup, RollupFileOptions } from 'rollup';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
@@ -27,6 +30,7 @@ import { PackageConfig } from '../model/package-config';
 import { PackerConfig } from '../model/packer-config';
 import logger, { Logger } from '../common/logger';
 import { LogLevel } from '../model/log-level';
+import { writeFile } from './util';
 
 export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
   if (config.license.banner) {
@@ -162,27 +166,82 @@ export const preBundlePlugins = (config: PackerConfig) => {
   ];
 };
 
+const bundleSizeLoggerPlugin = (taskName: string, type: string) => {
+  return rollupFilesize({
+    showMinifiedSize: false,
+    showBrotliSize: false,
+    render: (options: any, sourceBundle: any, { gzipSize, bundleSize }): string => {
+      const bundleFormatted = `bundle size: ${chalk.red(bundleSize)}`;
+      const gzippedFormatted = `gzipped size: ${chalk.red(gzipSize)}`;
+      return chalk.yellow(`${chalk.green(taskName)} ${type} ${bundleFormatted}, ${gzippedFormatted}`);
+    }
+  });
+};
+
 export const postBundlePlugins = (task: string, type: string) => {
   if (logger.level <= LogLevel.INFO) {
     return [
       rollupProgress(),
-      rollupFilesize({
-        render: (options: any, size: string, gzippedSize: string): string => {
-          return chalk.yellow(
-            `${chalk.green(task)} ${type} bundle size: ${chalk.red(size)}, gzipped size: ${chalk.red(gzippedSize)}`);
-        }
-      })
+      bundleSizeLoggerPlugin(task, type)
     ];
   }
 
   return [];
 };
 
-export const bundleBuild = async (config: RollupFileOptions, type: string, log: Logger): Promise<void> => {
+export const bundleBuild = async (config: PackerConfig, packageData: PackageConfig, bundleConfig: RollupFileOptions,
+                                  type: string, log: Logger): Promise<void> => {
   log.trace('%s bundle build start', type);
-  const bundle = await rollup(config);
-  await bundle.write(config.output);
+  const bundle = await rollup(bundleConfig);
+  const { code, map } = await bundle.write(bundleConfig.output);
   log.trace('%s bundle build end', type);
+
+  if (config.output.minBundle) {
+    log.trace('%s minified bundle build start', type);
+    const minFileDist = bundleConfig.output.file.replace('.js', '.min.js');
+    const minMapFileDist = minFileDist.concat('.map');
+    const minFileName = path.basename(minFileDist);
+    const minMapFileName = minFileName.concat('.map');
+
+    let minSourceMapConfig: any = {
+      content: map,
+      filename: minFileName
+    };
+
+    if (config.output.sourceMap === 'inline') {
+      minSourceMapConfig.url = 'inline';
+    } else if (config.output.sourceMap) {
+      minSourceMapConfig.url = minMapFileName;
+    } else {
+      minSourceMapConfig = undefined;
+    }
+
+    const minData = Terser.minify(code, {
+      sourceMap: minSourceMapConfig,
+      output: {
+        comments: /@preserve|@license|@cc_on/i
+      }
+    });
+    log.trace('%s minified bundle terser config\n%o', type, minData);
+
+    if (minData.error) {
+      const { message, line, col: column } = minData.error;
+      log.error('%s bundle min build failure \n%s', type,
+        codeFrameColumns(code, { start: { line, column } }, { message }));
+    } else {
+      await writeFile(minFileDist, minData.code);
+      if (minSourceMapConfig && minSourceMapConfig.url === minMapFileName) {
+        log.trace('%s minified bundle write source maps', type);
+        await writeFile(minMapFileDist, minData.map);
+      }
+
+      const task = log.taskName.replace(' ', '');
+      const sizeDetail = bundleSizeLoggerPlugin(task, `${type} minified`);
+      sizeDetail.ongenerate(null, { code:  minData.code });
+    }
+
+    log.trace('%s minified bundle build end', type);
+  }
 };
 
 export const externalFilter = (config: PackerConfig) => {

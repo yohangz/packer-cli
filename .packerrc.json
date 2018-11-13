@@ -1,7 +1,7 @@
 {
   "entry": "index.ts",
   "source": "src",
-  "dist": "dist",
+  "dist": "dist3",
   "tmp": ".tmp",
   "output": {
     "amd": {
@@ -10,7 +10,7 @@
     },
     "dependencyMapMode": "map-dependency",
     "esnext": false,
-    "es5": true,
+    "es5": false,
     "minBundle": false,
     "format": "cjs",
     "imageInlineLimit": 1000000,
@@ -86,7 +86,8 @@
       "validator/**",
       "path",
       "fs",
-      "child_process"
+      "child_process",
+      "terser"
     ],
     "globals": {},
     "mapExternals": false

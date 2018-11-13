@@ -36,3 +36,15 @@ export const makeRelativeDirPath = (...fragments: string[]): void => {
     }
   }
 };
+
+export const writeFile = (filePath: string, data: any): Promise<void> => {
+  return new Promise<void>((resolve: () => void, reject: (e: Error) => void) => {
+    fs.writeFile(filePath, data, (err: NodeJS.ErrnoException): void => {
+      if (err) {
+        reject(err);
+      }
+
+      resolve();
+    });
+  });
+};
