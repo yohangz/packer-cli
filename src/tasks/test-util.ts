@@ -65,10 +65,10 @@ export const buildUnitTestSource = async (config: PackerConfig, srcFile: string,
       file: path.join(process.cwd(), config.tmp, 'test/index.bundled.spec.js'),
       format: 'cjs' as ModuleFormat,
       globals: config.bundle.globals,
-      name: config.output.namespace
+      name: config.bundle.namespace
     },
     plugins: [
-      rollupStyleBuildPlugin(config, packageJson, true, false, true),
+      ...rollupStyleBuildPlugin(config, packageJson, true, false, true, log),
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
       ...buildPlugin('bundle', false, false, config, typescript),

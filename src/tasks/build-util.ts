@@ -49,7 +49,7 @@ export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, 
     output: {
       banner,
       name: packageJson.name,
-      sourcemap: typeof sourceMap !== 'undefined' ? sourceMap : config.output.sourceMap
+      sourcemap: typeof sourceMap !== 'undefined' ? sourceMap : config.compiler.sourceMap
     }
   };
 };
@@ -58,29 +58,42 @@ export const rollupStyleBuildPlugin = (config: PackerConfig,
                                        packageJson: PackageConfig,
                                        watch: boolean,
                                        minify: boolean,
-                                       main: boolean) => {
-  const styleDir = watch ? path.join(config.tmp, 'watch') : config.dist;
-  const fileName = packageJson.name + (minify ? '.min.css' : '.css');
-  const styleDist = path.join(process.cwd(), styleDir, config.output.stylesDir, fileName);
-
-  if (!main && !config.output.inlineStyle) {
-    return rollupIgnoreImport({
-      extensions: ['.scss', '.sass', '.styl', '.css', '.less']
-    });
+                                       main: boolean,
+                                       log: Logger) => {
+  if (!config.compiler.style) {
+    log.trace('style build disabled');
+    return [];
   }
 
-  return rollupPostCss({
-    extract: config.output.inlineStyle ? false : styleDist,
-    minimize: minify,
-    plugins: [
-      postCssImageInline({
-        assetPaths: config.assetPaths,
-        maxFileSize: config.output.imageInlineLimit
-      }),
-      postCssAutoPrefix
-    ],
-    sourceMap: config.output.sourceMap
-  });
+  if (!main && !config.compiler.style.inline) {
+    log.trace('ignore style imports to avoid redundant style compilation');
+    return [
+      rollupIgnoreImport({
+        extensions: ['.scss', '.sass', '.styl', '.css', '.less']
+      })
+    ];
+  }
+
+  log.trace('init style build plugins');
+  const styleDir = watch ? path.join(config.tmp, 'watch') : config.dist;
+  const fileName = packageJson.name + (minify ? '.min.css' : '.css');
+  const styleDist = path.join(process.cwd(), styleDir, config.compiler.style.outDir, fileName);
+  log.trace('stylesheet dist file name %s', styleDist);
+
+  return [
+    rollupPostCss({
+      extract: config.compiler.style.inline ? false : styleDist,
+      minimize: minify,
+      plugins: [
+        postCssImageInline({
+          assetPaths: config.assetPaths,
+          maxFileSize: config.compiler.style.image.inlineLimit
+        }),
+        postCssAutoPrefix
+      ],
+      sourceMap: config.compiler.sourceMap
+    })
+  ];
 };
 
 export const rollupReplacePlugin = (config: PackerConfig) => {
@@ -117,7 +130,7 @@ export const resolvePlugins = (config: PackerConfig) => {
 export const buildPlugin = (packageModule: string, generateDefinition: boolean, check: boolean, config: PackerConfig,
                             tsPackage: boolean) => {
   const plugins = [];
-  if (config.compiler.scriptPreprocessor  === 'typescript') {
+  if (config.compiler.script.preprocessor  === 'typescript') {
     const buildConf: any = {
       check,
       tsconfig: `tsconfig.json`,
@@ -160,8 +173,8 @@ export const preBundlePlugins = (config: PackerConfig) => {
     rollupImage({
       exclude: 'node_modules/**',
       extensions: /\.(png|jpg|jpeg|gif|svg)$/,
-      limit: config.output.imageInlineLimit,
-      output: path.join(config.dist, config.output.imageDir)
+      limit: config.compiler.script.image.inlineLimit,
+      output: path.join(config.dist, config.compiler.script.image.outDir)
     })
   ];
 };
@@ -190,13 +203,13 @@ export const postBundlePlugins = (task: string, type: string) => {
 };
 
 export const bundleBuild = async (config: PackerConfig, packageData: PackageConfig, bundleConfig: RollupFileOptions,
-                                  type: string, log: Logger): Promise<void> => {
+                                  type: string, minify: boolean, log: Logger): Promise<void> => {
   log.trace('%s bundle build start', type);
   const bundle = await rollup(bundleConfig);
   const { code, map } = await bundle.write(bundleConfig.output);
   log.trace('%s bundle build end', type);
 
-  if (config.output.minBundle) {
+  if (minify) {
     log.trace('%s minified bundle build start', type);
     const minFileDist = bundleConfig.output.file.replace('.js', '.min.js');
     const minMapFileDist = minFileDist.concat('.map');
@@ -208,9 +221,9 @@ export const bundleBuild = async (config: PackerConfig, packageData: PackageConf
       filename: minFileName
     };
 
-    if (config.output.sourceMap === 'inline') {
+    if (config.compiler.sourceMap === 'inline') {
       minSourceMapConfig.url = 'inline';
-    } else if (config.output.sourceMap) {
+    } else if (config.compiler.sourceMap) {
       minSourceMapConfig.url = minMapFileName;
     } else {
       minSourceMapConfig = undefined;

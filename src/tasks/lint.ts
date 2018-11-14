@@ -11,7 +11,7 @@ export default function init() {
     try {
       const config = meta.readPackerConfig(log);
 
-      if (config.compiler.styleSupport) {
+      if (config.compiler.style) {
         log.info('start');
 
         const src = path.join(config.source, '**/*.{styl,scss,sass,less,css}');
@@ -32,7 +32,7 @@ export default function init() {
     try {
       const config = meta.readPackerConfig(log);
 
-      if (config.compiler.scriptPreprocessor === 'typescript') {
+      if (config.compiler.script.preprocessor === 'typescript') {
         log.info('start');
 
         const src = path.join(config.source, '**/*.{ts,tsx}');
@@ -53,7 +53,7 @@ export default function init() {
     try {
       const config = meta.readPackerConfig(log);
 
-      if (config.compiler.scriptPreprocessor !== 'typescript') {
+      if (config.compiler.script.preprocessor === 'none') {
         log.info('start');
 
         const src = path.join(config.source, '**/*.{js,mjs}');

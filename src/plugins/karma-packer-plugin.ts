@@ -16,7 +16,7 @@ export function karmaPackerPlugin() {
 
   try {
     const typescript = require('typescript');
-    const packerConfig = require(path.join(process.cwd(), '.packerrc.json'));
+    const packerConfig = require(path.join(process.cwd(), '.packerrc.js'));
     const validation = inspector.validate(packerSchema, packerConfig);
     if (!validation.valid) {
       log.warn('malformed packer config (.packerrc):\n%s', validation.format());

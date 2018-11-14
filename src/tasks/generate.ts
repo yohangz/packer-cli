@@ -17,16 +17,16 @@ import {
   commonConfigCopy,
   copyGitIgnore,
   copyPackerAssets,
+  copyPackerConfig,
   demoCopy,
   demoHelperRequireJsCopy,
   demoHelperSystemJsCopy,
   eslintConfigCopy,
   getPackageConfig,
-  getPackerConfig,
   jasmineConfigCopy,
   jestConfigCopy,
   karmaConfigCopy,
-  licenseCopy,
+  licenseCopy, parseBuildMode,
   readmeCopy,
   sourceCopy,
   styleCopy,
@@ -252,65 +252,66 @@ export default function init() {
       }
 
       const options: PackerOptions = await inquirer.prompt<PackerOptions>(questions);
-      const packerConfig = getPackerConfig(options);
       const packageConfig = getPackageConfig(options, packageName);
       const projectDir = path.join(process.cwd(), packageName);
-      const styleExt = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
+      const styleExt = parseStylePreprocessorExtension(options.stylePreprocessor);
+      const buildMode = parseBuildMode(options);
 
       const tasks: TaskFunction[] = [];
       tasks.push(taskGulpify(assetCopy, projectDir, log));
       tasks.push(taskGulpify(templateCopy, projectDir, log));
 
-      if (packerConfig.compiler.styleSupport) {
+      if (options.styleSupport) {
         tasks.push(taskGulpify(styleCopy, styleExt, projectDir, log));
       }
 
-      if (packerConfig.compiler.buildMode !== 'node-cli') {
-        tasks.push(taskGulpify(demoCopy, options, packerConfig, packageName, projectDir, log));
+      if (buildMode !== 'node-cli') {
+        tasks.push(taskGulpify(demoCopy, options, buildMode, packageName, projectDir, log));
       }
 
-      if (packerConfig.compiler.buildMode === 'browser') {
-        if (packerConfig.output.format === 'system') {
+      if (buildMode === 'browser') {
+        if (options.bundleFormat === 'system') {
           tasks.push(taskGulpify(demoHelperSystemJsCopy, projectDir, log));
         }
 
-        if (packerConfig.output.format === 'amd') {
+        if (options.bundleFormat === 'amd') {
           tasks.push(taskGulpify(demoHelperRequireJsCopy, projectDir, log));
         }
       }
 
-      tasks.push(taskGulpify(sourceCopy, options, packerConfig, styleExt, projectDir, log));
+      tasks.push(taskGulpify(sourceCopy, options, buildMode, styleExt, projectDir, log));
 
-      if (packerConfig.compiler.scriptPreprocessor === 'typescript') {
+      if (options.scriptPreprocessor === 'typescript') {
         tasks.push(taskGulpify(typescriptConfigCopy, projectDir, log));
       } else {
         tasks.push(taskGulpify(eslintConfigCopy, projectDir, log));
       }
 
-      if (packerConfig.compiler.buildMode === 'browser') {
-        if (packerConfig.testFramework !== 'jest') {
+      if (buildMode === 'browser') {
+        if (options.testFramework !== 'jest') {
           tasks.push(taskGulpify(karmaConfigCopy, projectDir, log));
         }
       } else {
-        if (packerConfig.testFramework === 'jasmine') {
+        if (options.testFramework === 'jasmine') {
           tasks.push(taskGulpify(jasmineConfigCopy, projectDir, log));
         }
       }
 
-      if (packerConfig.testFramework === 'jest') {
+      if (options.testFramework === 'jest') {
         tasks.push(taskGulpify(jestConfigCopy, projectDir, log));
       }
 
-      if (packerConfig.compiler.styleSupport) {
+      if (options.styleSupport) {
         tasks.push(taskGulpify(styleLintConfigCopy, projectDir, log));
       }
 
-      tasks.push(taskGulpify(licenseCopy, options, packerConfig, projectDir, log));
+      tasks.push(taskGulpify(licenseCopy, options, projectDir, log));
       tasks.push(taskGulpify(readmeCopy, packageConfig, projectDir, log));
-      tasks.push(taskGulpify(babelConfigCopy, options, packerConfig, projectDir, log));
+      tasks.push(taskGulpify(babelConfigCopy, options, buildMode, projectDir, log));
       tasks.push(taskGulpify(copyGitIgnore, projectDir, log));
       tasks.push(taskGulpify(copyPackerAssets, projectDir, log));
-      tasks.push(taskGulpify(commonConfigCopy, packageConfig, packerConfig, options.isYarn, projectDir, log));
+      tasks.push(taskGulpify(commonConfigCopy, packageConfig, options.isYarn, projectDir, log));
+      tasks.push(taskGulpify(copyPackerConfig, options, buildMode, projectDir));
 
       await gulp.series([gulp.parallel(tasks), async () => {
         if (!args.includes('--skipInstall') || !args.includes('-sk')) {

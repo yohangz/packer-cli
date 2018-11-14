@@ -32,7 +32,7 @@ export default function init() {
         makeRelativeDirPath(config.tmp, 'test');
 
         let masterSpecCode = '';
-        const fileExtension = parseScriptPreprocessorExtension(config.compiler.scriptPreprocessor);
+        const fileExtension = parseScriptPreprocessorExtension(config.compiler.script.preprocessor);
         const files = glob.sync(path.join(process.cwd(), config.source, `**/*.spec.${fileExtension}`));
         files.forEach((file) => {
           masterSpecCode += `import '${file}';\n`;

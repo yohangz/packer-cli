@@ -7,126 +7,42 @@ import ReadWriteStream = NodeJS.ReadWriteStream;
 
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 import { DependencyMap } from '../model/dependency-map';
-import { TestFramework } from '../model/test-framework';
-import { StylePreprocessor } from '../model/style-preprocessor';
 import { BrowserBundleFormat } from '../model/browser-bundle-format';
 import { NodeBundleFormat } from '../model/node-bundle-format';
-import { PackerConfig } from '../model/packer-config';
-import { ScriptPreprocessor } from '../model/script-preprocessor';
 import { BuildMode } from '../model/build-mode';
 import { PackerOptions } from '../model/packer-options';
 import { PackageConfig } from '../model/package-config';
 import { Logger } from '../common/logger';
-import { parseScriptPreprocessorExtension, parseLicenseType, parseStylePreprocessorExtension } from './parser';
+import {
+  parseScriptPreprocessorExtension,
+  parseLicenseType,
+  parseStylePreprocessorExtension
+} from './parser';
 
-export const getPackerConfig = (options: PackerOptions): PackerConfig => {
-  const entryFile = 'index.' + parseScriptPreprocessorExtension(options.scriptPreprocessor);
+export const parseDependencyMapMode = (options: PackerOptions): DependencyMap => {
+  if (options.cliProject) {
+    return 'map-dependency';
+  }
 
-  let bundleFormat: NodeBundleFormat | BrowserBundleFormat = 'cjs';
-  let mapMode: DependencyMap = 'cross-map-peer-dependency';
-  let bundleBuildMode: BuildMode;
+  return 'cross-map-peer-dependency';
+};
+
+export const parseBuildMode = (options: PackerOptions): BuildMode => {
   if (options.browserCompliant) {
-    bundleBuildMode = 'browser';
-    bundleFormat = (options.bundleFormat || 'umd') as BrowserBundleFormat;
+    return 'browser';
   } else if (options.cliProject) {
-    bundleBuildMode = 'node-cli';
-    mapMode = 'map-dependency';
-  } else {
-    bundleBuildMode = 'node';
+    return 'node-cli';
   }
 
-  let globalDependencies = {};
-  const additionalServeDir = [];
-  const externalsDependencies = [
-    'regenerator-runtime/**',
-    '@babel/runtime/**',
-    '@babel/runtime-corejs2/**'
-  ];
+  return 'node';
+};
 
-  if (options.testFramework === 'mocha') {
-    externalsDependencies.push('assert');
+export const parseBundleFormat = (options: PackerOptions): NodeBundleFormat | BrowserBundleFormat => {
+  if (options.browserCompliant) {
+    return options.bundleFormat || 'umd';
   }
 
-  if (options.reactLib) {
-    globalDependencies = {
-      'react': 'React',
-      'react-dom': 'ReactDOM'
-    };
-
-    externalsDependencies.push('react', 'react-dom');
-    additionalServeDir.push(
-      'node_modules/react/umd',
-      'node_modules/react-dom/umd'
-    );
-  } else {
-    externalsDependencies.push('handlebars/runtime');
-  }
-
-  return {
-    entry: entryFile,
-    source: 'src',
-    dist: 'dist',
-    tmp: '.tmp',
-    output: {
-      amd: {
-        define: '',
-        id: (options.amdId || '')
-      },
-      dependencyMapMode: mapMode,
-      esnext: true,
-      es5: true,
-      minBundle: true,
-      format: bundleFormat,
-      imageInlineLimit: 1000000,
-      inlineStyle: Boolean(options.bundleStyles),
-      stylesDir: 'styles',
-      imageDir: 'images',
-      namespace: options.namespace || '',
-      sourceMap: true
-    },
-    compiler: {
-      buildMode: bundleBuildMode,
-      scriptPreprocessor: String(options.scriptPreprocessor) as ScriptPreprocessor,
-      stylePreprocessor: (options.stylePreprocessor || 'none') as StylePreprocessor,
-      styleSupport: Boolean(options.styleSupport),
-      concurrentBuild: true
-    },
-    assetPaths: [
-      'src/assets'
-    ],
-    copy: [
-      'README.md',
-      'LICENSE'
-    ],
-    bundle: {
-      externals: externalsDependencies,
-      globals: globalDependencies,
-      mapExternals: true
-    },
-    ignore: [],
-    replacePatterns: [
-      {
-        replace: './config/replace-config',
-        test: './config/base-config'
-      }
-    ],
-    testFramework: (options.testFramework || 'jasmine') as TestFramework,
-    watch: {
-      demoDir: 'demo/watch',
-      helperDir: 'demo/helper',
-      serveDir: additionalServeDir,
-      open: true,
-      port: 4000,
-      serve: true
-    },
-    license: {
-      banner: true,
-      thirdParty: {
-        fileName: 'dependencies.txt',
-        includePrivate: false
-      }
-    },
-  };
+  return 'cjs';
 };
 
 export const getPackageConfig = (options: PackerOptions, packageName: string): PackageConfig => {
@@ -324,6 +240,37 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
   return packageConfig;
 };
 
+export const copyPackerConfig = (options: PackerOptions, buildMode: BuildMode, projectDir: string): ReadWriteStream => {
+  const entryFile = 'index.' + parseScriptPreprocessorExtension(options.scriptPreprocessor);
+  const mapMode = parseDependencyMapMode(options);
+  const bundleFormat = parseBundleFormat(options);
+  const packerTemplatePath = path.join(__dirname, '../resources/dynamic/.packerrc.js.hbs');
+
+  return gulp.src([
+    packerTemplatePath
+  ])
+    .pipe(gulpHbsRuntime({
+      entry: entryFile,
+      buildMode,
+      scriptPreprocessor: options.scriptPreprocessor,
+      styleSupport: options.styleSupport,
+      inlineStyle: options.bundleStyles,
+      stylePreprocessor: options.stylePreprocessor,
+      isMocha: options.testFramework === 'mocha',
+      isReactLib: options.reactLib,
+      bundleFormat,
+      namespace: options.namespace,
+      amdId: options.amdId,
+      testFramework: options.testFramework,
+      serveSupport: options.browserCompliant,
+      dependencyMapMode: mapMode
+    }, {
+      replaceExt: ''
+    }))
+    .pipe(gulp.dest(projectDir));
+
+};
+
 export const styleCopy = (styleExt: string, projectDir: string, log: Logger): ReadWriteStream => {
   log.trace('copy styles');
 
@@ -360,14 +307,14 @@ export const assetCopy = (projectDir: string, log: Logger): ReadWriteStream => {
     .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
 };
 
-export const sourceCopy = (packerOptions: PackerOptions, packerConfig: PackerConfig, styleExt: string,
+export const sourceCopy = (packerOptions: PackerOptions, buildMode: BuildMode, styleExt: string,
                            projectDir: string, log: Logger): ReadWriteStream => {
   log.trace('copy source');
-  const jasmine = packerConfig.testFramework === 'jasmine';
-  const mocha = packerConfig.testFramework === 'mocha';
-  const jest = packerConfig.testFramework === 'jest';
-  const scriptExtension = parseScriptPreprocessorExtension(packerConfig.compiler.scriptPreprocessor);
-  const styleExtension = parseStylePreprocessorExtension(packerConfig.compiler.stylePreprocessor);
+  const jasmine = packerOptions.testFramework === 'jasmine';
+  const mocha = packerOptions.testFramework === 'mocha';
+  const jest = packerOptions.testFramework === 'jest';
+  const scriptExtension = parseScriptPreprocessorExtension(packerOptions.scriptPreprocessor);
+  const styleExtension = parseStylePreprocessorExtension(packerOptions.stylePreprocessor);
 
   log.trace('script extension: "%s"\nstyle extension:\n "%s"', scriptExtension, styleExtension);
 
@@ -385,8 +332,8 @@ export const sourceCopy = (packerOptions: PackerOptions, packerConfig: PackerCon
     isJasmine: jasmine,
     isMocha: mocha,
     isJest: jest,
-    styleSupport: packerConfig.compiler.styleSupport,
-    cliProject: packerConfig.compiler.buildMode === 'node-cli',
+    styleSupport: packerOptions.styleSupport,
+    cliProject: buildMode === 'node-cli',
     reactLib: packerOptions.reactLib
   };
   log.trace('template data: %o', templateData);
@@ -400,8 +347,7 @@ export const sourceCopy = (packerOptions: PackerOptions, packerConfig: PackerCon
     .pipe(gulp.dest(path.join(projectDir, 'src')));
 };
 
-export const licenseCopy = (packerOptions: PackerOptions, packerConfig: PackerConfig,
-                            projectDir: string, log: Logger): ReadWriteStream => {
+export const licenseCopy = (packerOptions: PackerOptions, projectDir: string, log: Logger): ReadWriteStream => {
   log.trace('copy license file');
   const license = parseLicenseType(packerOptions.license);
   const licenseFilePath = path.join(__dirname, '../resources/dynamic/license', `${license}.hbs`);
@@ -472,28 +418,27 @@ export const demoHelperSystemJsCopy = (projectDir: string, log: Logger): ReadWri
     .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
 };
 
-export const demoCopy = (packerOptions: PackerOptions, packerConfig: PackerConfig, packageName: string,
+export const demoCopy = (packerOptions: PackerOptions, buildMode: BuildMode, packageName: string,
                          projectDir: string, log: Logger): ReadWriteStream => {
   log.trace('copy demo resources');
-  const isAmd = packerConfig.output.format === 'amd';
-  const isIife = packerConfig.output.format === 'umd'
-    || packerConfig.output.format === 'iife';
-  const isSystem = packerConfig.output.format === 'system';
-  const templateGlob = packerConfig.compiler.buildMode === 'browser' ? '*.html.hbs' : '*.js.hbs';
+  const isAmd = packerOptions.bundleFormat === 'amd';
+  const isIife = packerOptions.bundleFormat === 'umd' || packerOptions.bundleFormat === 'iife';
+  const isSystem = packerOptions.bundleFormat === 'system';
+  const templateGlob = buildMode === 'browser' ? '*.html.hbs' : '*.js.hbs';
   const demoTemplateGlob = path.join(__dirname, '../resources/dynamic/demo/**', templateGlob);
   log.trace('demo template glob: %s', demoTemplateGlob);
 
   const templateData = {
     projectName: packageName,
-    includeStyles: packerConfig.compiler.styleSupport && packerConfig.output.inlineStyle,
-    namespace: packerConfig.output.namespace,
-    watchDir: path.join(packerConfig.tmp, 'watch'),
-    distDir: packerConfig.dist,
+    includeStyles: packerOptions.styleSupport && packerOptions.bundleStyles,
+    namespace: packerOptions.namespace,
+    watchDir: '.tmp/watch',
+    distDir: 'dist',
     require: isAmd,
     iife: isIife,
     system: isSystem,
-    format: packerConfig.output.format,
-    amdModule: packerConfig.output.amd.id,
+    format: packerOptions.bundleFormat,
+    amdModule: packerOptions.amdId,
     reactLib: packerOptions.reactLib
   };
   log.trace('template data: %o', templateData);
@@ -507,14 +452,14 @@ export const demoCopy = (packerOptions: PackerOptions, packerConfig: PackerConfi
     .pipe(gulp.dest(path.join(projectDir, 'demo')));
 };
 
-export const babelConfigCopy = (packerOptions: PackerOptions, packerConfig: PackerConfig, projectDir: string,
+export const babelConfigCopy = (packerOptions: PackerOptions, buildMode: BuildMode, projectDir: string,
                                 log: Logger): ReadWriteStream => {
   log.trace('copy babel config');
   const babelConfigGlob = path.join(__dirname, '../resources/dynamic/babel/.*.hbs');
   log.trace('babel config glob: %s', babelConfigGlob);
 
   const templateData = {
-    browserCompliant: packerConfig.compiler.buildMode === 'browser',
+    browserCompliant: buildMode === 'browser',
     reactLib: packerOptions.reactLib
   };
   log.trace('template data: %o', templateData);
@@ -645,7 +590,7 @@ export const styleLintConfigCopy = (projectDir: string, log: Logger): ReadWriteS
     .pipe(gulp.dest(projectDir));
 };
 
-export const commonConfigCopy = (packageConfig: PackageConfig, packerConfig: PackerConfig, isYarn: boolean,
+export const commonConfigCopy = (packageConfig: PackageConfig, isYarn: boolean,
                                  projectDir: string, log: Logger): ReadWriteStream => {
   log.trace('copy base dynamic and static config');
   const editorConfig = path.join(__dirname, '../resources/static/.editorconfig');
@@ -661,7 +606,6 @@ export const commonConfigCopy = (packageConfig: PackageConfig, packerConfig: Pac
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);
     })
-    .pipe(gulpFile('.packerrc.json', JSON.stringify(packerConfig, null, 2)))
     .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
     .pipe(gulp.dest(projectDir));
 };

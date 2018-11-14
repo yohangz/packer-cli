@@ -5,9 +5,7 @@ import chmod from 'gulp-chmod';
 import merge from 'lodash/merge';
 import { ModuleFormat, RollupFileOptions } from 'rollup';
 
-import rollupUglify from '../plugins/rollup-plugin-uglify-es';
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
-
 
 import { PackageConfig } from '../model/package-config';
 import logger from '../common/logger';
@@ -54,24 +52,40 @@ export default function init() {
         targetPackage.bin = packageJson.bin;
       }
 
-      targetPackage.main = path.join('bundle', `${packageJson.name}.${config.output.format}.min.js`);
+      if (config.compiler.build.bundleMin) {
+        targetPackage.main = path.join('bundle', `${packageJson.name}.${config.bundle.format}.min.js`);
+      } else {
+        targetPackage.main = path.join('bundle', `${packageJson.name}.${config.bundle.format}.js`);
+      }
 
-      if (config.compiler.scriptPreprocessor === 'typescript') {
+      if (config.compiler.script.preprocessor === 'typescript') {
         targetPackage.typings = 'index.d.ts';
       }
 
-      if (config.output.es5) {
-        targetPackage.module = path.join('fesm5', `${packageJson.name}.esm.min.js`);
-        targetPackage.fesm5 = path.join('fesm5', `${packageJson.name}.esm.min.js`);
+      if (config.compiler.build.es5Min) {
+        const esm5MinPath = path.join('fesm5', `${packageJson.name}.esm.min.js`);
+        targetPackage.module = esm5MinPath;
+        targetPackage.fesm5 = esm5MinPath;
+      } else if (config.compiler.build.es5) {
+        const fesm5Path = path.join('fesm5', `${packageJson.name}.esm.js`);
+        targetPackage.module = fesm5Path;
+        targetPackage.fesm5 = fesm5Path;
       }
 
-      if (config.output.esnext) {
-        targetPackage.esnext = path.join('fesmnext', `${packageJson.name}.esm.min.js`);
-        targetPackage.fesmnext = path.join('fesmnext', `${packageJson.name}.esm.min.js`);
+      if (config.compiler.build.esnextMin) {
+        const esmNextMinPath = path.join('fesmnext', `${packageJson.name}.esm.min.js`);
+        targetPackage.esnext = esmNextMinPath;
+        targetPackage.fesmnext = esmNextMinPath;
+        targetPackage['jsnext:main'] = esmNextMinPath;
+      } else if (config.compiler.build.esnext) {
+        const esmNextPath = path.join('fesmnext', `${packageJson.name}.esm.js`);
+        targetPackage.esnext = esmNextPath;
+        targetPackage.fesmnext = esmNextPath;
+        targetPackage['jsnext:main'] = esmNextPath;
       }
 
       // Map dependencies to target package file
-      switch (config.output.dependencyMapMode) {
+      switch (config.compiler.dependencyMapMode) {
         case 'cross-map-peer-dependency':
           targetPackage.peerDependencies = packageJson.dependencies;
           break;
@@ -126,7 +140,7 @@ export default function init() {
         })
         .pipe(gulpHbsRuntime({
           packageName: packageJson.name,
-          format: config.output.format
+          format: config.bundle.format
         }, {
           rename: `${packageJson.name}.js`
         }))
@@ -171,14 +185,14 @@ export default function init() {
       const flatConfig: RollupFileOptions = merge({}, baseConfig, {
         external: externals,
         output: {
-          amd: config.output.amd,
-          file: path.join(process.cwd(), config.dist, 'bundle', `${packageJson.name}.${config.output.format}.js`),
-          format: config.output.format,
+          amd: config.bundle.amd,
+          file: path.join(process.cwd(), config.dist, 'bundle', `${packageJson.name}.${config.bundle.format}.js`),
+          format: config.bundle.format,
           globals: config.bundle.globals,
-          name: config.output.namespace
+          name: config.bundle.namespace
         },
         plugins: [
-          rollupStyleBuildPlugin(config, packageJson, false, false, true),
+          ...rollupStyleBuildPlugin(config, packageJson, false, false, true, log),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           ...buildPlugin('bundle', true, true, config, typescript),
@@ -186,10 +200,11 @@ export default function init() {
         ]
       });
 
-      log.trace('flat bundle rollu6p config:\n%o', flatConfig);
-      buildTasks.push(bundleBuild(config, packageJson, flatConfig, 'flat', log));
+      log.trace('flat bundle rollup config:\n%o', flatConfig);
+      buildTasks.push(
+        bundleBuild(config, packageJson, flatConfig, 'flat', config.compiler.build.bundleMin, log));
 
-      if (config.output.es5) {
+      if (config.compiler.build.es5) {
         // FESM+ES5 flat module bundle.
         const es5config: RollupFileOptions = merge({}, baseConfig, {
           external: externalFilter(config),
@@ -198,7 +213,7 @@ export default function init() {
             format: 'esm' as ModuleFormat
           },
           plugins: [
-            rollupStyleBuildPlugin(config, packageJson, false, true, false),
+            ...rollupStyleBuildPlugin(config, packageJson, false, true, false, log),
             ...preBundlePlugins(config),
             ...resolvePlugins(config),
             ...buildPlugin('es5', false, true, config, typescript),
@@ -207,10 +222,11 @@ export default function init() {
         });
 
         log.trace('es5 bundle rollup config:\n%o', es5config);
-        buildTasks.push(bundleBuild(config,  packageJson, es5config, 'es5', log));
+        buildTasks.push(
+          bundleBuild(config,  packageJson, es5config, 'es5', config.compiler.build.es5Min, log));
       }
 
-      if (config.output.esnext) {
+      if (config.compiler.build.esnext) {
         // FESM+ESNEXT flat module bundle.
         const esnextConfig: RollupFileOptions = merge({}, baseConfig, {
           external: externalFilter(config),
@@ -219,7 +235,7 @@ export default function init() {
             format: 'esm' as ModuleFormat
           },
           plugins: [
-            rollupStyleBuildPlugin(config, packageJson, false, true, false),
+            ...rollupStyleBuildPlugin(config, packageJson, false, true, false, log),
             ...preBundlePlugins(config),
             ...resolvePlugins(config),
             ...buildPlugin('esnext', false, true, config, typescript),
@@ -228,7 +244,8 @@ export default function init() {
         });
 
         log.trace('esnext bundle rollup config:\n%o', esnextConfig);
-        buildTasks.push(bundleBuild(config,  packageJson, esnextConfig, 'esnext', log));
+        buildTasks.push(
+          bundleBuild(config,  packageJson, esnextConfig, 'esnext', config.compiler.build.esnextMin, log));
       }
 
       if (config.compiler.concurrentBuild) {

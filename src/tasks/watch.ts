@@ -34,9 +34,9 @@ export default function init() {
       makeRelativeDirPath(config.tmp, 'watch');
 
       let rollupServePlugins = [];
-      const additionalServeDir = config.watch.serveDir.map((dir: string) => path.join(process.cwd(), dir));
-      if (config.watch.serve && config.output.format !== 'cjs') {
-        log.trace('set serve plugins');
+      if (config.watch && config.bundle.format !== 'cjs') {
+        log.trace('build bundle with serve support');
+        const additionalServeDir = config.watch.serveDir.map((dir: string) => path.join(process.cwd(), dir));
         rollupServePlugins = [
           rollupServe({
             contentBase: [
@@ -55,19 +55,21 @@ export default function init() {
             ]
           })
         ];
+      } else {
+        log.trace('build serve disabled or not supported for bundle type');
       }
 
       const externals = extractBundleExternals(config);
       const watchConfig: RollupWatchOptions = merge({}, baseConfig, {
         external: externals,
         output: {
-          file: path.join(process.cwd(), config.tmp, 'watch', `${packageJson.name}.${config.output.format}.js`),
-          format: config.output.format,
+          file: path.join(process.cwd(), config.tmp, 'watch', `${packageJson.name}.${config.bundle.format}.js`),
+          format: config.bundle.format,
           globals: config.bundle.globals,
-          name: config.output.namespace
+          name: config.bundle.namespace
         },
         plugins: [
-          rollupStyleBuildPlugin(config, packageJson, true, false, true),
+          ...rollupStyleBuildPlugin(config, packageJson, true, false, true, log),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           ...buildPlugin('bundle', false, false, config, typescript),

@@ -26,10 +26,10 @@ class MetaData {
       return this.packerConfig;
     }
 
-    const packerConfig = require(path.join(process.cwd(), '.packerrc.json'));
+    const packerConfig = require(path.join(process.cwd(), '.packerrc.js'));
     const validation = inspector.validate(packerSchema, packerConfig);
     if (!validation.valid) {
-      log.warn('malformed packer config (.packerrc):\n%s', validation.format());
+      log.warn('malformed packer config (.packerrc):\n%s\nusing default configuration', validation.format());
     }
 
     this.packerConfig = inspector.sanitize(packerSchema, packerConfig).data;
@@ -91,7 +91,7 @@ class MetaData {
   }
 
   public isValidProject(log: Logger): boolean {
-    const hasPackerConfig = fs.existsSync(path.join(process.cwd(), '.packerrc.json'));
+    const hasPackerConfig = fs.existsSync(path.join(process.cwd(), '.packerrc.js'));
     if (!hasPackerConfig) {
       log.warn('Current directory does not contain packer config.\n%s "%s %s"',
         chalk.reset('Generate new project via'), chalk.blue('packer generate'), chalk.green('<project name>'));

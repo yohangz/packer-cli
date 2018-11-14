@@ -7,60 +7,70 @@ import { BuildMode } from './build-mode';
 import { TestFramework } from './test-framework';
 import { PathReplacePattern } from './path-replace-pattern';
 
+export interface PackerStyleConfig {
+  inline: boolean;
+  outDir: string;
+  preprocessor: StylePreprocessor;
+  image: {
+    inlineLimit: number;
+    outDir: string;
+  };
+}
+
+export interface PackerWatchConfig {
+  demoDir: string;
+  helperDir: string;
+  serveDir: string[];
+  open: boolean;
+  port: number;
+}
+
 export interface PackerConfig {
   entry: string;
   source: string;
   dist: string;
   tmp: string;
-  output: {
-    amd: {
-      define: string;
-      id: string;
-    };
-    dependencyMapMode: DependencyMap;
-    esnext: boolean;
-    es5: boolean;
-    minBundle: boolean;
-    format: NodeBundleFormat | BrowserBundleFormat;
-    imageInlineLimit: number;
-    inlineStyle: boolean;
-    stylesDir: string;
-    imageDir: string;
-    namespace: string;
-    sourceMap: boolean | 'inline'
-  };
   compiler: {
-    buildMode: BuildMode,
-    scriptPreprocessor: ScriptPreprocessor,
-    stylePreprocessor: StylePreprocessor,
-    styleSupport: boolean,
-    concurrentBuild: boolean
+    dependencyMapMode: DependencyMap;
+    sourceMap: boolean | 'inline';
+    build: {
+      bundleMin: boolean;
+      es5: boolean;
+      es5Min: boolean;
+      esnext: boolean;
+      esnextMin: boolean;
+    };
+    buildMode: BuildMode;
+    script: {
+      preprocessor: ScriptPreprocessor;
+      image: {
+        inlineLimit: number;
+        outDir: string;
+      }
+    };
+    style: false | PackerStyleConfig;
+    concurrentBuild: boolean;
   };
   assetPaths: string[];
   copy: string[];
+  ignore: string[];
+  replacePatterns: PathReplacePattern[];
   bundle: {
     externals: string[],
     globals: {
       [key: string]: string;
     },
     mapExternals: boolean;
+    format: NodeBundleFormat | BrowserBundleFormat;
+    namespace: string;
+    amd: {
+      define: string;
+      id: string;
+    };
   };
-  ignore: string[];
-  replacePatterns: PathReplacePattern[];
   testFramework: TestFramework;
-  watch: {
-    demoDir: string,
-    helperDir: string,
-    serveDir: string[],
-    open: boolean,
-    port: number,
-    serve: boolean
-  };
+  watch: false | PackerWatchConfig;
   license: {
-    banner: boolean,
-    thirdParty: {
-      fileName: string,
-      includePrivate: boolean
-    }
+    banner: boolean;
   };
 }
