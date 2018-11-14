@@ -180,6 +180,7 @@ export default function init() {
           }
         },
         {
+          default: 'com.lib',
           message: 'What\'s the library namespace you want to use?',
           name: 'namespace',
           type: 'input',

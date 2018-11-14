@@ -212,7 +212,7 @@ export const packerSchema = {
         namespace: {
           type: 'string',
           optional: false,
-          def: ''
+          def: 'com.lib'
         },
         amd: {
           type: 'object',
