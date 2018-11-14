@@ -1,7 +1,7 @@
 {
   "entry": "index.ts",
   "source": "src",
-  "dist": "dist3",
+  "dist": "dist",
   "tmp": ".tmp",
   "output": {
     "amd": {
