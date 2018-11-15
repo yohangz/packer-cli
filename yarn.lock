@@ -5469,9 +5469,9 @@ package-hash@^2.0.0:
     md5-hex "^2.0.0"
     release-zalgo "^1.0.0"
 
-packer-cli@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.5.1.tgz#5f1cee1fa3a56993f2e67103d216f0c735162769"
+packer-cli@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.5.2.tgz#94800d16eb859df267b0fdebd74ecce9a357fc51"
   dependencies:
     "@babel/cli" "^7.1.0"
     "@babel/code-frame" "^7.0.0"
