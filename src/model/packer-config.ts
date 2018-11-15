@@ -25,6 +25,8 @@ export interface PackerWatchConfig {
   port: number;
 }
 
+export type CustomRollupPluginExtractorCallback = (buildType: string, packerConfig: PackerConfig) => any[];
+
 export interface PackerConfig {
   extend: string;
   entry: string;
@@ -34,6 +36,7 @@ export interface PackerConfig {
   compiler: {
     dependencyMapMode: DependencyMap;
     sourceMap: boolean | 'inline';
+    customRollupPluginExtractor: null | CustomRollupPluginExtractorCallback,
     build: {
       bundleMin: boolean;
       es5: boolean;

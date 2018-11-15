@@ -202,6 +202,14 @@ export const postBundlePlugins = (task: string, type: string) => {
   return [];
 };
 
+export const customRollupPlugins = (config: PackerConfig, type: string): any[] => {
+  if (config.compiler.customRollupPluginExtractor) {
+    return config.compiler.customRollupPluginExtractor(type, config);
+  }
+
+  return [];
+};
+
 export const bundleBuild = async (config: PackerConfig, packageData: PackageConfig, bundleConfig: RollupFileOptions,
                                   type: string, minify: boolean, log: Logger): Promise<void> => {
   log.trace('%s bundle build start', type);

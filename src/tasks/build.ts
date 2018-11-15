@@ -12,7 +12,7 @@ import logger from '../common/logger';
 import { meta } from './meta';
 import {
   buildPlugin,
-  bundleBuild, externalFilter,
+  bundleBuild, customRollupPlugins, externalFilter,
   extractBundleExternals,
   getBanner,
   getBaseConfig,
@@ -211,7 +211,8 @@ export default function init() {
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           ...buildPlugin('bundle', true, true, config, typescript),
-          ...postBundlePlugins('[build:bundle]', 'flat')
+          ...postBundlePlugins('[build:bundle]', 'flat'),
+          ...customRollupPlugins(config, 'bundle')
         ]
       });
 
@@ -232,7 +233,8 @@ export default function init() {
             ...preBundlePlugins(config),
             ...resolvePlugins(config),
             ...buildPlugin('es5', false, true, config, typescript),
-            ...postBundlePlugins('[build:bundle]', 'es5')
+            ...postBundlePlugins('[build:bundle]', 'es5'),
+            ...customRollupPlugins(config, 'es5')
           ]
         });
 
@@ -254,7 +256,8 @@ export default function init() {
             ...preBundlePlugins(config),
             ...resolvePlugins(config),
             ...buildPlugin('esnext', false, true, config, typescript),
-            ...postBundlePlugins('[build:bundle]', 'esnext')
+            ...postBundlePlugins('[build:bundle]', 'esnext'),
+            ...customRollupPlugins(config, 'esnext')
           ]
         });
 

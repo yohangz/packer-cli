@@ -43,6 +43,11 @@ export const packerSchema = {
           pattern: /^(inline)$/,
           def: true
         },
+        customRollupPluginExtractor: {
+          type: ['null', 'function'],
+          optional: false,
+          def: null
+        },
         build: {
           type: 'object',
           optional: false,

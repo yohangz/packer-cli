@@ -313,6 +313,20 @@ module.exports = {
      * @default true
      */
     sourceMap: true,
+    
+    /**
+     * Custom rollup plugin extractor callback.
+     * @callback customRollupPluginExtractorCallback
+     * @param {string} buildType - 'bundle'|'es5'|'esnext'
+     * @param {string} packerConfig - Packer configuration object.
+     * @return {Array<{}>} Custom rollup plugin collection
+     */
+
+    /**
+     * Extract custom rollup plugins to be executed while building the target artifacts.
+     * @type {(null|customRollupPluginExtractorCallback)}
+     */
+    customRollupPluginExtractor: null,
 
     /**
      * Compile build target config.
