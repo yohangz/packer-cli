@@ -143,7 +143,6 @@ class MetaData {
 
     let confPath: string;
     if (dynamicConfIndex > -1) {
-      console.log(dynamicConfIndex);
       const dynamicConf = args[dynamicConfIndex + 1];
       if (!dynamicConf) {
         log.error('config file path not defined with config option.\n%s "%s"',

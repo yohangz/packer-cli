@@ -47,7 +47,7 @@ const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void>
       }
     }
   } catch (e) {
-    console.log(e);
+    log.error('test execution failure\n%o', e);
   }
 };
 
