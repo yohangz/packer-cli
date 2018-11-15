@@ -141,8 +141,9 @@ What's the library namespace you want to use? my.lib
 
 # You can chose either Jasmine or Mocha unit test framework.
 Which unit test framework do you want to use?
-- Jasmine
-- Mocha
+- jasmine
+- mocha
+- jest
 
 # Library copyright year to be included in license file.
 What is the library copyright year (optional)? 2018
