@@ -47,7 +47,8 @@ export default function init() {
         await buildUnitTestSource(config, srcFile, log);
       }
     } catch (e) {
-      log.error('failure: %s\n', e.stack || e.message);
+      log.error('task failure: %s\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 }

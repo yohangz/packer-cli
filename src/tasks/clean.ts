@@ -18,6 +18,7 @@ export default function init() {
         .pipe(clean());
     } catch (e) {
       log.error('task failure:\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 
@@ -33,6 +34,7 @@ export default function init() {
         .pipe(clean());
     } catch (e) {
       log.error('task failure:\n', e.message, e.stack);
+      process.exit(1);
     }
   });
 

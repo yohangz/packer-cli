@@ -23,7 +23,8 @@ export default function init() {
         log.trace('skip style lint');
       }
     } catch (e) {
-      log.error('failure: %s\n', e.stack || e.message);
+      log.error('task failure: %s\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 
@@ -44,7 +45,8 @@ export default function init() {
         log.trace('skip script tslint');
       }
     } catch (e) {
-      log.error('failure: %s\n', e.stack || e.message);
+      log.error('task failure: %s\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 
@@ -65,7 +67,8 @@ export default function init() {
         log.trace('skip script eslint');
       }
     } catch (e) {
-      log.error('failure: %s\n', e.stack || e.message);
+      log.error('task failure: %s\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 

@@ -258,7 +258,7 @@ module.exports = {
    * @type {string}
    * @default '~/packer-cli/resources/static/.packerrc.base.js'
    */
-  extends: '~/packer-cli/resources/static/.packerrc.base.js',
+  extend: '~/packer-cli/resources/static/.packerrc.base.js',
     
   /**
    * Entry source file.

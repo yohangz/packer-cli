@@ -364,6 +364,7 @@ export const licenseCopy = (packerOptions: PackerOptions, projectDir: string, lo
   ])
     .on('error', (e) => {
       log.error('missing license file template: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulpHbsRuntime(templateData, {
       rename: 'LICENSE'
@@ -385,6 +386,7 @@ export const readmeCopy = (packageConfig: PackageConfig, projectDir: string, log
   ])
     .on('error', (e) => {
       log.error('missing README.md template: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulpHbsRuntime(templateData, {
       replaceExt: ''
@@ -401,6 +403,7 @@ export const demoHelperRequireJsCopy = (projectDir: string, log: Logger): ReadWr
   ])
     .on('error', (e) => {
       log.error('missing helper file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
 };
@@ -414,6 +417,7 @@ export const demoHelperSystemJsCopy = (projectDir: string, log: Logger): ReadWri
   ])
     .on('error', (e) => {
       log.error('missing helper file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(path.join(projectDir, 'demo/helper')));
 };
@@ -483,6 +487,7 @@ export const copyGitIgnore = (projectDir: string, log: Logger): ReadWriteStream 
   ])
     .on('error', (e) => {
       log.error('missing .gitignore template: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulpHbsRuntime({}, {
       replaceExt: ''
@@ -504,6 +509,7 @@ export const copyPackerAssets = (projectDir: string, log: Logger): ReadWriteStre
   ])
     .on('error', (e) => {
       log.error('missing packer asset: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(path.join(projectDir, '.packer')));
 };
@@ -521,6 +527,7 @@ export const typescriptConfigCopy = (projectDir: string, log: Logger): ReadWrite
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(projectDir));
 };
@@ -534,6 +541,7 @@ export const karmaConfigCopy = (projectDir: string, log: Logger): ReadWriteStrea
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(projectDir));
 };
@@ -547,6 +555,7 @@ export const jasmineConfigCopy = (projectDir: string, log: Logger): ReadWriteStr
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(projectDir));
 };
@@ -560,6 +569,7 @@ export const jestConfigCopy = (projectDir: string, log: Logger): ReadWriteStream
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(projectDir));
 };
@@ -573,6 +583,7 @@ export const eslintConfigCopy = (projectDir: string, log: Logger): ReadWriteStre
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(projectDir));
 };
@@ -586,6 +597,7 @@ export const styleLintConfigCopy = (projectDir: string, log: Logger): ReadWriteS
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulp.dest(projectDir));
 };
@@ -605,6 +617,7 @@ export const commonConfigCopy = (packageConfig: PackageConfig, isYarn: boolean,
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);
+      process.exit(1);
     })
     .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
     .pipe(gulp.dest(projectDir));

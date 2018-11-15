@@ -12,6 +12,7 @@ export default function init() {
       console.log(chalk.blue('%s version: %s'), config.name, chalk.red(config.version));
     } catch (e) {
       log.error('task failure:\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 }

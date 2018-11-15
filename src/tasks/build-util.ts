@@ -241,6 +241,7 @@ export const bundleBuild = async (config: PackerConfig, packageData: PackageConf
       const { message, line, col: column } = minData.error;
       log.error('%s bundle min build failure \n%s', type,
         codeFrameColumns(code, { start: { line, column } }, { message }));
+      process.exit(1);
     } else {
       await writeFile(minFileDist, minData.code);
       if (minSourceMapConfig && minSourceMapConfig.url === minMapFileName) {

@@ -242,6 +242,7 @@ export default function init() {
       if (args.length < 2) {
         log.error('Please provide a library name to generate the project\n%s',
           chalk.blue('npx packer-cli generate my-library'));
+        process.exit(1);
         return;
       }
 
@@ -249,6 +250,7 @@ export default function init() {
       const packageNameValidity = npmValidate(packageName);
       if (!packageNameValidity.validForNewPackages) {
         log.error(packageNameValidity.errors.join('\n'));
+        process.exit(1);
         return;
       }
 
@@ -324,6 +326,7 @@ export default function init() {
       });
     } catch (e) {
       log.error('task failure\n%s', e.stack || e.message);
+      process.exit(1);
     }
   });
 }

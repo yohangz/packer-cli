@@ -21,7 +21,7 @@ import {
 const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void> => {
   try {
     const specBundlePath = path.join(config.tmp, 'test/index.bundled.spec.js');
-    if (args.includes('--coverage') || args.includes('-c')) {
+    if (args.includes('--coverage') || args.includes('-C')) {
       switch (config.testFramework) {
         case 'jasmine':
           await runShellCommand('nyc', ['jasmine', 'JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);

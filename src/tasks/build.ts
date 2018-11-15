@@ -112,6 +112,7 @@ export default function init() {
         }))
           .on('error', (e) => {
             log.error('copy source missing: %s\n', e.stack || e.message);
+            process.exit(1);
           })
           .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
           .pipe(gulp.dest(path.join(process.cwd(), config.dist)))
@@ -128,7 +129,8 @@ export default function init() {
       }
 
     } catch (e) {
-      log.error('failure: %s\n', e.stack || e.message);
+      log.error('task failure: %s\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 
@@ -148,6 +150,7 @@ export default function init() {
       return gulp.src([path.join(process.cwd(), '.packer/bin.hbs')])
         .on('error', (e) => {
           log.error('bin source missing: %s\n', e.stack || e.message);
+          process.exit(1);
         })
         .pipe(gulpHbsRuntime({
           packageName: packageJson.name,
@@ -175,7 +178,8 @@ export default function init() {
           log.trace('end');
         });
     } catch (e) {
-      log.error('failure: %s\n', e.stack || e.message);
+      log.error('task failure: %s\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 
@@ -268,7 +272,8 @@ export default function init() {
       }
       log.trace('end');
     } catch (e) {
-      log.error('failure: %s\n', e.stack || e.message);
+      log.error('task failure: %s\n', e.stack || e.message);
+      process.exit(1);
     }
   });
 

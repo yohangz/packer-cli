@@ -44,57 +44,55 @@ export const initPacker = () => {
         break;
       case 'build':
       case 'b':
-        if (meta.isValidProject(log)) {
-          gulp.series('build')(() => {
-            // no implementation
-          });
-        }
+        meta.fetchPackerConfig(log);
+        gulp.series('build')(() => {
+          // no implementation
+        });
         break;
       case 'watch':
       case 'w':
-        if (meta.isValidProject(log)) {
-          gulp.series('watch')(() => {
-            // no implementation
-          });
-        }
+        meta.fetchPackerConfig(log);
+        gulp.series('watch')(() => {
+          // no implementation
+        });
         break;
       case 'test':
       case 't':
-        if (meta.isValidProject(log)) {
-          gulp.series('test')(() => {
-            // no implementation
-          });
-        }
+        meta.fetchPackerConfig(log);
+        gulp.series('test')(() => {
+          // no implementation
+        });
         break;
       case 'clean':
       case 'c':
+        meta.fetchPackerConfig(log);
         gulp.series('clean')(() => {
           // no implementation
         });
         break;
       case 'lint':
       case 'l': {
-        if (meta.isValidProject(log)) {
-          if (args.includes('--style') || args.includes('-st')) {
-            gulp.series('lint:style')(() => {
-              // no implementation
-            });
-            break;
-          } else if (args.includes('--script') || args.includes('-sc')) {
-            gulp.series('lint:script')(() => {
-              // no implementation
-            });
-            break;
-          } else {
-            gulp.series('lint')(() => {
-              // no implementation
-            });
-          }
+        meta.fetchPackerConfig(log);
+        if (args.includes('--style') || args.includes('-st')) {
+          gulp.series('lint:style')(() => {
+            // no implementation
+          });
           break;
+        } else if (args.includes('--script') || args.includes('-sc')) {
+          gulp.series('lint:script')(() => {
+            // no implementation
+          });
+          break;
+        } else {
+          gulp.series('lint')(() => {
+            // no implementation
+          });
         }
+        break;
       }
       default:
         log.error('Invalid task name argument\n%s%s', chalk.reset('try '), chalk.blue('packer --help'));
+        process.exit(1);
     }
   } catch (e) {
     log.error('packer init failure: %s\n', e.stack || e.message);

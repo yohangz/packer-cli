@@ -9,6 +9,7 @@ import { PackageConfig } from '../model/package-config';
 import { BabelConfig } from '../model/babel-config';
 import { Logger } from '../common/logger';
 import { packerSchema } from './validation';
+import { args } from './util';
 
 // TODO: handle concurrent reads, implement a locking mechanism
 class MetaData {
@@ -22,12 +23,12 @@ class MetaData {
   private packerHelpSummary: string;
   private packerBanner: string;
 
-  public readPackerConfig(log: Logger): PackerConfig {
+  public fetchPackerConfig(log: Logger): void {
     if (this.packerConfig) {
-      return this.packerConfig;
+      return;
     }
 
-    const projectConf: PackerConfig = require(path.join(process.cwd(), '.packerrc.js'));
+    const projectConf: PackerConfig = require(this.readConfigPath(log));
 
     const readConf = (sourceConf) => {
       const conf = sourceConf[sourceConf.length - 1];
@@ -36,7 +37,7 @@ class MetaData {
         if (conf.extend.startsWith('~/packer-cli')) {
           parentConfPath = path.join(__dirname, conf.extend.replace('~/packer-cli', '../'));
         } else {
-          parentConfPath = path.join(process.cwd(), conf.extend);
+          parentConfPath = path.isAbsolute(conf.extend) ? conf.extend : path.join(process.cwd(), conf.extend);
         }
 
         log.trace('read parent packer config from path: %s', parentConfPath);
@@ -70,6 +71,14 @@ class MetaData {
     }
 
     this.packerConfig = inspector.sanitize(packerSchema, packerConfig).data;
+  }
+
+  public readPackerConfig(log: Logger): PackerConfig {
+    if (this.packerConfig) {
+      return this.packerConfig;
+    }
+
+    this.fetchPackerConfig(log);
     return this.packerConfig;
   }
 
@@ -127,14 +136,39 @@ class MetaData {
     return this.packerBanner;
   }
 
-  public isValidProject(log: Logger): boolean {
-    const hasPackerConfig = fs.existsSync(path.join(process.cwd(), '.packerrc.js'));
-    if (!hasPackerConfig) {
-      log.warn('Current directory does not contain packer config.\n%s "%s %s"',
-        chalk.reset('Generate new project via'), chalk.blue('packer generate'), chalk.green('<project name>'));
+  private readConfigPath(log: Logger): string {
+    const dynamicConfIndex = args.findIndex((value: string): boolean => {
+      return value.startsWith('--config') || value.startsWith('-c');
+    });
+
+    let confPath: string;
+    if (dynamicConfIndex > -1) {
+      console.log(dynamicConfIndex);
+      const dynamicConf = args[dynamicConfIndex + 1];
+      if (!dynamicConf) {
+        log.error('config file path not defined with config option.\n%s "%s"',
+          chalk.reset('correct packer command with'), chalk.blue('packer <command> --config path/to/packerrc.js'));
+        process.exit(1);
+      }
+
+      confPath = path.isAbsolute(dynamicConf) ? dynamicConf : path.join(process.cwd(), dynamicConf);
+      log.info('using dynamic packer config in %s', confPath);
+
+      if (!fs.existsSync(confPath)) {
+        log.error('packer config file not found');
+        process.exit(1);
+      }
+    } else {
+      confPath = path.join(process.cwd(), '.packerrc.js');
+
+      if (!fs.existsSync(confPath)) {
+        log.error('Current directory does not contain packer config.\n%s "%s %s"',
+          chalk.reset('Generate new project via'), chalk.blue('packer generate'), chalk.green('<project name>'));
+        process.exit(1);
+      }
     }
 
-    return hasPackerConfig;
+    return confPath;
   }
 }
 
