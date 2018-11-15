@@ -3,6 +3,13 @@
  */
 module.exports = {
   /**
+   * Extend with packer base config
+   * @type {string}
+   * @default '~/packer-cli/resources/static/.packerrc.base.js'
+   */
+  extend: '~/packer-cli/resources/static/.packerrc.base.js',
+
+  /**
    * Entry source file.
    * @type {string}
    * @default 'index.js'

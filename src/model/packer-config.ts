@@ -26,6 +26,7 @@ export interface PackerWatchConfig {
 }
 
 export interface PackerConfig {
+  extend: string;
   entry: string;
   source: string;
   dist: string;

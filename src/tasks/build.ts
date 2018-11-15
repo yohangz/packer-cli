@@ -105,17 +105,28 @@ export default function init() {
       }
 
       // copy the needed additional files in the 'dist' folder
-      return gulp.src((config.copy || []).map((copyFile: string) => {
-        return path.join(process.cwd(), copyFile);
-      }))
-        .on('error', (e) => {
-          log.error('copy source missing: %s\n', e.stack || e.message);
-        })
-        .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
-        .pipe(gulp.dest(path.join(process.cwd(), config.dist)))
-        .on('finish', () => {
-          log.trace('end');
-        });
+      if (config.copy.length > 0) {
+        log.trace('copy static files and package.json');
+        return gulp.src(config.copy.map((copyFile: string) => {
+          return path.join(process.cwd(), copyFile);
+        }))
+          .on('error', (e) => {
+            log.error('copy source missing: %s\n', e.stack || e.message);
+          })
+          .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
+          .pipe(gulp.dest(path.join(process.cwd(), config.dist)))
+          .on('finish', () => {
+            log.trace('end');
+          });
+      } else {
+        log.trace('copy package.json');
+        return gulpFile('package.json', JSON.stringify(targetPackage, null, 2))
+          .pipe(gulp.dest(path.join(process.cwd(), config.dist)))
+          .on('finish', () => {
+            log.trace('end');
+          });
+      }
+
     } catch (e) {
       log.error('failure: %s\n', e.stack || e.message);
     }

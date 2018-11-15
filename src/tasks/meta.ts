@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import * as inspector from 'schema-inspector';
+import mergeWith from 'lodash/mergeWith';
 
 import { PackerConfig } from '../model/packer-config';
 import { PackageConfig } from '../model/package-config';
@@ -26,10 +27,46 @@ class MetaData {
       return this.packerConfig;
     }
 
-    const packerConfig = require(path.join(process.cwd(), '.packerrc.js'));
+    const projectConf: PackerConfig = require(path.join(process.cwd(), '.packerrc.js'));
+
+    const readConf = (sourceConf) => {
+      const conf = sourceConf[sourceConf.length - 1];
+      if (conf && typeof conf === 'object' && conf.extend) {
+        let parentConfPath;
+        if (conf.extend.startsWith('~/packer-cli')) {
+          parentConfPath = path.join(__dirname, conf.extend.replace('~/packer-cli', '../'));
+        } else {
+          parentConfPath = path.join(process.cwd(), conf.extend);
+        }
+
+        log.trace('read parent packer config from path: %s', parentConfPath);
+        return readConf([...sourceConf, require(parentConfPath)]);
+      } else {
+        return sourceConf;
+      }
+    };
+
+    const confCollection = readConf([projectConf]).reverse();
+    let packerConfig: PackerConfig = null;
+    if (confCollection.length > 1) {
+      const baseConf = confCollection.shift();
+      packerConfig = mergeWith(baseConf, ...confCollection, (objValue, srcValue) => {
+        if (Array.isArray(objValue)) {
+          if (Array.isArray(srcValue)) {
+            return srcValue;
+          }
+
+          return [];
+        }
+      });
+    } else {
+      packerConfig = confCollection[0];
+    }
+
+    log.trace('merged packer config:\n%o', packerConfig);
     const validation = inspector.validate(packerSchema, packerConfig);
     if (!validation.valid) {
-      log.warn('malformed packer config (.packerrc):\n%s\nusing default configuration', validation.format());
+      log.warn('malformed packer config (.packerrc.js):\n%s\nusing default configuration', validation.format());
     }
 
     this.packerConfig = inspector.sanitize(packerSchema, packerConfig).data;
