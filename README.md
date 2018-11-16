@@ -53,7 +53,7 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 - [x] Support SCSS, SASS, LESS and Stylus and vanilla CSS
 - [x] Post CSS based image inline and auto prefixing
 - [x] Karma unit test runner
-- [x] Jasmine and Mocha unit test frameworks
+- [x] Jasmine, Mocha and Jest unit test frameworks
 - [x] Rollup and Gulp based build process
 - [x] FESM5, FESM2015 and UMD build output
 - [x] Emmit type definitions for typescript projects
@@ -69,6 +69,7 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 - [x] Library dependency license extraction
 - [x] Node CLI project support
 - [x] JSX and TSX support
+- [x] Custom rollup plugin integration support
 
 # Usage
 
