@@ -9,8 +9,6 @@ import codeFrameColumns from '@babel/code-frame';
 import { rollup, RollupFileOptions } from 'rollup';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupPostCss from 'rollup-plugin-postcss';
-import postCssImageInline from 'postcss-image-inliner';
-import postCssAutoPrefix from 'autoprefixer';
 import rollupReplace from 'rollup-plugin-re';
 import rollupIgnore from 'rollup-plugin-ignore';
 import rollupResolve from 'rollup-plugin-node-resolve';
@@ -83,15 +81,14 @@ export const rollupStyleBuildPlugin = (config: PackerConfig,
   return [
     rollupPostCss({
       extract: config.compiler.style.inline ? false : styleDist,
-      minimize: minify,
-      plugins: [
-        postCssImageInline({
-          assetPaths: config.assetPaths,
-          maxFileSize: config.compiler.style.image.inlineLimit
-        }),
-        postCssAutoPrefix
-      ],
-      sourceMap: config.compiler.sourceMap
+      minimize: config.compiler.style.inline || minify, // minify styles if inline compile is enabled
+      config: {
+        path: path.join(process.cwd(), 'postcss.config.js'),
+        ctx: {
+          config
+        }
+      },
+      sourceMap: config.compiler.style.inline ? false : config.compiler.sourceMap
     })
   ];
 };

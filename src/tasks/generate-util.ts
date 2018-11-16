@@ -223,7 +223,9 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
 
   if (options.styleSupport) {
     devDependencies = Object.assign({
-      'stylelint-config-standard': '^18.2.0'
+      'stylelint-config-standard': '^18.2.0',
+      'autoprefixer': '^8.6.3',
+      'postcss-url': '^8.0.0'
     }, devDependencies);
   }
 
@@ -538,6 +540,20 @@ export const karmaConfigCopy = (projectDir: string, log: Logger): ReadWriteStrea
 
   return gulp.src([
     karma
+  ])
+    .on('error', (e) => {
+      log.error('missing config file: %s\n', e.stack || e.message);
+      process.exit(1);
+    })
+    .pipe(gulp.dest(projectDir));
+};
+
+export const postCssConfigCopy = (projectDir: string, log: Logger): ReadWriteStream =>  {
+  const postCss = path.join(__dirname, '../resources/static/postcss.config.js');
+  log.trace('karma.conf.js path: %s', postCss);
+
+  return gulp.src([
+    postCss
   ])
     .on('error', (e) => {
       log.error('missing config file: %s\n', e.stack || e.message);

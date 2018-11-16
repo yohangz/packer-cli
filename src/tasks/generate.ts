@@ -26,7 +26,7 @@ import {
   jasmineConfigCopy,
   jestConfigCopy,
   karmaConfigCopy,
-  licenseCopy, parseBuildMode,
+  licenseCopy, parseBuildMode, postCssConfigCopy,
   readmeCopy,
   sourceCopy,
   styleCopy,
@@ -305,6 +305,7 @@ export default function init() {
       }
 
       if (options.styleSupport) {
+        tasks.push(taskGulpify(postCssConfigCopy, projectDir, log));
         tasks.push(taskGulpify(styleLintConfigCopy, projectDir, log));
       }
 
