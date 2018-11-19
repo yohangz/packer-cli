@@ -125,7 +125,8 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
     }, dependencies);
 
     devDependencies = Object.assign({
-      typescript: '^3.1.6'
+      typescript: '^3.1.6',
+      tslint: '^5.11.0'
     }, devDependencies);
 
     if (options.testFramework === 'jest') {
@@ -155,6 +156,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
     }
   } else {
     devDependencies = Object.assign({
+      'eslint': '^5.9.0',
       'eslint-config-standard': '^12.0.0',
       'eslint-plugin-import': '^2.10.0',
       'eslint-plugin-node': '^8.0.0',
@@ -222,11 +224,30 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
 
   if (options.styleSupport) {
     devDependencies = Object.assign({
+      'stylelint': '^9.8.0',
       'stylelint-config-standard': '^18.2.0',
       'autoprefixer': '^8.6.3',
       'postcss-url': '^8.0.0',
       'cssnano': '^4.1.7'
     }, devDependencies);
+
+    if (options.stylePreprocessor === 'scss' || options.stylePreprocessor === 'sass') {
+      devDependencies = Object.assign({
+        'node-sass': '^4.9.3'
+      }, devDependencies);
+    }
+
+    if (options.stylePreprocessor === 'less') {
+      devDependencies = Object.assign({
+        less: '^3.8.1'
+      }, devDependencies);
+    }
+
+    if (options.stylePreprocessor === 'stylus') {
+      devDependencies = Object.assign({
+        stylus: '^0.54.5'
+      }, devDependencies);
+    }
   }
 
   devDependencies[cliPackageData.name] = `^${cliPackageData.version}`;

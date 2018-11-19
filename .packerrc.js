@@ -215,8 +215,29 @@ module.exports = {
   ignore: [],
 
   /**
+   * Custom rollup plugin extractor callback.
+   * @callback pathReplaceCallback
+   * @param {string} code - code segment
+   * @param {string} id - file path/identifier.
+   * @return {string} transformed code.
+   */
+
+  /**
+   * Path Replace pattern object type.
+   * @typedef {Object} PathReplacePattern
+   * @property {(string|RegExp)} test - test expression or string.
+   * @property {string} replace - string to replace the match.
+   * @property {RegExp} match - regexp match with resolved path.
+   * @property {(string|string[])} include - whitelist patterns to match.
+   * @property {(string|string[])} exclude - blacklist patterns avoid matching.
+   * @property {string} text - replace content with given text.
+   * @property {string} file - replace with given file relative to project root.
+   * @property {pathReplaceCallback} transform - path replace function.
+   */
+
+  /**
    * Import path replace pattern collection.
-   * @type {Array<{ test: (string|RegExp), replace: string }>}
+   * @type {Array<PathReplacePattern>}
    * @default []
    */
   replacePatterns: [],

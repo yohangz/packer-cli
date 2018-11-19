@@ -87,6 +87,8 @@ declare interface PostCssConfig {
 declare type PostCssOnImport = (id: string) => void;
 
 declare interface RollupPluginPostCssOptions {
+  include?: string|string[];
+  exclude?: string|string[];
   extensions?: string[];
   plugins?: any[];
   inject?: boolean | object;
@@ -121,7 +123,7 @@ declare module 'postcss-image-inliner' {
   export default function(options?: PostCssImageInnerOptions): any;
 }
 
-declare type RenameTrransform = (code: string, id: string) => boolean;
+declare type RenameTransform = (code: string, id: string) => string;
 
 declare interface RenamePattern {
   include?: string | string[];
@@ -131,7 +133,7 @@ declare interface RenamePattern {
   replace?: string;
   text?: string;
   file?: string;
-  transform?: RenameTrransform;
+  transform?: RenameTransform;
 }
 
 declare interface RollupPluginRenameOptions {
@@ -142,7 +144,7 @@ declare interface RollupPluginRenameOptions {
     IS_REMOVE?: boolean,
   };
   replaces?: {
-    $version: string
+    [key: string]: string
   };
   patterns: RenamePattern[];
 }

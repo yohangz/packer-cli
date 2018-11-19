@@ -169,11 +169,17 @@ export const packerSchema = {
     assetPaths: {
       type: 'array',
       optional: false,
+      items: {
+        type: 'string'
+      },
       def: []
     },
     copy: {
       type: 'array',
       optional: false,
+      items: {
+        type: 'string'
+      },
       def: [
         'README.md',
         'LICENSE'
@@ -182,11 +188,57 @@ export const packerSchema = {
     ignore: {
       type: 'array',
       optional: false,
+      items: {
+        type: 'string'
+      },
       def: []
     },
     replacePatterns: {
       type: 'array',
       optional: false,
+      items: {
+        type: 'object',
+        properties: {
+          include: {
+            type: [ 'string', 'array'],
+            optional: false,
+            items: {
+              type: 'string'
+            },
+          },
+          exclude:  {
+            type: [ 'string', 'array'],
+            optional: true,
+            items: {
+              type: 'string'
+            },
+          },
+          test: {
+            type: [ 'string', 'object'],
+            optional: true
+          },
+          replace: {
+            type: 'string',
+            optional: true
+          },
+          match: {
+            type: 'object',
+            optional: true
+          },
+          text: {
+            type: 'string',
+            optional: true
+          },
+          file: {
+            type: 'string',
+            optional: true
+          },
+          pathReplaceCallback: {
+            type: 'function',
+            optional: true
+          }
+        }
+      },
       def: []
     },
     bundle: {
@@ -197,6 +249,9 @@ export const packerSchema = {
         externals: {
           type: 'array',
           optional: false,
+          items: {
+            type: 'string'
+          },
           def: []
         },
         globals: {
@@ -263,6 +318,9 @@ export const packerSchema = {
         serveDir: {
           type: 'array',
           optional: false,
+          items: {
+            type: 'string'
+          },
           def: []
         },
         open: {

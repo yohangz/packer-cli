@@ -77,6 +77,7 @@ export const rollupStyleBuildPlugin = (config: PackerConfig, packageJson: Packag
 
   return [
     rollupPostCss({
+      exclude: 'node_modules/**',
       extract: config.compiler.style.inline ? false : styleDist,
       config: {
         path: path.join(process.cwd(), 'postcss.config.js'),
@@ -92,6 +93,7 @@ export const rollupStyleBuildPlugin = (config: PackerConfig, packageJson: Packag
 
 export const rollupReplacePlugin = (config: PackerConfig) => {
   return rollupReplace({
+    exclude: 'node_modules/**',
     patterns: config.replacePatterns
   });
 };
@@ -161,8 +163,14 @@ export const buildPlugin = (packageModule: string, generateDefinition: boolean, 
 };
 
 export const preBundlePlugins = (config: PackerConfig) => {
-  return [
-    rollupReplacePlugin(config),
+  const plugins = [];
+  if (config.replacePatterns.length) {
+    plugins.push(rollupReplace({
+      exclude: 'node_modules/**',
+      patterns: config.replacePatterns
+    }));
+  }
+  plugins.push(
     rollupHandlebars(),
     rollupImage({
       exclude: 'node_modules/**',
@@ -170,7 +178,9 @@ export const preBundlePlugins = (config: PackerConfig) => {
       limit: config.compiler.script.image.inlineLimit,
       output: path.join(config.dist, config.compiler.script.image.outDir)
     })
-  ];
+  );
+
+  return plugins;
 };
 
 const bundleSizeLoggerPlugin = (taskName: string, type: string) => {
