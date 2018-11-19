@@ -208,7 +208,7 @@ generated project structure can be viewed [here](docs/STRUCTURE.md)
 
 You can also use packer CLI standalone on any packer compliant project to customize the NPM scripts generated.
 
-```sh
+```
 Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
 
   Arguments supported with all commands
