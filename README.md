@@ -55,7 +55,7 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 - [x] Karma unit test runner
 - [x] Jasmine, Mocha and Jest unit test frameworks
 - [x] Rollup and Gulp based build process
-- [x] FESM5, FESM2015 and UMD build output
+- [x] es5, esnext, umd, amd, system, iife and commonjs bundle build output
 - [x] Emmit type definitions for typescript projects
 - [x] Ready to publish as Node module
 - [x] Inline and bundle styles
