@@ -110,12 +110,12 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
     }, devDependencies);
 
     dependencies =  Object.assign({
-      'react': '^16.6.1',
-      'react-dom': '^16.6.1'
+      'react': '^16.6.3',
+      'react-dom': '^16.6.3'
     }, dependencies);
   } else {
     dependencies =  Object.assign({
-      handlebars: '^4.0.11'
+      handlebars: '^4.0.12'
     }, dependencies);
   }
 
@@ -125,7 +125,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
     }, dependencies);
 
     devDependencies = Object.assign({
-      typescript: '^3.1.1'
+      typescript: '^3.1.6'
     }, devDependencies);
 
     if (options.testFramework === 'jest') {
@@ -136,7 +136,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
 
     if (options.testFramework === 'jasmine') {
       devDependencies = Object.assign({
-        '@types/jasmine': '^2.8.8'
+        '@types/jasmine': '^3.3.0'
       }, devDependencies);
     }
 
@@ -149,18 +149,17 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
 
     if (options.reactLib) {
       devDependencies = Object.assign({
-        '@types/react': '^16.4.18',
+        '@types/react': '^16.7.6',
         '@types/react-dom': '^16.0.9',
       }, devDependencies);
     }
   } else {
     devDependencies = Object.assign({
-      'eslint': '>=5.0.0',
-      'eslint-config-standard': '*',
-      'eslint-plugin-import': '>=2.13.0',
-      'eslint-plugin-node': '>=7.0.0',
-      'eslint-plugin-promise': '>=4.0.0',
-      'eslint-plugin-standard': '>=4.0.0'
+      'eslint-config-standard': '^12.0.0',
+      'eslint-plugin-import': '^2.10.0',
+      'eslint-plugin-node': '^8.0.0',
+      'eslint-plugin-promise': '^4.0.1',
+      'eslint-plugin-standard': '^4.0.0'
     }, devDependencies);
   }
 
@@ -171,17 +170,17 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
   } else {
     if (options.browserCompliant) {
       devDependencies = Object.assign({
-        'puppeteer': '^1.5.0',
-        'karma': '^3.0.0',
+        'puppeteer': '^1.10.0',
+        'karma': '^3.1.1',
         'karma-chrome-launcher': '^2.2.0',
         'karma-coverage': '^1.1.2'
       }, devDependencies);
 
       if (options.testFramework === 'jasmine') {
         devDependencies = Object.assign({
-          'jasmine-core': '^3.1.0',
-          'karma-jasmine': '^1.1.2',
-          'karma-jasmine-html-reporter': '^1.1.0'
+          'jasmine-core': '^3.3.0',
+          'karma-jasmine': '^2.1.0',
+          'karma-jasmine-html-reporter': '^1.4.0'
         }, devDependencies);
       }
 
