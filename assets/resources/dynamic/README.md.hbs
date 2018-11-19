@@ -85,6 +85,38 @@ npm run release
 └── tslint.json                 # TS Lint rules for the project.
 ```
 
+# Standalone Usage
+
+You can also use packer CLI standalone on any packer compliant project to customize the NPM scripts generated.
+
+```sh
+Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
+
+Arguments supported with all commands
+   + Logging flags
+  [--trace]          set console log level to trace
+  [--info]           set console log level to information
+  [--warn]           set console log level to warning
+  [--error]          set console log level to error
+  [--silent]         set console log level to silent
+   + Other Flags
+  [--config | -c]    dynamic packer config path
+
+Generate a new library project via packer
+  generate | g <project name>
+    [--skipInstall | -sk]   skip dependency install after project
+
+These are packer commands can be used on generated project
+  build | b                 trigger build
+  watch | w                 trigger serve on watch mode
+  test | t                  execute project test suite
+    [--coverage | -C]       execute test suite with coverage
+  clean | c                 clean project build artifacts and temporary files generated
+  lint | l                  execute lint for project source
+    [--style | -sc]         execute only style lint
+    [--script | -sr]        execute only script lint
+```
+
 # Build Configuration
 
 Build configuration can be updated after project generation via ``.packerrc.js``.
