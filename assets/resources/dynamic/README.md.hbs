@@ -90,31 +90,32 @@ npm run release
 You can also use packer CLI standalone on any packer compliant project to customize the NPM scripts generated.
 
 ```sh
-Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
+Usage: [34mpacker[39m [33m[--version | -v][39m] | [33m[--help | -h][39m | [34m<command>[39m [33m[<args>][39m
 
-Arguments supported with all commands
-   + Logging flags
-  [--trace]          set console log level to trace
-  [--info]           set console log level to information
-  [--warn]           set console log level to warning
-  [--error]          set console log level to error
-  [--silent]         set console log level to silent
-   + Other Flags
-  [--config | -c]    dynamic packer config path
+  Arguments supported with all commands
+  + Logging flags
+  [33m[--trace][39m          [90mset console log level to trace[39m
+  [33m[--info][39m           [90mset console log level to information[39m
+  [33m[--warn][39m           [90mset console log level to warning[39m
+  [33m[--error][39m          [90mset console log level to error[39m
+  [33m[--silent][39m         [90mset console log level to silent[39m
+  + Other Flags
+  [33m[--config | -c][39m    [90mdynamic packer config path[39m
 
-Generate a new library project via packer
-  generate | g <project name>
-    [--skipInstall | -sk]   skip dependency install after project
+  Generate a new library project via packer
+  [34mgenerate | g[39m [33m<project name>[39m
+    [33m[--skipInstall | -sk][39m  [90mskip dependency install after project[39m
 
-These are packer commands can be used on generated project
-  build | b                 trigger build
-  watch | w                 trigger serve on watch mode
-  test | t                  execute project test suite
-    [--coverage | -C]       execute test suite with coverage
-  clean | c                 clean project build artifacts and temporary files generated
-  lint | l                  execute lint for project source
-    [--style | -sc]         execute only style lint
-    [--script | -sr]        execute only script lint
+    These are packer commands can be used on generated project
+    [34mbuild | b[39m              [90mtrigger build[39m
+    [34mwatch | w[39m              [90mtrigger serve on watch mode[39m
+    [34mtest | t[39m               [90mexecute project test suite[39m
+    [33m[--coverage | -C][39m    [90mexecute test suite with coverage[39m
+    [34mclean | c[39m              [90mclean project build artifacts and temporary files generated[39m
+    [34mlint | l[39m               [90mexecute lint for project source[39m
+    [33m[--style | -sc][39m      [90mexecute only style lint[39m
+    [33m[--script | -sr][39m     [90mexecute only script lint[39m
+
 ```
 
 # Build Configuration
