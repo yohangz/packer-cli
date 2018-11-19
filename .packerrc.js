@@ -202,7 +202,8 @@ module.exports = {
   copy: [
     'README.md',
     'LICENSE',
-    "assets/**/{.*,*}"
+    "assets/**/{.*,*}",
+    "docs/**/{.*,*}",
   ],
 
   /**
