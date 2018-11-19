@@ -75,15 +75,19 @@ This project is inspired by [Angular CLI](https://cli.angular.io/)
 
 You can simply run the following command in a preferred directory to generate a new project using Packer CLI,
 
-```npx packer-cli generate my-library```
+```sh
+npx packer-cli generate my-library
+```
 
 or
 
-```npm install packer-cli -g && packer generate my-library```
+```sh
+npm install packer-cli -g && packer generate my-library
+```
 
 Then CLI will query questions associated to custom project generation,
 
-```
+```sh
 # Description about the library
 Give us a small description about the library (optional)? Client compliant node module
 
@@ -208,7 +212,7 @@ generated project structure can be viewed [here](docs/STRUCTURE.md)
 
 You can also use packer CLI standalone on any packer compliant project to customize the NPM scripts generated.
 
-```
+```text
 Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
 
   Arguments supported with all commands
