@@ -224,7 +224,8 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
     devDependencies = Object.assign({
       'stylelint-config-standard': '^18.2.0',
       'autoprefixer': '^8.6.3',
-      'postcss-url': '^8.0.0'
+      'postcss-url': '^8.0.0',
+      'cssnano': '^4.1.7'
     }, devDependencies);
   }
 

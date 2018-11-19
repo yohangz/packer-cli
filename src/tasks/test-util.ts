@@ -68,7 +68,7 @@ export const buildUnitTestSource = async (config: PackerConfig, srcFile: string,
       name: config.bundle.namespace
     },
     plugins: [
-      ...rollupStyleBuildPlugin(config, packageJson, true, false, true, log),
+      ...rollupStyleBuildPlugin(config, packageJson, true, true, log),
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
       ...buildPlugin('bundle', false, false, config, typescript),

@@ -341,3 +341,28 @@ declare interface RollupPluginLiveReloadOptions {
 declare module 'rollup-plugin-livereload' {
   export default function(options?: string | RollupPluginLiveReloadOptions): any;
 }
+
+declare interface CodeFrameLocation {
+  start?: {
+    line?: number;
+    column?: number;
+  };
+  end?: {
+    line?: number;
+    column?: number;
+  };
+}
+
+declare interface CodeFrameOptions {
+  highlightCode?: boolean;
+  linesAbove?: number;
+  linesBelow?: number;
+  forceColor?: boolean;
+  message?: string;
+}
+
+declare module '@babel/code-frame' {
+  export default function(rowLine: string, location: CodeFrameLocation, options?: CodeFrameOptions): string;
+}
+
+declare module 'terser';

@@ -14,7 +14,7 @@
 
 > Full-fledged CLI tool to generate and package library Node modules compliant with Browser and NodeJS. Packer CLI support all modern style, unit test and script transpiler tools.
 
-This project is inspired by [Angular CLI](https://cli.angular.io/)
+This project is using itself to compile self source.
 
 # Features
 
@@ -128,7 +128,7 @@ Do you want to inline bundle styles within script? (y/N) No
 # Target build process to support browser compliant bundling if yes
 Are you building a browser compliant library? (Y/n) Yes
 
-## If yes, react framework support will be enabled. Select none to disable support.
+# If yes, react framework support will be enabled. Select none to disable support.
 Are you building a react library? (y/N) No
 
 # You can chose from the browser compliant flat bundle formats options list.

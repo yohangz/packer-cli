@@ -207,7 +207,7 @@ export default function init() {
           name: config.bundle.namespace
         },
         plugins: [
-          ...rollupStyleBuildPlugin(config, packageJson, false, false, true, log),
+          ...rollupStyleBuildPlugin(config, packageJson, false, true, log),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           ...buildPlugin('bundle', true, true, config, typescript),
@@ -229,7 +229,7 @@ export default function init() {
             format: 'esm' as ModuleFormat
           },
           plugins: [
-            ...rollupStyleBuildPlugin(config, packageJson, false, true, false, log),
+            ...rollupStyleBuildPlugin(config, packageJson, false, false, log),
             ...preBundlePlugins(config),
             ...resolvePlugins(config),
             ...buildPlugin('es5', false, true, config, typescript),
@@ -252,7 +252,7 @@ export default function init() {
             format: 'esm' as ModuleFormat
           },
           plugins: [
-            ...rollupStyleBuildPlugin(config, packageJson, false, true, false, log),
+            ...rollupStyleBuildPlugin(config, packageJson, false, false, log),
             ...preBundlePlugins(config),
             ...resolvePlugins(config),
             ...buildPlugin('esnext', false, true, config, typescript),

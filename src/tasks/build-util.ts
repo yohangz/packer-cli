@@ -2,7 +2,7 @@ import path from 'path';
 import handlebars from 'handlebars';
 import glob from 'glob-to-regexp';
 import chalk from 'chalk';
-import * as Terser from 'terser';
+import terser from 'terser';
 
 import codeFrameColumns from '@babel/code-frame';
 
@@ -52,11 +52,7 @@ export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, 
   };
 };
 
-export const rollupStyleBuildPlugin = (config: PackerConfig,
-                                       packageJson: PackageConfig,
-                                       watch: boolean,
-                                       minify: boolean,
-                                       main: boolean,
+export const rollupStyleBuildPlugin = (config: PackerConfig, packageJson: PackageConfig, watch: boolean, main: boolean,
                                        log: Logger) => {
   if (!config.compiler.style) {
     log.trace('style build disabled');
@@ -73,6 +69,7 @@ export const rollupStyleBuildPlugin = (config: PackerConfig,
   }
 
   log.trace('init style build plugins');
+  const minify = !watch;
   const styleDir = watch ? path.join(config.tmp, 'watch') : config.dist;
   const fileName = packageJson.name + (minify ? '.min.css' : '.css');
   const styleDist = path.join(process.cwd(), styleDir, config.compiler.style.outDir, fileName);
@@ -81,11 +78,11 @@ export const rollupStyleBuildPlugin = (config: PackerConfig,
   return [
     rollupPostCss({
       extract: config.compiler.style.inline ? false : styleDist,
-      minimize: config.compiler.style.inline || minify, // minify styles if inline compile is enabled
       config: {
         path: path.join(process.cwd(), 'postcss.config.js'),
         ctx: {
-          config
+          config,
+          minify
         }
       },
       sourceMap: config.compiler.style.inline ? false : config.compiler.sourceMap
@@ -234,7 +231,7 @@ export const bundleBuild = async (config: PackerConfig, packageData: PackageConf
       minSourceMapConfig = undefined;
     }
 
-    const minData = Terser.minify(code, {
+    const minData = terser.minify(code, {
       sourceMap: minSourceMapConfig,
       output: {
         comments: /@preserve|@license|@cc_on/i
