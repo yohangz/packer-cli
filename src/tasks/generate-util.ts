@@ -49,8 +49,12 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
   const cliPackageData = meta.readCLIPackageData();
 
   let projectAuthor = '';
-  if (options.author && options.email) {
-    projectAuthor = `${options.author} <${options.email}>`;
+  if (options.author) {
+    projectAuthor = options.author;
+
+    if (options.email) {
+      projectAuthor += ` <${options.email}>`;
+    }
   }
 
   let projectUrl = '';

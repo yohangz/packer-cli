@@ -63,6 +63,9 @@ export default function init() {
           message: 'Author\'s email address (optional)?',
           name: 'email',
           type: 'input',
+          when: (answers) => {
+            return answers.author;
+          },
           validate: (value) => {
             return !value || isEmail(value) ? true : 'Value must be a valid email address';
           }
