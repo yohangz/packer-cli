@@ -185,7 +185,7 @@ export const getPackageConfig = (options: PackerOptions, packageName: string): P
       if (options.testFramework === 'jasmine') {
         devDependencies = Object.assign({
           'jasmine-core': '^3.3.0',
-          'karma-jasmine': '^2.1.0',
+          'karma-jasmine': '^2.0.1',
           'karma-jasmine-html-reporter': '^1.4.0'
         }, devDependencies);
       }
