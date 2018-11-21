@@ -13,13 +13,13 @@ import { meta } from './meta';
 import {
   buildPlugin,
   bundleBuild, customRollupPlugins, externalFilter,
-  extractBundleExternals,
+  extractBundleExternals, generateMinCss,
   getBanner,
   getBaseConfig,
   postBundlePlugins,
   preBundlePlugins,
   resolvePlugins,
-  rollupStyleBuildPlugin
+  rollupStyleBuildPlugins
 } from './build-util';
 
 export default function init() {
@@ -207,7 +207,7 @@ export default function init() {
           name: config.bundle.namespace
         },
         plugins: [
-          ...rollupStyleBuildPlugin(config, packageJson, false, true, log),
+          ...rollupStyleBuildPlugins(config, packageJson, false, true, log),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           ...buildPlugin('bundle', true, true, config, typescript),
@@ -229,7 +229,7 @@ export default function init() {
             format: 'esm' as ModuleFormat
           },
           plugins: [
-            ...rollupStyleBuildPlugin(config, packageJson, false, false, log),
+            ...rollupStyleBuildPlugins(config, packageJson, false, false, log),
             ...preBundlePlugins(config),
             ...resolvePlugins(config),
             ...buildPlugin('es5', false, true, config, typescript),
@@ -252,7 +252,7 @@ export default function init() {
             format: 'esm' as ModuleFormat
           },
           plugins: [
-            ...rollupStyleBuildPlugin(config, packageJson, false, false, log),
+            ...rollupStyleBuildPlugins(config, packageJson, false, false, log),
             ...preBundlePlugins(config),
             ...resolvePlugins(config),
             ...buildPlugin('esnext', false, true, config, typescript),
@@ -273,9 +273,12 @@ export default function init() {
           await task;
         }
       }
+
+      await generateMinCss(config, packageJson, log);
+
       log.trace('end');
     } catch (e) {
-      log.error('task failure: %s\n', e.stack || e.message);
+      log.error('task failure:\n%s', e.stack || e.message);
       process.exit(1);
     }
   });

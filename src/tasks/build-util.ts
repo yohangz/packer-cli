@@ -3,6 +3,7 @@ import handlebars from 'handlebars';
 import glob from 'glob-to-regexp';
 import chalk from 'chalk';
 import terser from 'terser';
+import fs from 'fs';
 
 import codeFrameColumns from '@babel/code-frame';
 
@@ -17,7 +18,6 @@ import rollupTypescript from 'rollup-plugin-typescript2';
 import rollupBabel from 'rollup-plugin-babel';
 import rollupHandlebars from 'rollup-plugin-hbs';
 import rollupImage from 'rollup-plugin-img';
-import rollupProgress from 'rollup-plugin-progress';
 import rollupFilesize from 'rollup-plugin-filesize';
 import rollupBuiltins from 'rollup-plugin-node-builtins';
 import rollupGlobals from 'rollup-plugin-node-globals';
@@ -30,6 +30,11 @@ import logger, { Logger } from '../common/logger';
 import { LogLevel } from '../model/log-level';
 import { writeFile } from './util';
 
+/**
+ * Get distribution banner comment.
+ * @param config - Packer configuration object.
+ * @param packageJson - Package configuration object.
+ */
 export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
   if (config.license.banner) {
     const bannerTemplate = meta.readBannerTemplate();
@@ -40,8 +45,16 @@ export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
   }
 };
 
+/**
+ * Get rollup base configuration.
+ * @param config - Packer configuration object.
+ * @param packageJson - Package configuration object.
+ * @param banner - Banner comment.
+ * @param sourceMap - If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
+ * the resulting output file as a data URI.
+ */
 export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, banner: string,
-                              sourceMap?: boolean|string) => {
+                              sourceMap?: boolean | 'inline') => {
   return {
     input: path.join(config.source, config.entry),
     output: {
@@ -52,8 +65,17 @@ export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, 
   };
 };
 
-export const rollupStyleBuildPlugin = (config: PackerConfig, packageJson: PackageConfig, watch: boolean, main: boolean,
-                                       log: Logger) => {
+/**
+ * Get rollup style build plugins.
+ * @param config - Packer configuration object.
+ * @param packageJson - Package configuration object.
+ * @param watch - Copy stylesheets artifacts to watch temp directory if true, else dist directory.
+ * @param main - Indicate whether it is the main build task to emit stylesheets. Otherwise, ignore style sheet building
+ * unless style inline mode is enabled.
+ * @param log - Logger reference.
+ */
+export const rollupStyleBuildPlugins = (config: PackerConfig, packageJson: PackageConfig, watch: boolean, main: boolean,
+                                        log: Logger) => {
   if (!config.compiler.style) {
     log.trace('style build disabled');
     return [];
@@ -63,15 +85,15 @@ export const rollupStyleBuildPlugin = (config: PackerConfig, packageJson: Packag
     log.trace('ignore style imports to avoid redundant style compilation');
     return [
       rollupIgnoreImport({
+        exclude: 'node_modules/**',
         extensions: ['.scss', '.sass', '.styl', '.css', '.less']
       })
     ];
   }
 
   log.trace('init style build plugins');
-  const minify = !watch;
   const styleDir = watch ? path.join(config.tmp, 'watch') : config.dist;
-  const fileName = packageJson.name + (minify ? '.min.css' : '.css');
+  const fileName = packageJson.name + '.css';
   const styleDist = path.join(process.cwd(), styleDir, config.compiler.style.outDir, fileName);
   log.trace('stylesheet dist file name %s', styleDist);
 
@@ -82,8 +104,7 @@ export const rollupStyleBuildPlugin = (config: PackerConfig, packageJson: Packag
       config: {
         path: path.join(process.cwd(), 'postcss.config.js'),
         ctx: {
-          config,
-          minify
+          config
         }
       },
       sourceMap: config.compiler.style.inline ? false : config.compiler.sourceMap
@@ -91,11 +112,50 @@ export const rollupStyleBuildPlugin = (config: PackerConfig, packageJson: Packag
   ];
 };
 
-export const rollupReplacePlugin = (config: PackerConfig) => {
-  return rollupReplace({
-    exclude: 'node_modules/**',
-    patterns: config.replacePatterns
-  });
+export const generateMinCss = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
+                                     log: Logger): Promise<void> => {
+  if (!packerConfig.compiler.style || packerConfig.compiler.style.inline) {
+    return;
+  }
+
+  const nano = require('cssnano');
+
+  const srcPath = path.join(process.cwd(), packerConfig.dist, packerConfig.compiler.style.outDir);
+  const srcFileName = `${packageConfig.name}.css`;
+  const srcFilePath = path.join(srcPath, srcFileName);
+  const srcMinFileName = `${packageConfig.name}.min.css`;
+  const srcMinFilePath = path.join(srcPath, srcMinFileName);
+  const srcCss = fs.readFileSync(srcFilePath, 'utf8');
+  const options: any = {
+    from: srcFileName,
+    to: srcMinFileName
+  };
+
+  if (packerConfig.compiler.sourceMap === true) {
+    const srcMapFilePath = path.join(srcPath, `${packageConfig.name}.css.map`);
+    const srcMapCss = fs.readFileSync(srcMapFilePath, 'utf8');
+    options.map = {
+      sourcesContent: true,
+      prev: srcMapCss
+    };
+  }
+
+  let result;
+
+  log.info('cssnano options:\n%o', options);
+  try {
+    result = await nano.process(String(srcCss), options);
+  } catch (e) {
+    log.error('style minify failure:\n%s', e.stack || e.message);
+    process.exit(1);
+  }
+
+  fs.writeFileSync(srcMinFilePath, result.css);
+
+  if (packerConfig.compiler.sourceMap === true) {
+    const srcMinMapFilePath = path.join(srcPath, `${srcMinFileName}.map`);
+    fs.writeFileSync(srcMinMapFilePath, result.map);
+  }
 };
 
 export const resolvePlugins = (config: PackerConfig) => {
@@ -198,7 +258,6 @@ const bundleSizeLoggerPlugin = (taskName: string, type: string) => {
 export const postBundlePlugins = (task: string, type: string) => {
   if (logger.level <= LogLevel.INFO) {
     return [
-      rollupProgress(),
       bundleSizeLoggerPlugin(task, type)
     ];
   }

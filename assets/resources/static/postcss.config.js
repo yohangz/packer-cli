@@ -19,7 +19,7 @@ module.exports = (context) => {
     require('autoprefixer')
   ];
 
-  if (context.options.minify) {
+  if (conf.compiler.style.inline) {
     plugins.push(require('cssnano'));
   }
 

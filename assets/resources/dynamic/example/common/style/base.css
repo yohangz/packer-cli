@@ -1,29 +1,27 @@
-@import "base.theme.variables";
-
 body {
-  background: @background-colour;
+  background: #5e5e63;
   font-family: 'K2D', sans-serif;
 }
 
 .packer-container {
   align-items: center;
-  color: @font-colour;
+  color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
 
-  .packer-badges {
-    display: flex;
+.packer-container .packer-badges {
+  display: flex;
+}
 
-    a {
-      display: block;
-      padding-right: .5rem;
-    }
-  }
+.packer-container .packer-badges a {
+  display: block;
+  padding-right: .5rem;
+}
 
-  .packer-tag-line {
-    color: @packer-tag-line-colour;
-  }
+.packer-container .packer-tag-line {
+  color: #fff;
 }
 
 .fork-me-logo {

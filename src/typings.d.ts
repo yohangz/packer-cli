@@ -35,27 +35,26 @@ declare module 'gulp-chmod' {
   export default function(options: PermissionOptions): NodeJS.ReadWriteStream;
 }
 
-declare module 'validate-npm-package-name' {
-  export default function(packageName: string): PackageValidity;
-}
-
 declare module 'gulp-filter' {
   export default function(glob: string|string[]): NodeJS.ReadWriteStream;
 }
 
+declare module 'validate-npm-package-name' {
+  export default function(packageName: string): PackageValidity;
+}
+
 declare module 'schema-inspector';
 
-declare interface RollupPluginProgressOptions {
-  clearLine?: boolean;
+declare module 'glob-to-regexp' {
+  export default function(globPatten: string): RegExp;
 }
 
-declare module 'rollup-plugin-progress' {
-  export default function(options?: RollupPluginProgressOptions): any;
-}
-
-declare interface RollupPluginIstanbulOptions {
+declare interface RollupFilterOptions {
   include?: string|string[];
   exclude?: string|string[];
+}
+
+declare interface RollupPluginIstanbulOptions extends RollupFilterOptions  {
   instrumenterConfig?: any;
 }
 
@@ -65,16 +64,12 @@ declare module 'rollup-plugin-istanbul' {
 
 declare module 'karma-rollup-preprocessor';
 
-declare interface RollupPluginIgnoreImportOptions {
+declare interface RollupPluginIgnoreImportOptions extends RollupFilterOptions {
   extensions: string[];
 }
 
 declare module 'rollup-plugin-ignore-import' {
   export default function(options: RollupPluginIgnoreImportOptions): any;
-}
-
-declare module 'glob-to-regexp' {
-  export default function(globPatten: string): RegExp;
 }
 
 declare type NamedExportExtractor = (name: string) => boolean;

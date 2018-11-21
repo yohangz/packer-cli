@@ -2,7 +2,6 @@ import path from 'path';
 import merge from 'lodash/merge';
 
 import { ModuleFormat, rollup, RollupFileOptions, RollupWatchOptions, watch } from 'rollup';
-import rollupProgress from 'rollup-plugin-progress';
 
 import { PackerConfig } from '../model/packer-config';
 import { Logger } from '../common/logger';
@@ -15,7 +14,7 @@ import {
   getBaseConfig,
   preBundlePlugins,
   resolvePlugins,
-  rollupStyleBuildPlugin
+  rollupStyleBuildPlugins
 } from './build-util';
 
 const runNodeUnitTest = async (config: PackerConfig, log: Logger): Promise<void> => {
@@ -68,11 +67,10 @@ export const buildUnitTestSource = async (config: PackerConfig, srcFile: string,
       name: config.bundle.namespace
     },
     plugins: [
-      ...rollupStyleBuildPlugin(config, packageJson, true, true, log),
+      ...rollupStyleBuildPlugins(config, packageJson, true, true, log),
       ...preBundlePlugins(config),
       ...resolvePlugins(config),
-      ...buildPlugin('bundle', false, false, config, typescript),
-      rollupProgress()
+      ...buildPlugin('bundle', false, false, config, typescript)
     ]
   });
 

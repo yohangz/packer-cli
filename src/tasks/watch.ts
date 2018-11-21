@@ -5,7 +5,6 @@ import path from 'path';
 import { RollupWatchOptions, watch } from 'rollup';
 import rollupServe from 'rollup-plugin-serve';
 import rollupLivereload from 'rollup-plugin-livereload';
-import rollupProgress from 'rollup-plugin-progress';
 
 import {
   buildPlugin,
@@ -14,7 +13,7 @@ import {
   getBaseConfig,
   preBundlePlugins,
   resolvePlugins,
-  rollupStyleBuildPlugin
+  rollupStyleBuildPlugins
 } from './build-util';
 
 import { meta } from './meta';
@@ -69,12 +68,11 @@ export default function init() {
           name: config.bundle.namespace
         },
         plugins: [
-          ...rollupStyleBuildPlugin(config, packageJson, true, true, log),
+          ...rollupStyleBuildPlugins(config, packageJson, true, true, log),
           ...preBundlePlugins(config),
           ...resolvePlugins(config),
           ...buildPlugin('bundle', false, false, config, typescript),
-          ...rollupServePlugins,
-          rollupProgress()
+          ...rollupServePlugins
         ],
         watch: {
           exclude: ['node_modules/**']
