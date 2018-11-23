@@ -14,9 +14,23 @@
 
 > Full-fledged CLI tool to generate and package library Node modules compliant with Browser and NodeJS. Packer CLI support all modern style, unit test and script transpiler tools.
 
-This project is using itself to compile self source.
+> This project is using itself to compile self source.
 
-# Features
+## :book: Table of Contents
+  <!-- START doctoc generated TOC please keep comment here to allow auto update -->
+  <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+  
+  - [Features](#bulb-features)
+  - [Usage](#sparkles-usage)
+    - [Basic Usage](#mag_right-basic-usage)
+    - [Standalone Usage](#gear-standalone-usage)
+  - [Build Configuration](#hammer_and_pick-build-configuration)
+  - [Contributions](#seedling-contributions)
+  - [License](#copyright-license)
+  
+  <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## :bulb: Features
 
 [![NPM](https://image.ibb.co/m2HMtp/npm.png)](https://www.npmjs.com/)
 [![YARN](https://image.ibb.co/g1aVm9/yarn.png)](https://yarnpkg.com/)
@@ -41,37 +55,44 @@ This project is using itself to compile self source.
 [![React](https://image.ibb.co/j9xLFA/react.png)](https://reactjs.org/)
 [![Jest](https://image.ibb.co/dLBQhq/jest.png)](https://jestjs.io/)
 
-- [x] Managed build configuration
-- [x] Encapsulated build process
-- [x] Both NPM and Yarn support
-- [x] Travis CI
-- [x] Typescript and Babel based code transpilation
-- [x] TS Lint based Typescript code analysis
-- [x] ES Lint based Javascript code analysis
-- [x] Style lint based style sheet code analysis
-- [x] Precompiled handlebars templating
-- [x] Support SCSS, SASS, LESS and Stylus and vanilla CSS
-- [x] Post CSS based image inline and auto prefixing
-- [x] Karma unit test runner
-- [x] Jasmine, Mocha and Jest unit test frameworks
-- [x] Rollup and Gulp based build process
-- [x] es5, esnext, umd, amd, system, iife and commonjs bundle build output
-- [x] Emmit type definitions for typescript projects
-- [x] Ready to publish as Node module
-- [x] Inline and bundle styles
-- [x] Theme packaging
-- [x] Source import path replace
-- [x] Exclude external peer dependencies in bundle
-- [x] Bundle peer dependencies
-- [x] Ignore imports
-- [x] Copy static assets to build dir
-- [x] Library summary banner generation
-- [x] Library dependency license extraction
-- [x] Node CLI project support
-- [x] JSX and TSX support
-- [x] Custom rollup plugin integration support
+  :ballot_box_with_check: Managed build configuration  
+  :ballot_box_with_check: Encapsulated build process  
+  :ballot_box_with_check: Both NPM and Yarn support  
+  :ballot_box_with_check: Travis CI support  
+  :ballot_box_with_check: Typescript and Babel based code transpilation  
+  :ballot_box_with_check: TS Lint based Typescript code analysis  
+  :ballot_box_with_check: ES Lint based Javascript code analysis  
+  :ballot_box_with_check: Style lint based style sheet code analysis  
+  :ballot_box_with_check: Precompiled handlebars templating  
+  :ballot_box_with_check: Support SCSS, SASS, LESS and Stylus and vanilla CSS  
+  :ballot_box_with_check: Post CSS based image inline and auto prefixing  
+  :ballot_box_with_check: Karma unit test runner  
+  :ballot_box_with_check: Jasmine, Mocha and Jest unit test frameworks  
+  :ballot_box_with_check: Rollup and Gulp based build process  
+  :ballot_box_with_check: ES5, ESNext, UMD, AMD, SYSTEM, IIFE and CommonJS bundle build output  
+  :ballot_box_with_check: Emmit type definitions for typescript projects  
+  :ballot_box_with_check: Ready to publish as Node module  
+  :ballot_box_with_check: Inline and bundle styles  
+  :ballot_box_with_check: Theme packaging  
+  :ballot_box_with_check: Source import path replace  
+  :ballot_box_with_check: Exclude external peer dependencies in bundle  
+  :ballot_box_with_check: Bundle peer dependencies  
+  :ballot_box_with_check: Ignore imports  
+  :ballot_box_with_check: Copy static assets to build dir  
+  :ballot_box_with_check: Library summary banner generation  
+  :ballot_box_with_check: Library dependency license extraction  
+  :ballot_box_with_check: Node CLI project support  
+  :ballot_box_with_check: JSX and TSX support  
+  :ballot_box_with_check: Custom rollup plugin integration support
+  
+## :sparkles: Usage
 
-# Usage
+Before the Packer-CLI installation there are few pre-requisites to be complete. If your device meet the below requisites then you can proceed to the next section. 
+
+- Install [Node.js](https://nodejs.org/en/) on your device. 
+- Run `npm install -g npx` to install [npx](https://www.npmjs.com/package/npx) globally. (optional)
+
+## :mag_right: Basic Usage
 
 You can simply run the following command in a preferred directory to generate a new project using Packer CLI,
 
@@ -139,7 +160,7 @@ What's the build bundle format you want to use? umd
 - system
 
 # Custom AMD id can be provided if flat bundle format is UMD or AMD. Applicable for "amd" module format only.
-What's the AMD id you want to use? (optional) my-lib
+What's the AMD id you want to use? my-lib
 
 # Library namespace will be used when exposing the library via global scope. Applicable for "umd" | "iife" | "systemjs" module formats.
 What's the library namespace you want to use? my.lib
@@ -151,10 +172,10 @@ Which unit test framework do you want to use?
 - jest
 
 # Library copyright year to be included in license file.
-What is the library copyright year (optional)? 2018
+What's the library copyright year (optional)? 2018
 
 # Generate license file for the project.
-What's the library copyright year (optional)?
+What's the license you want to use?
 - MIT License
 - Apache License 2.0
 - Mozilla Public License 2.0
@@ -206,9 +227,9 @@ npm version major|minor|patch
 npm run release
 ```
 
-generated project structure can be viewed [here](docs/STRUCTURE.md)
+Generated project structure can be viewed [here](docs/STRUCTURE.md)
 
-# Standalone Usage
+## :gear: Standalone Usage
 
 You can also use packer CLI standalone on any packer compliant project to customize the NPM scripts generated.
 
@@ -243,7 +264,7 @@ Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
       [--script | -sr]       execute only script lint
 ```
 
-# Build Configuration
+## :hammer_and_pick: Build Configuration
 
 Build configuration can be updated after project generation via ``.packerrc.js``. 
 
@@ -697,6 +718,10 @@ module.exports = {
 };
 ```
                                                                                                                                                                  
-# Contributions
+## :seedling: Contributions
 
-Feel free to open an issue or create a PR
+Feel free to open an issue or create a PR.
+
+## :copyright: License
+
+Packer-CLI was license under MIT. Please refer [LICENSE](https://github.com/yohangz/packer-cli/blob/master/LICENSE) for more information.
