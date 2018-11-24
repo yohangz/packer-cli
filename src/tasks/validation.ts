@@ -1,6 +1,9 @@
 import inspector from 'schema-inspector';
 import forOwn from 'lodash/forOwn';
 
+/**
+ * Schema inspector packer config validation schema.
+ */
 export const packerSchema = {
   type: 'object',
   optional: false,
@@ -36,6 +39,24 @@ export const packerSchema = {
           optional: false,
           def: 'cross-map-peer-dependency',
           pattern: /^(cross-map-peer-dependency|cross-map-dependency|map-dependency|map-peer-dependency|all)$/
+        },
+        packageFieldsToCopy: {
+          type: 'array',
+          optional: false,
+          def: [
+            'name',
+            'version',
+            'description',
+            'keywords',
+            'author',
+            'repository',
+            'license',
+            'bugs',
+            'homepage'
+          ],
+          items: {
+            type: 'string'
+          }
         },
         sourceMap: {
           type: ['string', 'boolean'],
@@ -163,6 +184,134 @@ export const packerSchema = {
           type: 'boolean',
           optional: false,
           def: true
+        },
+        advanced: {
+          type: 'object',
+          optional: false,
+          $mapDef: true,
+          properties: {
+            rollup: {
+              type: 'object',
+              optional: false,
+              $mapDef: true,
+              properties: {
+                inputOptions: {
+                  type: 'object',
+                  optional: false,
+                  def: {}
+                },
+                outputOptions: {
+                  type: 'object',
+                  optional: false,
+                  def: {}
+                },
+                watchOptions: {
+                  type: 'object',
+                  optional: false,
+                  def: {}
+                },
+                pluginOptions: {
+                  type: 'object',
+                  optional: false,
+                  $mapDef: true,
+                  properties: {
+                    ignoreImport: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    postCss: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    nodeResolve: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    commonjs: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    json: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    globals: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    builtins: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    babel: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    typescript: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    replace: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    image: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    handlebars: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    filesize: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    serve: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                    liveReload: {
+                      type: 'object',
+                      optional: false,
+                      def: {}
+                    },
+                  }
+                }
+              }
+            },
+            other: {
+              type: 'object',
+              optional: false,
+              $mapDef: true,
+              properties: {
+                terser: {
+                  type: 'object',
+                  optional: false,
+                  def: {}
+                },
+                cssnano: {
+                  type: 'object',
+                  optional: false,
+                  def: {}
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -200,21 +349,21 @@ export const packerSchema = {
         type: 'object',
         properties: {
           include: {
-            type: [ 'string', 'array'],
+            type: ['string', 'array'],
             optional: false,
             items: {
               type: 'string'
             },
           },
-          exclude:  {
-            type: [ 'string', 'array'],
+          exclude: {
+            type: ['string', 'array'],
             optional: true,
             items: {
               type: 'string'
             },
           },
           test: {
-            type: [ 'string', 'object'],
+            type: ['string', 'object'],
             optional: true
           },
           replace: {
@@ -352,6 +501,10 @@ export const packerSchema = {
   }
 };
 
+/**
+ * Recursively map object defaults.
+ * @param schema - Inspector schema.
+ */
 const mapObjectDefaults = (schema) => {
   const obj: any = {};
   forOwn(schema.properties, (value, key) => {
@@ -365,19 +518,34 @@ const mapObjectDefaults = (schema) => {
   return obj;
 };
 
+/**
+ * Extend schema inspector sanitizations.
+ */
 inspector.Sanitization.extend({
+
+  /**
+   * Map object defaults if invalid.
+   * @param schema - Inspector schema.
+   * @param candidate - Current sanitization candidate.
+   */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
-  mapDef: function(schema, candidate) {
+  mapDef: function (schema, candidate) {
     if (schema.$mapDef && (typeof candidate !== 'object' || candidate === null)) {
       return mapObjectDefaults(schema);
     }
 
     return candidate;
   },
+
+  /**
+   * Set accept only boolean value if not valid.
+   * @param schema - Inspector schema.
+   * @param candidate - Current sanitization candidate.
+   */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
-  acceptOnly: function(schema, candidate) {
+  acceptOnly: function (schema, candidate) {
     if (schema.$acceptOnly && typeof candidate === 'boolean') {
       if (String(candidate) !== schema.$acceptOnly) {
         this.report(`support only boolean value '${schema.$acceptOnly}' or object`);
@@ -389,7 +557,16 @@ inspector.Sanitization.extend({
   }
 });
 
+/**
+ * Extend schema inspector validations.
+ */
 inspector.Validation.extend({
+
+  /**
+   * Validate whether candidate value is accept only boolean value.
+   * @param schema - Inspector schema.
+   * @param candidate - Current validating candidate.
+   */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
   acceptOnly: function (schema, candidate) {
