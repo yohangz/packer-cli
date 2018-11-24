@@ -81,9 +81,7 @@ declare interface PostCssConfig {
 
 declare type PostCssOnImport = (id: string) => void;
 
-declare interface RollupPluginPostCssOptions {
-  include?: string|string[];
-  exclude?: string|string[];
+declare interface RollupPluginPostCssOptions extends RollupFilterOptions {
   extensions?: string[];
   plugins?: any[];
   inject?: boolean | object;
@@ -120,9 +118,7 @@ declare module 'postcss-image-inliner' {
 
 declare type RenameTransform = (code: string, id: string) => string;
 
-declare interface RenamePattern {
-  include?: string | string[];
-  exclude?: string | string[];
+declare interface RenamePattern extends RollupFilterOptions {
   match?: RegExp;
   test?: string;
   replace?: string;
@@ -131,9 +127,7 @@ declare interface RenamePattern {
   transform?: RenameTransform;
 }
 
-declare interface RollupPluginRenameOptions {
-  include?: string | string[];
-  exclude?: string | string[];
+declare interface RollupPluginRenameOptions extends RollupFilterOptions  {
   defines?: {
     IS_SKIP?: boolean,
     IS_REMOVE?: boolean,
@@ -171,9 +165,7 @@ declare module 'rollup-plugin-node-resolve' {
   export default function(options?: RollupPluginNodeResolveOptions): any;
 }
 
-declare interface RollupPluginCommonjsOptions {
-  include?: string | string[];
-  exclude?: string | string[];
+declare interface RollupPluginCommonjsOptions extends RollupFilterOptions  {
   extensions?: string[];
   ignoreGlobal?: boolean;
   sourceMap?: boolean;
@@ -194,15 +186,14 @@ declare enum RollupPluginTypescriptVerbosity {
   Debug
 }
 
-declare interface RollupPluginTypescriptOptions {
+declare interface RollupPluginTypescriptOptions extends RollupFilterOptions {
   tsconfigDefaults?: any;
   tsconfig?: string;
   tsconfigOverride?: any;
   check?: boolean;
+  clean?: boolean;
   verbosity?: RollupPluginTypescriptVerbosity;
   cacheRoot?: string;
-  include: string | string[];
-  exclude: string | string[];
   abortOnError?: boolean;
   rollupCommonJSResolveHack?: boolean;
   objectHashIgnoreUnknownHack?: boolean;
@@ -215,11 +206,9 @@ declare module 'rollup-plugin-typescript2' {
   export default function(options?: RollupPluginTypescriptOptions): any;
 }
 
-declare interface RollupPluginBabelOptions {
+declare interface RollupPluginBabelOptions extends RollupFilterOptions {
   babelrc?: boolean;
   externalHelpers?: boolean;
-  include?: string | string[];
-  exclude?: string | string[];
   externalHelpersWhitelist?: string[];
   extensions?: string[];
   plugins?: any[];
@@ -231,7 +220,7 @@ declare module 'rollup-plugin-babel' {
   export default function(options?: RollupPluginBabelOptions): any;
 }
 
-declare interface RollupPluginHbsOptions {
+declare interface RollupPluginHbsOptions extends RollupFilterOptions  {
   handlebars?: {
     id?: string;
     options?: {
@@ -247,9 +236,7 @@ declare module 'rollup-plugin-hbs' {
   export default function(options?: RollupPluginHbsOptions): any;
 }
 
-declare interface RollupPluginImageOptions {
-  include?: string | string[];
-  exclude?: string | string[];
+declare interface RollupPluginImageOptions extends RollupFilterOptions  {
   limit?: number;
   output?: string;
   extensions?: RegExp;
@@ -296,9 +283,7 @@ declare module 'rollup-plugin-node-globals' {
   export default function(options?: RollupPluginNodeGlobalOptions): any;
 }
 
-declare interface RollupPluginJsonOptions {
-  include?: string | string[];
-  exclude?: string | string[];
+declare interface RollupPluginJsonOptions extends RollupFilterOptions {
   preferConst?: boolean;
   indent?: string;
   compact?: boolean;
