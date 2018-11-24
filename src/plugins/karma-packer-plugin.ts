@@ -4,12 +4,21 @@ import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 
 import path from 'path';
 
-import { buildPlugin, extractBundleExternals, preBundlePlugins, resolvePlugins } from '../tasks/build-util';
+import {
+  getScriptBuildPlugin,
+  extractBundleExternals,
+  getPreBundlePlugins,
+  getDependencyResolvePlugins
+} from '../tasks/build-util';
 import { args } from '../tasks/util';
 import { parseScriptPreprocessorExtension } from '../tasks/parser';
 import logger from '../common/logger';
+
 import { meta } from '../tasks/meta';
 
+/**
+ * Get karma packer plugin
+ */
 export function karmaPackerPlugin() {
   const log = logger.create('[test]');
 
@@ -51,9 +60,9 @@ export function karmaPackerPlugin() {
         rollupIgnoreImport({
           extensions: ['.scss', '.sass', '.styl', '.css', '.less']
         }),
-        ...preBundlePlugins(config),
-        ...resolvePlugins(config),
-        ...buildPlugin('bundle', false, false, config, typescript),
+        ...getPreBundlePlugins(config),
+        ...getDependencyResolvePlugins(config),
+        ...getScriptBuildPlugin('bundle', false, false, config, typescript, log),
         ...coveragePlugins
       ]
     };
