@@ -13,7 +13,7 @@ import { args } from './tasks/util';
 import { meta } from './tasks/meta';
 import logger from './common/logger';
 
-export const initPacker = () => {
+export const initPacker = async () => {
   const log = logger.create('');
   try {
     initClean();
@@ -27,7 +27,7 @@ export const initPacker = () => {
     switch (args[0]) {
       case '--help':
       case '-h':
-        console.log(meta.readPackerHelpSummary());
+        console.log(await meta.readPackerHelpSummary());
         break;
       case '--version':
       case '-v':
@@ -37,7 +37,7 @@ export const initPacker = () => {
         break;
       case 'generate':
       case 'g':
-        console.log(chalk.red(meta.readPackerBanner()));
+        console.log(chalk.red(await meta.readPackerBanner()));
         gulp.series('generate')(() => {
           // no implementation
         });

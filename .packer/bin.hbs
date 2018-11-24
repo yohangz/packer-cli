@@ -1,4 +1,10 @@
 #!/usr/bin/env node
 
 const { initPacker } = require('../bundle/{{packageName}}.{{format}}.min.js');
-initPacker();
+initPacker().then(() => {
+  // no implementation
+}, (e) => {
+  console.error(e);
+}).catch((e) => {
+  console.error(e);
+});
