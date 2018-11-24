@@ -6,6 +6,7 @@ import { StylePreprocessor } from './style-preprocessor';
 import { BuildMode } from './build-mode';
 import { TestFramework } from './test-framework';
 import { PathReplacePattern } from './path-replace-pattern';
+import { PackageModuleType } from './package-module-type';
 
 export interface PackerStyleConfig {
   inline: boolean;
@@ -25,7 +26,11 @@ export interface PackerWatchConfig {
   port: number;
 }
 
-export type CustomRollupPluginExtractorCallback = (buildType: string, packerConfig: PackerConfig) => any[];
+export type CustomRollupPluginExtractorCallback = (buildType: PackageModuleType, packerConfig: PackerConfig) => any[];
+
+interface ObjectLiteral {
+  [key: string]: any;
+}
 
 export interface PackerConfig {
   extend: string;
@@ -35,6 +40,7 @@ export interface PackerConfig {
   tmp: string;
   compiler: {
     dependencyMapMode: DependencyMap;
+    packageFieldsToCopy: string[];
     sourceMap: boolean | 'inline';
     customRollupPluginExtractor: null | CustomRollupPluginExtractorCallback,
     build: {
@@ -54,6 +60,34 @@ export interface PackerConfig {
     };
     style: false | PackerStyleConfig;
     concurrentBuild: boolean;
+    advanced: {
+      rollup: {
+        inputOptions: ObjectLiteral;
+        outputOptions: ObjectLiteral;
+        watchOptions: ObjectLiteral;
+        pluginOptions: {
+          ignoreImport: ObjectLiteral;
+          postCss: ObjectLiteral;
+          nodeResolve: ObjectLiteral;
+          commonjs: ObjectLiteral;
+          json: ObjectLiteral;
+          globals: ObjectLiteral;
+          builtins: ObjectLiteral;
+          babel: ObjectLiteral;
+          typescript: ObjectLiteral;
+          replace: ObjectLiteral;
+          image: ObjectLiteral;
+          handlebars: ObjectLiteral;
+          filesize: ObjectLiteral;
+          serve: ObjectLiteral;
+          liveReload: ObjectLiteral;
+        };
+      };
+      other: {
+        terser: ObjectLiteral;
+        cssnano: ObjectLiteral;
+      };
+    };
   };
   assetPaths: string[];
   copy: string[];
