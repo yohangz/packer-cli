@@ -4,7 +4,14 @@ import chalk from 'chalk';
 import { meta } from './meta';
 import logger from '../common/logger';
 
+/**
+ * Initialize version log associated gulp tasks.
+ */
 export default function init() {
+
+  /**
+   * Log packer version gulp task.
+   */
   gulp.task('version', async () => {
     const log = logger.create('[version]');
     try {
