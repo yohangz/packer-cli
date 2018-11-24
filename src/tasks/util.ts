@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { Logger } from '../common/logger';
+import mergeWith from 'lodash/mergeWith';
 
 const isWindows = process.platform === 'win32';
 
@@ -79,5 +80,22 @@ export const readFile = (filePath: string): Promise<string> => {
 
       resolve(data.toString('utf8'));
     });
+  });
+};
+
+/**
+ * Merge objects deep.
+ * @param object - Base object.
+ * @param sources - Source objects to merge.
+ */
+export const mergeDeep = (object, ...sources) => {
+  return mergeWith(object, ...sources, (objValue, srcValue) => {
+    if (Array.isArray(objValue)) {
+      if (Array.isArray(srcValue)) {
+        return srcValue;
+      }
+
+      return [];
+    }
   });
 };

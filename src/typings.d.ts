@@ -266,10 +266,6 @@ declare module 'rollup-plugin-filesize' {
   export default function(options?: RollupPluginFileSizeOptions): any;
 }
 
-declare module 'rollup-plugin-node-builtins' {
-  export default function(options?: { crypto?: boolean; }): any;
-}
-
 declare interface RollupPluginNodeGlobalOptions {
   process?: boolean;
   global?: boolean;

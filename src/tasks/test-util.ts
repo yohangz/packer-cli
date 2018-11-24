@@ -5,7 +5,7 @@ import { ModuleFormat, rollup, RollupFileOptions, RollupWatchOptions, watch } fr
 
 import { PackerConfig } from '../model/packer-config';
 import { Logger } from '../common/logger';
-import { args, runShellCommand } from './util';
+import { args, mergeDeep, runShellCommand } from './util';
 import { meta } from './meta';
 import {
   getScriptBuildPlugin,
@@ -101,10 +101,9 @@ export const buildUnitTestSource = async (packerConfig: PackerConfig, srcFile: s
     });
     log.trace('rollup config:\n%o', rollupWatchConfig);
 
-    const watcher = await watch([ {
-      ...rollupWatchConfig,
-      ...packerConfig.compiler.advanced.rollup.watchOptions
-    }]);
+    const watcher = await watch([
+      mergeDeep(rollupWatchConfig, packerConfig.compiler.advanced.rollup.watchOptions)
+    ]);
     watcher.on('event', async (event) => {
       switch (event.code) {
         case 'START':

@@ -17,7 +17,7 @@ import {
 } from './build-util';
 
 import { meta } from './meta';
-import { makeRelativeDirPath } from './util';
+import { makeRelativeDirPath, mergeDeep } from './util';
 import logger from '../common/logger';
 
 /**
@@ -46,7 +46,7 @@ export default function init() {
         log.trace('build bundle with serve support');
         const additionalServeDir = packerConfig.watch.serveDir.map((dir: string) => path.join(process.cwd(), dir));
         rollupServePlugins = [
-          rollupServe({
+          rollupServe(mergeDeep({
             contentBase: [
               path.join(process.cwd(), packerConfig.tmp, 'watch'),
               path.join(process.cwd(), packerConfig.watch.demoDir),
@@ -54,16 +54,14 @@ export default function init() {
               ...additionalServeDir
             ],
             open: packerConfig.watch.open,
-            port: packerConfig.watch.port,
-            ...packerConfig.compiler.advanced.rollup.pluginOptions.serve
-          }),
-          rollupLivereload({
+            port: packerConfig.watch.port
+          }, packerConfig.compiler.advanced.rollup.pluginOptions.serve)),
+          rollupLivereload(mergeDeep({
             watch: [
               path.join(process.cwd(), packerConfig.tmp, 'watch'),
               path.join(process.cwd(), packerConfig.watch.demoDir)
-            ],
-            ...packerConfig.compiler.advanced.rollup.pluginOptions.liveReload
-          })
+            ]
+          }, packerConfig.compiler.advanced.rollup.pluginOptions.liveReload))
         ];
       } else {
         log.trace('build serve disabled or not supported for bundle type');
@@ -93,10 +91,9 @@ export default function init() {
       });
       log.trace('rollup config:\n%o', watchConfig);
 
-      const watcher = await watch([ {
-        ...watchConfig,
-        ...packerConfig.compiler.advanced.rollup.watchOptions
-      }]);
+      const watcher = await watch([
+        mergeDeep(watchConfig, packerConfig.compiler.advanced.rollup.watchOptions)
+      ]);
       watcher.on('event', (event) => {
         switch (event.code) {
           case 'START':

@@ -328,13 +328,6 @@ module.exports = {
           globals: {},
 
           /**
-           * Override builtins plugin options.
-           * refer: https://github.com/calvinmetcalf/rollup-plugin-node-builtins
-           * @type {{}}
-           */
-          builtins: {},
-
-          /**
            * Override babel plugin options.
            * refer: https://github.com/rollup/rollup-plugin-babel
            * @type {{}}

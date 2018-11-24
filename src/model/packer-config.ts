@@ -91,7 +91,6 @@ export interface PackerConfig {
           commonjs: ObjectLiteral;
           json: ObjectLiteral;
           globals: ObjectLiteral;
-          builtins: ObjectLiteral;
           babel: ObjectLiteral;
           typescript: ObjectLiteral;
           replace: ObjectLiteral;

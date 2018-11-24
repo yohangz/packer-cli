@@ -245,11 +245,6 @@ export const packerSchema = {
                       optional: false,
                       def: {}
                     },
-                    builtins: {
-                      type: 'object',
-                      optional: false,
-                      def: {}
-                    },
                     babel: {
                       type: 'object',
                       optional: false,
