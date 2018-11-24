@@ -1,20 +1,31 @@
 import gulp from 'gulp';
 import path from 'path';
-import fs from 'fs';
 import glob from 'glob';
 
-import { makeRelativeDirPath } from './util';
+import { makeRelativeDirPath, writeFile } from './util';
 import { meta } from './meta';
 import { parseScriptPreprocessorExtension } from './parser';
 import logger from '../common/logger';
 import { buildUnitTestSource } from './test-util';
 
+/**
+ * Initialize test associated gulp tasks.
+ */
 export default function init() {
+
+  /**
+   * Unit test execution gulp task.
+   *
+   */
   gulp.task('test', async () => {
     const log = logger.create('[test]');
     try {
       log.trace('start');
       const config = meta.readPackerConfig(log);
+      /**
+       * Use karma if browser build mode and not using jest, else use standalone test execution
+       * depending on test framework.
+       */
       if (config.compiler.buildMode === 'browser' && config.testFramework !== 'jest') {
         log.trace('start test suite execution via karma');
         const karma = require('karma');
@@ -31,6 +42,7 @@ export default function init() {
         log.trace('start test suite execution node');
         makeRelativeDirPath(config.tmp, 'test');
 
+        // Prepare dynamic spec file which imports all spec references.
         let masterSpecCode = '';
         const fileExtension = parseScriptPreprocessorExtension(config.compiler.script.preprocessor);
         const files = glob.sync(path.join(process.cwd(), config.source, `**/*.spec.${fileExtension}`));
@@ -42,7 +54,7 @@ export default function init() {
         const srcFile = path.join(process.cwd(), config.tmp, `test/index.spec.${fileExtension}`);
         log.trace('combined test spec file path:\n%s', srcFile);
 
-        fs.writeFileSync(srcFile, masterSpecCode);
+        await writeFile(srcFile, masterSpecCode);
 
         await buildUnitTestSource(config, srcFile, log);
       }
