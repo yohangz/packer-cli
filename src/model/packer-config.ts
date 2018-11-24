@@ -8,6 +8,9 @@ import { TestFramework } from './test-framework';
 import { PathReplacePattern } from './path-replace-pattern';
 import { PackageModuleType } from './package-module-type';
 
+/**
+ * Packer style configuration schema.
+ */
 export interface PackerStyleConfig {
   inline: boolean;
   outDir: string;
@@ -18,6 +21,9 @@ export interface PackerStyleConfig {
   };
 }
 
+/**
+ * Packer watch configuration schema.
+ */
 export interface PackerWatchConfig {
   demoDir: string;
   helperDir: string;
@@ -26,12 +32,25 @@ export interface PackerWatchConfig {
   port: number;
 }
 
+/**
+ * Custom rollup plugin extractor callback.
+ * @callback customRollupPluginExtractorCallback
+ * @param {string} buildType - 'bundle'|'es5'|'esnext'
+ * @param {string} packerConfig - Packer configuration object.
+ * @return {Array<{}>} Custom rollup plugin collection
+ */
 export type CustomRollupPluginExtractorCallback = (buildType: PackageModuleType, packerConfig: PackerConfig) => any[];
 
+/**
+ * generic object literal schema.
+ */
 interface ObjectLiteral {
   [key: string]: any;
 }
 
+/**
+ * Packer configuration schema.
+ */
 export interface PackerConfig {
   extend: string;
   entry: string;

@@ -1,3 +1,6 @@
+/**
+ * Path replace pattern schema.
+ */
 export interface PathReplacePattern {
   include: string[] | string;
   exclude?: string[] | string;

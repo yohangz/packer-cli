@@ -1,3 +1,6 @@
+/**
+ * Library license type.
+ */
 export class LicenseType {
   public static readonly MIT = 'MIT License';
   public static readonly APACHE_2 = 'Apache License 2.0';

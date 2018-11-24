@@ -4,6 +4,9 @@ import { BrowserBundleFormat } from './browser-bundle-format';
 import { NodeBundleFormat } from './node-bundle-format';
 import { TestFramework } from './test-framework';
 
+/**
+ * Packer questioner options schema.
+ */
 export interface PackerOptions {
   description: string;
   keywords: string;

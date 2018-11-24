@@ -1,3 +1,6 @@
+/**
+ * Package configuration (package.json) schema.
+ */
 export interface PackageConfig {
   name?: string;
   version?: string;
