@@ -2,6 +2,10 @@ import { ScriptPreprocessor } from '../model/script-preprocessor';
 import { StylePreprocessor } from '../model/style-preprocessor';
 import { LicenseType } from '../model/license-type';
 
+/**
+ * Parse style extension by preprocessor type.
+ * @param preprocessor - Style preprocessor type.
+ */
 export const parseStylePreprocessorExtension = (preprocessor: StylePreprocessor): string => {
   switch (preprocessor) {
     case 'scss':
@@ -17,6 +21,10 @@ export const parseStylePreprocessorExtension = (preprocessor: StylePreprocessor)
   }
 };
 
+/**
+ * Parse license file name by license type.
+ * @param license - License type.
+ */
 export const parseLicenseType = (license: string): string => {
   let licenseFileName = '';
 
@@ -53,6 +61,10 @@ export const parseLicenseType = (license: string): string => {
   return licenseFileName;
 };
 
+/**
+ * Parse script transpiler by preprocessor type.
+ * @param preprocessor - Script preprocessor type.
+ */
 export const parseScriptPreprocessorExtension = (preprocessor: ScriptPreprocessor): string => {
   switch (preprocessor) {
     case 'typescript':
