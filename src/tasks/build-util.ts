@@ -215,7 +215,7 @@ export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
  * Get script build rollup plugins.
  * @param packageModule - Package module type.
  * @param generateDefinition - Generate type definitions if true.
- * @param check - Validate package for type errors if true. // TODO: check
+ * @param check - Set to false to avoid doing any diagnostic checks on the code.
  * @param packerConfig - Packer configuration object.
  * @param typescript - Typescript compiler reference.
  * @param log -  Logger reference.
