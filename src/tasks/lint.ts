@@ -5,7 +5,15 @@ import { meta } from './meta';
 import { runShellCommand } from './util';
 import logger from '../common/logger';
 
+/**
+ * Initialize lint gulp tasks.
+ */
 export default function init() {
+
+  /**
+   * Lint style source gulp task.
+   * Execute style lint on source directory.
+   */
   gulp.task('lint:style', async () => {
     const log = logger.create('[lint:style]');
     try {
@@ -28,6 +36,10 @@ export default function init() {
     }
   });
 
+  /**
+   * Lint typescript source gulp task.
+   * Execute tslint on source directory.
+   */
   gulp.task('lint:script:ts', async () => {
     const log = logger.create('[lint:script:ts]');
     try {
@@ -50,6 +62,10 @@ export default function init() {
     }
   });
 
+  /**
+   * Lint javascript source gulp task.
+   * Execute eslint on source directory.
+   */
   gulp.task('lint:script:es', async () => {
     const log = logger.create('[lint:script:es]');
     try {
@@ -72,7 +88,15 @@ export default function init() {
     }
   });
 
+  /**
+   * Lint all script files gulp task.
+   * Run typescript lint and javascript lint gulp tasks on series mode.
+   */
   gulp.task('lint:script', gulp.series('lint:script:ts', 'lint:script:es'));
 
+  /**
+   * Lint both styles and script files.
+   * Run style lint and script lint tasks on series mode.
+   */
   gulp.task('lint', gulp.series('lint:style', 'lint:script'));
 }
