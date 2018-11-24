@@ -12,33 +12,39 @@ import logger from '../common/logger';
 
 import { parseStylePreprocessorExtension } from './parser';
 import {
-  assetCopy,
-  babelConfigCopy,
-  commonConfigCopy,
+  copyExxampleAsset,
+  copyBabelConfig,
+  copyCommonConfig,
   copyGitIgnore,
   copyPackerAssets,
   copyPackerConfig,
-  demoCopy,
-  demoHelperRequireJsCopy,
-  demoHelperSystemJsCopy,
-  eslintConfigCopy,
+  copyDemoSource,
+  copyDemoHelperRequireJs,
+  copyDemoHelperSystemJs,
+  copyEsLintConfig,
   getPackageConfig,
-  jasmineConfigCopy,
-  jestConfigCopy,
-  karmaConfigCopy,
-  licenseCopy, parseBuildMode, postCssConfigCopy,
-  readmeCopy,
-  sourceCopy,
-  styleCopy,
-  styleLintConfigCopy,
-  taskGulpify,
-  templateCopy,
-  typescriptConfigCopy
+  copyJasmineConfig,
+  copyJestConfig,
+  copyKarmaConfig,
+  licenseCopy, parseBuildMode, copyPostCssConfig,
+  copyReadme,
+  copyExampleSource,
+  copyExampleStyleSheets,
+  copyStyleLintConfig,
+  copyExampleTemplates,
+  copyTypescriptConfig
 } from './generate-util';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
 
+/**
+ * Initialize project generation associated gulp tasks
+ */
 export default function init() {
+
+  /**
+   * Project generate gulp task.
+   */
   gulp.task('generate', async () => {
     const log = logger.create('[generate]');
     try {
@@ -264,61 +270,61 @@ export default function init() {
       const buildMode = parseBuildMode(options);
 
       const tasks: TaskFunction[] = [];
-      tasks.push(taskGulpify(assetCopy, projectDir, log));
-      tasks.push(taskGulpify(templateCopy, projectDir, log));
+      tasks.push(copyExxampleAsset(projectDir, log));
+      tasks.push(copyExampleTemplates(projectDir, log));
 
       if (options.styleSupport) {
-        tasks.push(taskGulpify(styleCopy, styleExt, projectDir, log));
+        tasks.push(copyExampleStyleSheets(styleExt, projectDir, log));
       }
 
       if (buildMode !== 'node-cli') {
-        tasks.push(taskGulpify(demoCopy, options, buildMode, packageName, projectDir, log));
+        tasks.push(copyDemoSource(options, buildMode, packageName, projectDir, log));
       }
 
       if (buildMode === 'browser') {
         if (options.bundleFormat === 'system') {
-          tasks.push(taskGulpify(demoHelperSystemJsCopy, projectDir, log));
+          tasks.push(copyDemoHelperSystemJs(projectDir, log));
         }
 
         if (options.bundleFormat === 'amd') {
-          tasks.push(taskGulpify(demoHelperRequireJsCopy, projectDir, log));
+          tasks.push(copyDemoHelperRequireJs(projectDir, log));
         }
       }
 
-      tasks.push(taskGulpify(sourceCopy, options, buildMode, styleExt, projectDir, log));
+      tasks.push(copyExampleSource(options, buildMode, styleExt, projectDir, log));
 
       if (options.scriptPreprocessor === 'typescript') {
-        tasks.push(taskGulpify(typescriptConfigCopy, projectDir, log));
+        tasks.push(copyTypescriptConfig(projectDir, log));
       } else {
-        tasks.push(taskGulpify(eslintConfigCopy, projectDir, log));
+        tasks.push(copyEsLintConfig(projectDir, log));
       }
 
       if (buildMode === 'browser') {
         if (options.testFramework !== 'jest') {
-          tasks.push(taskGulpify(karmaConfigCopy, projectDir, log));
+          tasks.push(copyKarmaConfig(projectDir, log));
         }
       } else {
         if (options.testFramework === 'jasmine') {
-          tasks.push(taskGulpify(jasmineConfigCopy, projectDir, log));
+          tasks.push(copyJasmineConfig(projectDir, log));
         }
       }
 
       if (options.testFramework === 'jest') {
-        tasks.push(taskGulpify(jestConfigCopy, projectDir, log));
+        tasks.push(copyJestConfig(projectDir, log));
       }
 
       if (options.styleSupport) {
-        tasks.push(taskGulpify(postCssConfigCopy, projectDir, log));
-        tasks.push(taskGulpify(styleLintConfigCopy, projectDir, log));
+        tasks.push(copyPostCssConfig(projectDir, log));
+        tasks.push(copyStyleLintConfig(projectDir, log));
       }
 
-      tasks.push(taskGulpify(licenseCopy, options, projectDir, log));
-      tasks.push(taskGulpify(readmeCopy, packageConfig, projectDir, log));
-      tasks.push(taskGulpify(babelConfigCopy, options, buildMode, projectDir, log));
-      tasks.push(taskGulpify(copyGitIgnore, projectDir, log));
-      tasks.push(taskGulpify(copyPackerAssets, projectDir, log));
-      tasks.push(taskGulpify(commonConfigCopy, packageConfig, options.isYarn, projectDir, log));
-      tasks.push(taskGulpify(copyPackerConfig, options, buildMode, projectDir));
+      tasks.push(licenseCopy(options, projectDir, log));
+      tasks.push(copyReadme(packageConfig, projectDir, log));
+      tasks.push(copyBabelConfig(options, buildMode, projectDir, log));
+      tasks.push(copyGitIgnore(projectDir, log));
+      tasks.push(copyPackerAssets(projectDir, log));
+      tasks.push(copyCommonConfig(packageConfig, projectDir, log));
+      tasks.push(copyPackerConfig(options, buildMode, projectDir));
 
       await gulp.series([gulp.parallel(tasks), async () => {
         if (!args.includes('--skipInstall') || !args.includes('-sk')) {
