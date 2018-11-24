@@ -36,7 +36,7 @@ module.exports = {
   compiler: {
 
     /**
-     * Dependency map mode option
+     * Dependency map mode option in target package.json file.
      * - 'cross-map-peer-dependency' : Map project dependencies to target peerDependencies
      * - 'cross-map-dependency' : Map project peerDependencies to target dependencies
      * - 'map-dependency' : Map project dependencies to target dependencies
@@ -46,6 +46,23 @@ module.exports = {
      * @default 'cross-map-peer-dependency'
      */
     dependencyMapMode: 'cross-map-peer-dependency',
+
+    /**
+     * Specified package fields will be copied to target package.json file.
+     * @type {Array<string>}
+     * @default [ 'name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage' ]
+     */
+    packageFieldsToCopy: [
+      'name',
+      'version',
+      'description',
+      'keywords',
+      'author',
+      'repository',
+      'license',
+      'bugs',
+      'homepage'
+    ],
 
     /**
      * If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
@@ -225,7 +242,175 @@ module.exports = {
      * @type {boolean}
      * @default true
      */
-    concurrentBuild: true
+    concurrentBuild: true,
+
+    /**
+     * Advance compiler options to override plugin configuration.
+     * Caution! change only if you know what you are doing.
+     * @type {{}}
+     */
+    advanced: {
+
+      /**
+       * Rollup plugins.
+       * refer: https://rollupjs.org
+       * @type {{}}
+       */
+      rollup: {
+
+        /**
+         * Override rollup build task input options.
+         * refer: https://rollupjs.org inputOptions section.
+         * @type {{}}
+         */
+        inputOptions: {},
+
+        /**
+         * Override rollup build task output options.
+         * refer: https://rollupjs.org outputOptions section.
+         * @type {{}}
+         */
+        outputOptions: {},
+
+        /**
+         * Override rollup watch task options.
+         * refer: https://rollupjs.org watchOptions section.
+         * @type {{}}
+         */
+        watchOptions: {},
+
+        /**
+         * Override rollup plugin options.
+         * refer: https://rollupjs.org plugins section.
+         * @type {{}}
+         */
+        pluginOptions: {
+
+          /**
+           * Override ignore import plugin options
+           * refer: https://github.com/yohangz/rollup-plugin-ignore-import
+           * @type {{}}
+           */
+          ignoreImport: {},
+
+          /**
+           * Override post css plugin options.
+           * refer: https://github.com/egoist/rollup-plugin-postcss
+           */
+          postCss: {},
+
+          /**
+           * Override node resolve plugin options.
+           * refer: https://github.com/rollup/rollup-plugin-node-resolve
+           * @type {{}}
+           */
+          nodeResolve: {},
+
+          /**
+           * Override commonjs plugin options.
+           * refer: https://github.com/rollup/rollup-plugin-commonjs
+           * @type {{}}
+           */
+          commonjs: {},
+
+          /**
+           * Override json plugin options.
+           * refer: https://github.com/rollup/rollup-plugin-json
+           * @type {{}}
+           */
+          json: {},
+
+          /**
+           * Override globals plugin options.
+           * refer: https://github.com/calvinmetcalf/rollup-plugin-node-globals
+           * @type {{}}
+           */
+          globals: {},
+
+          /**
+           * Override builtins plugin options.
+           * refer: https://github.com/calvinmetcalf/rollup-plugin-node-builtins
+           * @type {{}}
+           */
+          builtins: {},
+
+          /**
+           * Override babel plugin options.
+           * refer: https://github.com/rollup/rollup-plugin-babel
+           * @type {{}}
+           */
+          babel: {},
+
+          /**
+           * Override typescript plugin options.
+           * refer: https://github.com/ezolenko/rollup-plugin-typescript2
+           * @type {{}}
+           */
+          typescript: {},
+
+          /**
+           * Override replace plugin options.
+           * refer: https://github.com/jetiny/rollup-plugin-re
+           */
+          replace: {},
+
+          /**
+           * Override image plugin options.
+           * refer: https://github.com/alwaysonlinetxm/rollup-plugin-img
+           * @type {{}}
+           */
+          image: {},
+
+          /**
+           * Override handlebars plugin options.
+           * refer: https://github.com/yohangz/rollup-plugin-hbs
+           * @type {{}}
+           */
+          handlebars: {},
+
+          /**
+           * Override filesize plugin options.
+           * refer: https://github.com/ritz078/rollup-plugin-filesize
+           * @type {{}}
+           */
+          filesize: {},
+
+          /**
+           * Override serve plugin options.
+           * refer: https://github.com/thgh/rollup-plugin-serve
+           * @type {{}}
+           */
+          serve: {},
+
+          /**
+           * Override live reload plugin options.
+           * refer: https://github.com/thgh/rollup-plugin-livereload
+           * @type {{}}
+           */
+          liveReload: {}
+        }
+      },
+
+      /**
+       * Other plugins.
+       */
+      other: {
+
+        /**
+         * Override terser plugin options.
+         * refer: https://github.com/terser-js/terser
+         * @type {{}}
+         */
+        terser: {},
+
+        /**
+         * Override cssnano options.
+         * refer: https://github.com/cssnano/cssnano
+         * @type {{}}
+         */
+        cssnano: {}
+      }
+    }
   },
 
   /**
@@ -242,12 +427,11 @@ module.exports = {
    * List of files paths to copy on build.
    * Paths should be relative to project root.
    * @type {Array<string>}
-   * @default []
+   * @default [ 'README.md', 'LICENSE' ]
    */
   copy: [
     'README.md',
-    'LICENSE',
-    'assets/**/{.*,*}'
+    'LICENSE'
   ],
 
   /**

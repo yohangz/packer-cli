@@ -43,7 +43,7 @@ module.exports = {
   compiler: {
 
     /**
-     * Dependency map mode option
+     * Dependency map mode option in target package.json file.
      * - 'cross-map-peer-dependency' : Map project dependencies to target peerDependencies
      * - 'cross-map-dependency' : Map project peerDependencies to target dependencies
      * - 'map-dependency' : Map project dependencies to target dependencies
@@ -53,6 +53,23 @@ module.exports = {
      * @default 'cross-map-peer-dependency'
      */
     dependencyMapMode: '{{dependencyMapMode}}',
+
+    /**
+     * Specified package fields will be copied to target package.json file.
+     * @type {Array<string>}
+     * @default [ 'name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage' ]
+     */
+    packageFieldsToCopy: [
+      'name',
+      'version',
+      'description',
+      'keywords',
+      'author',
+      'repository',
+      'license',
+      'bugs',
+      'homepage'
+    ],
 
     /**
      * If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
@@ -248,7 +265,7 @@ module.exports = {
    * List of files paths to copy on build.
    * Paths should be relative to project root.
    * @type {Array<string>}
-   * @default []
+   * @default [ 'README.md', 'LICENSE' ]
    */
   copy: [
     'README.md',
