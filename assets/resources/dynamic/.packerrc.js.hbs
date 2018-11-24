@@ -241,7 +241,7 @@ module.exports = {
          */
         outDir: 'images'
       }
-    },
+    },{{/unless}}
 
     /**
      * Run bundle build tasks concurrently to improve performance if true
@@ -249,7 +249,7 @@ module.exports = {
      * @default true
      */
     concurrentBuild: true
-  },{{/unless}}
+  },
 
   /**
    * List of paths which contains static assets referenced in style sheets.
@@ -269,8 +269,7 @@ module.exports = {
    */
   copy: [
     'README.md',
-    'LICENSE',
-    'assets/**/{.*,*}'
+    'LICENSE'
   ],
 
   /**
