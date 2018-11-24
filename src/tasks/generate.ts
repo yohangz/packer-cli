@@ -12,7 +12,7 @@ import logger from '../common/logger';
 
 import { parseStylePreprocessorExtension } from './parser';
 import {
-  copyExxampleAsset,
+  copyExampleAsset,
   copyBabelConfig,
   copyCommonConfig,
   copyGitIgnore,
@@ -270,8 +270,11 @@ export default function init() {
       const buildMode = parseBuildMode(options);
 
       const tasks: TaskFunction[] = [];
-      tasks.push(copyExxampleAsset(projectDir, log));
-      tasks.push(copyExampleTemplates(projectDir, log));
+      tasks.push(copyExampleAsset(projectDir, log));
+
+      if (!options.reactLib) {
+        tasks.push(copyExampleTemplates(projectDir, log));
+      }
 
       if (options.styleSupport) {
         tasks.push(copyExampleStyleSheets(styleExt, projectDir, log));

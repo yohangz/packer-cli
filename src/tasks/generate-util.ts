@@ -367,7 +367,7 @@ export const copyExampleTemplates = (projectDir: string, log: Logger): TaskFunct
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
  */
-export const copyExxampleAsset = (projectDir: string, log: Logger): TaskFunction => {
+export const copyExampleAsset = (projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy assets');
 
   const assetsPath  = path.join(__dirname, '../resources/dynamic/example/common/assets/**/*');
