@@ -1,5 +1,6 @@
 import path from 'path';
 import merge from 'lodash/merge';
+import debounce from 'lodash/debounce';
 
 import { ModuleFormat, rollup, RollupFileOptions, RollupWatchOptions, watch } from 'rollup';
 
@@ -101,6 +102,10 @@ export const buildUnitTestSource = async (packerConfig: PackerConfig, srcFile: s
     });
     log.trace('rollup config:\n%o', rollupWatchConfig);
 
+    const debounced = debounce(async () => {
+      await runNodeUnitTest(packerConfig, log);
+    }, 2000);
+
     const watcher = await watch([
       mergeDeep(rollupWatchConfig, packerConfig.compiler.advanced.rollup.watchOptions)
     ]);
@@ -108,13 +113,15 @@ export const buildUnitTestSource = async (packerConfig: PackerConfig, srcFile: s
       switch (event.code) {
         case 'START':
           log.info('%s - %s', 'watch', 'bundling start');
+          debounced.cancel();
           break;
         case 'END':
           log.info('%s - %s', 'watch', 'bundling end');
-          await runNodeUnitTest(packerConfig, log);
+          debounced();
           break;
         case 'ERROR':
           log.error('%s - %s\n%o', 'watch', 'bundling failure', event.error);
+          debounced.cancel();
           break;
         case 'FATAL':
           log.error('%s - %s\n%o', 'watch', 'bundling crashed', event);
