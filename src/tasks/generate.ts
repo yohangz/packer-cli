@@ -327,10 +327,11 @@ export default function init() {
       tasks.push(copyPackerConfig(options, buildMode, projectDir));
 
       await gulp.series([gulp.parallel(tasks), async () => {
-        if (!args.includes('--skipInstall') || !args.includes('-sk')) {
+        if (!args.includes('--skipInstall') && !args.includes('-sk')) {
           await runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir, log);
-          log.info('📦 package generated 🚀');
         }
+
+        log.info('📦 package generated 🚀');
       }])(() => {
         // No implementation
       });
