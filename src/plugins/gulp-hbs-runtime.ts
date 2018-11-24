@@ -4,11 +4,19 @@ import handlebars from 'handlebars';
 import path from 'path';
 import * as stream from 'stream';
 
+/**
+ * Gulp handlebars runtime options.
+ */
 export interface GulpHandlebarsOptions {
   replaceExt?: string;
   rename?: string;
 }
 
+/**
+ * Gulp handlebars runtime plugin.
+ * @param data - Template data to complile template with.
+ * @param options - Plugin options.
+ */
 export default function gulpHbsRuntime(data: any, options?: GulpHandlebarsOptions): stream.Transform {
   return through.obj((chunk: any, enc: string, callback: TransformCallback): void => {
     try {
