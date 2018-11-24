@@ -14,7 +14,7 @@
 
 > Full-fledged CLI tool to generate and package library Node modules compliant with Browser and NodeJS. Packer CLI support all modern style, unit test and script transpiler tools.
 
-> This project is using itself to compile self source.
+> Packer CLI is using itself to compile self source.
 
 ## :book: Table of Contents
   <!-- START doctoc generated TOC please keep comment here to allow auto update -->
