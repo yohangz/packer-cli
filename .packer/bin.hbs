@@ -4,7 +4,7 @@ const { initPacker } = require('../bundle/{{packageName}}.{{format}}.min.js');
 initPacker().then(() => {
   // no implementation
 }, (e) => {
-  console.error(e);
+  console.error('packer failure: ', e);
 }).catch((e) => {
-  console.error(e);
+  console.error('packer failure: ', e);
 });
