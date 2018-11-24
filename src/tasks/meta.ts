@@ -10,7 +10,7 @@ import { BabelConfig } from '../model/babel-config';
 import { PackageModuleType } from '../model/package-module-type';
 
 import { Logger } from '../common/logger';
-import { packerSchema } from './validation';
+import { packerSchema } from './validation-util';
 import { args, readFile } from './util';
 
 /**
