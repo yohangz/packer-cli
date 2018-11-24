@@ -3,7 +3,6 @@ import handlebars from 'handlebars';
 import glob from 'glob-to-regexp';
 import chalk from 'chalk';
 import terser from 'terser';
-import fs from 'fs';
 
 import codeFrameColumns from '@babel/code-frame';
 
@@ -28,92 +27,102 @@ import { PackageConfig } from '../model/package-config';
 import { PackerConfig } from '../model/packer-config';
 import logger, { Logger } from '../common/logger';
 import { LogLevel } from '../model/log-level';
-import { writeFile } from './util';
+import { readFile, writeFile } from './util';
+import { PackageModuleType } from '../model/package-module-type';
 
 /**
  * Get distribution banner comment.
- * @param config - Packer configuration object.
- * @param packageJson - Package configuration object.
+ * @param packerConfig - Packer configuration object.
+ * @param packageConfig - Package configuration object.
  */
-export const getBanner = (config: PackerConfig, packageJson: PackageConfig) => {
-  if (config.license.banner) {
-    const bannerTemplate = meta.readBannerTemplate();
+export const getBanner = async (packerConfig: PackerConfig, packageConfig: PackageConfig) => {
+  if (packerConfig.license.banner) {
+    const bannerTemplate = await meta.readBannerTemplate();
     return handlebars.compile(bannerTemplate)({
-      config,
-      pkg: packageJson
+      config: packerConfig,
+      pkg: packageConfig
     });
   }
 };
 
 /**
  * Get rollup base configuration.
- * @param config - Packer configuration object.
- * @param packageJson - Package configuration object.
+ * @param packerConfig - Packer configuration object.
+ * @param packageConfig - Package configuration object.
  * @param banner - Banner comment.
  * @param sourceMap - If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
  * the resulting output file as a data URI.
  */
-export const getBaseConfig = (config: PackerConfig, packageJson: PackageConfig, banner: string,
+export const getBaseConfig = (packerConfig: PackerConfig, packageConfig: PackageConfig, banner: string,
                               sourceMap?: boolean | 'inline') => {
   return {
-    input: path.join(config.source, config.entry),
+    input: path.join(packerConfig.source, packerConfig.entry),
     output: {
       banner,
-      name: packageJson.name,
-      sourcemap: typeof sourceMap !== 'undefined' ? sourceMap : config.compiler.sourceMap
+      name: packageConfig.name,
+      sourcemap: typeof sourceMap !== 'undefined' ? sourceMap : packerConfig.compiler.sourceMap
     }
   };
 };
 
 /**
  * Get rollup style build plugins.
- * @param config - Packer configuration object.
- * @param packageJson - Package configuration object.
+ * @param packerConfig - Packer configuration object.
+ * @param packageConfig - Package configuration object.
  * @param watch - Copy stylesheets artifacts to watch temp directory if true, else dist directory.
  * @param main - Indicate whether it is the main build task to emit stylesheets. Otherwise, ignore style sheet building
  * unless style inline mode is enabled.
  * @param log - Logger reference.
  */
-export const rollupStyleBuildPlugins = (config: PackerConfig, packageJson: PackageConfig, watch: boolean, main: boolean,
-                                        log: Logger) => {
-  if (!config.compiler.style) {
+export const getStyleBuildPlugins = (packerConfig: PackerConfig, packageConfig: PackageConfig, watch: boolean,
+                                     main: boolean, log: Logger) => {
+  if (!packerConfig.compiler.style) {
     log.trace('style build disabled');
     return [];
   }
 
-  if (!main && !config.compiler.style.inline) {
+  if (!main && !packerConfig.compiler.style.inline) {
     log.trace('ignore style imports to avoid redundant style compilation');
     return [
       rollupIgnoreImport({
         exclude: 'node_modules/**',
-        extensions: ['.scss', '.sass', '.styl', '.css', '.less']
+        extensions: ['.scss', '.sass', '.styl', '.css', '.less'],
+        ...packerConfig.compiler.advanced.rollup.pluginOptions.ignoreImport
       })
     ];
   }
 
   log.trace('init style build plugins');
-  const styleDir = watch ? path.join(config.tmp, 'watch') : config.dist;
-  const fileName = packageJson.name + '.css';
-  const styleDist = path.join(process.cwd(), styleDir, config.compiler.style.outDir, fileName);
+  const styleDir = watch ? path.join(packerConfig.tmp, 'watch') : packerConfig.dist;
+  const fileName = packageConfig.name + '.css';
+  const styleDist = path.join(process.cwd(), styleDir, packerConfig.compiler.style.outDir, fileName);
   log.trace('stylesheet dist file name %s', styleDist);
 
   return [
     rollupPostCss({
       exclude: 'node_modules/**',
-      extract: config.compiler.style.inline ? false : styleDist,
+      extract: packerConfig.compiler.style.inline ? false : styleDist,
       config: {
         path: path.join(process.cwd(), 'postcss.config.js'),
         ctx: {
-          config
+          config: packerConfig
         }
       },
-      sourceMap: config.compiler.style.inline ? false : config.compiler.sourceMap
+      // disable sourcemaps when inline bundling
+      sourceMap: packerConfig.compiler.style.inline ? false : packerConfig.compiler.sourceMap,
+      ...packerConfig.compiler.advanced.rollup.pluginOptions.postCss
     })
   ];
 };
 
-export const generateMinCss = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
-                                     log: Logger): Promise<void> => {
+/**
+ * Generate minified style sheets.
+ * @param packerConfig - Packer configuration object.
+ * @param packageConfig - Package configuration object.
+ * @param log - Logger reference.
+ */
+export const generateMinStyleSheet = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
+                                            log: Logger): Promise<void> => {
   if (!packerConfig.compiler.style || packerConfig.compiler.style.inline) {
     return;
   }
@@ -125,15 +134,16 @@ export const generateMinCss = async (packerConfig: PackerConfig, packageConfig: 
   const srcFilePath = path.join(srcPath, srcFileName);
   const srcMinFileName = `${packageConfig.name}.min.css`;
   const srcMinFilePath = path.join(srcPath, srcMinFileName);
-  const srcCss = fs.readFileSync(srcFilePath, 'utf8');
+  const srcCss = await readFile(srcFilePath);
   const options: any = {
     from: srcFileName,
     to: srcMinFileName
   };
 
+  // only set cssnano sourcemap options when sourcemap is true
   if (packerConfig.compiler.sourceMap === true) {
     const srcMapFilePath = path.join(srcPath, `${packageConfig.name}.css.map`);
-    const srcMapCss = fs.readFileSync(srcMapFilePath, 'utf8');
+    const srcMapCss = await readFile(srcMapFilePath);
     options.map = {
       sourcesContent: true,
       prev: srcMapCss
@@ -142,108 +152,160 @@ export const generateMinCss = async (packerConfig: PackerConfig, packageConfig: 
 
   let result;
 
-  log.info('cssnano options:\n%o', options);
+  log.trace('cssnano options:\n%o', options);
   try {
-    result = await nano.process(String(srcCss), options);
+    result = await nano.process(String(srcCss), {
+      ...options,
+      ...packerConfig.compiler.advanced.other.cssnano
+    });
   } catch (e) {
     log.error('style minify failure:\n%s', e.stack || e.message);
     process.exit(1);
   }
 
-  fs.writeFileSync(srcMinFilePath, result.css);
+  await writeFile(srcMinFilePath, result.css);
 
+  // save sourcemap file only when sourcemap true
   if (packerConfig.compiler.sourceMap === true) {
     const srcMinMapFilePath = path.join(srcPath, `${srcMinFileName}.map`);
-    fs.writeFileSync(srcMinMapFilePath, result.map);
+    await writeFile(srcMinMapFilePath, result.map);
   }
 };
 
-export const resolvePlugins = (config: PackerConfig) => {
+/**
+ * Get rollup dependency resolve plugins.
+ * @param packerConfig  - Packer configuration object.
+ */
+export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
   const plugins = [
-    rollupIgnore(config.ignore),
+    rollupIgnore(packerConfig.ignore),
     rollupResolve({
-      browser: true,
+      module: true,
       jsnext: true,
       main: true,
-      preferBuiltins: false
+      browser: packerConfig.compiler.buildMode === 'browser',
+      preferBuiltins: true,
+      ...packerConfig.compiler.advanced.rollup.pluginOptions.nodeResolve
     }),
     rollupCommonjs({
-      include: 'node_modules/**'
+      include: 'node_modules/**',
+      ...packerConfig.compiler.advanced.rollup.pluginOptions.commonjs
     }),
-    rollupJson()
+    rollupJson({
+      ...packerConfig.compiler.advanced.rollup.pluginOptions.json
+    })
   ];
 
-  if (config.compiler.buildMode === 'browser') {
+  // include global and builtin plugins only when browser build mode is enabled
+  if (packerConfig.compiler.buildMode === 'browser') {
     plugins.push(
-      rollupGlobals(),
-      rollupBuiltins()
+      rollupGlobals({
+        ...packerConfig.compiler.advanced.rollup.pluginOptions.globals
+      }),
+      rollupBuiltins({
+        ...packerConfig.compiler.advanced.rollup.pluginOptions.builtins
+      })
     );
   }
 
   return plugins;
 };
 
-export const buildPlugin = (packageModule: string, generateDefinition: boolean, check: boolean, config: PackerConfig,
-                            tsPackage: boolean) => {
+/**
+ * Get script build rollup plugins.
+ * @param packageModule - Package module type.
+ * @param generateDefinition - Generate type definitions if true.
+ * @param check - Validate package for type errors if true. // TODO: check
+ * @param packerConfig - Packer configuration object.
+ * @param typescript - Typescript compiler reference.
+ * @param log -  Logger reference.
+ */
+export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateDefinition: boolean, check: boolean,
+                                     packerConfig: PackerConfig, typescript: any, log: Logger) => {
   const plugins = [];
-  if (config.compiler.script.preprocessor  === 'typescript') {
-    const buildConf: any = {
+  if (packerConfig.compiler.script.preprocessor  === 'typescript') {
+    const buildConf: RollupPluginTypescriptOptions = {
       check,
       tsconfig: `tsconfig.json`,
-      typescript: tsPackage,
-      clean: config.compiler.concurrentBuild,
-      cacheRoot: path.join(process.cwd(), config.tmp, '.rts2_cache')
+      typescript,
+      clean: packerConfig.compiler.concurrentBuild,
+      cacheRoot: path.join(process.cwd(), packerConfig.tmp, '.rts2_cache')
     };
 
     if (generateDefinition) {
       buildConf.tsconfigOverride = {
         compilerOptions: {
           declaration: true,
-          declarationDir: path.join(process.cwd(), config.dist)
+          declarationDir: path.join(process.cwd(), packerConfig.dist)
         }
       };
 
       buildConf.useTsconfigDeclarationDir = true;
     }
 
-    plugins.push(rollupTypescript(buildConf));
+    plugins.push(rollupTypescript({
+      ...buildConf,
+      ...packerConfig.compiler.advanced.rollup.pluginOptions.typescript
+    }));
   }
 
-  const babelConfig = meta.readBabelConfig(packageModule);
+  let babelConfig;
+  try {
+    babelConfig = meta.readBabelConfig(packageModule);
+  } catch (e) {
+    log.error('Babel config read failure: %s', e.stack || e.message);
+    process.exit(1);
+  }
+
   plugins.push(rollupBabel({
     babelrc: false,
     exclude: 'node_modules/**',
     extensions: [ '.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx' ],
     plugins: babelConfig.plugins || [],
     presets: babelConfig.presets || [],
-    runtimeHelpers: true
+    runtimeHelpers: true,
+    ...packerConfig.compiler.advanced.rollup.pluginOptions.babel
   }));
 
   return plugins;
 };
 
-export const preBundlePlugins = (config: PackerConfig) => {
+/**
+ * Get pre bundle rollup plugins.
+ * @param packerConfig - Packer configuration object.
+ */
+export const getPreBundlePlugins = (packerConfig: PackerConfig) => {
   const plugins = [];
-  if (config.replacePatterns.length) {
+  if (packerConfig.replacePatterns.length) {
     plugins.push(rollupReplace({
       exclude: 'node_modules/**',
-      patterns: config.replacePatterns
+      patterns: packerConfig.replacePatterns,
+      ...packerConfig.compiler.advanced.rollup.pluginOptions.replace
     }));
   }
   plugins.push(
-    rollupHandlebars(),
+    rollupHandlebars({
+      ...packerConfig.compiler.advanced.rollup.pluginOptions.handlebars
+    }),
     rollupImage({
       exclude: 'node_modules/**',
       extensions: /\.(png|jpg|jpeg|gif|svg)$/,
-      limit: config.compiler.script.image.inlineLimit,
-      output: path.join(config.dist, config.compiler.script.image.outDir)
+      limit: packerConfig.compiler.script.image.inlineLimit,
+      output: path.join(packerConfig.dist, packerConfig.compiler.script.image.outDir),
+      ...packerConfig.compiler.advanced.rollup.pluginOptions.image
     })
   );
 
   return plugins;
 };
 
-const bundleSizeLoggerPlugin = (taskName: string, type: string) => {
+/**
+ * Get bundle size logger rollup plugin.
+ * @param packerConfig - Packer configuration object.
+ * @param taskName - Gulp task name.
+ * @param type - Package module type message.
+ */
+const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string, type: string) => {
   return rollupFilesize({
     showMinifiedSize: false,
     showBrotliSize: false,
@@ -251,33 +313,61 @@ const bundleSizeLoggerPlugin = (taskName: string, type: string) => {
       const bundleFormatted = `bundle size: ${chalk.red(bundleSize)}`;
       const gzippedFormatted = `gzipped size: ${chalk.red(gzipSize)}`;
       return chalk.yellow(`${chalk.green(taskName)} ${type} ${bundleFormatted}, ${gzippedFormatted}`);
-    }
+    },
+    ...packerConfig.compiler.advanced.rollup.pluginOptions.filesize
   });
 };
 
-export const postBundlePlugins = (task: string, type: string) => {
+/**
+ * Get post bundle rollup plugins.
+ * @param task - Gulp task name.
+ * @param type - Package module type.
+ * @param packerConfig - Packer config object.
+ */
+export const getPostBundlePlugins = (packerConfig: PackerConfig, task: string, type: PackageModuleType) => {
   if (logger.level <= LogLevel.INFO) {
     return [
-      bundleSizeLoggerPlugin(task, type)
+      getBundleSizeLoggerPlugin(packerConfig, task, type)
     ];
   }
 
   return [];
 };
 
-export const customRollupPlugins = (config: PackerConfig, type: string): any[] => {
-  if (config.compiler.customRollupPluginExtractor) {
-    return config.compiler.customRollupPluginExtractor(type, config);
+/**
+ * Get custom rollup plugins included via packer config.
+ * @param packerConfig - Packer configuration object.
+ * @param type - Package module type.
+ */
+export const customRollupPlugins = (packerConfig: PackerConfig, type: PackageModuleType): any[] => {
+  if (packerConfig.compiler.customRollupPluginExtractor) {
+    return packerConfig.compiler.customRollupPluginExtractor(type, packerConfig);
   }
 
   return [];
 };
 
-export const bundleBuild = async (config: PackerConfig, packageData: PackageConfig, bundleConfig: RollupFileOptions,
-                                  type: string, minify: boolean, log: Logger): Promise<void> => {
+/**
+ * Generate bundled artifacts via rollup.
+ * @param packerConfig - Packer configuration object.
+ * @param packageConfig - Package configuration object.
+ * @param bundleConfig - Rollup bundle configuration object.
+ * @param type - Package module type.
+ * @param minify - Generate minified bundle artifact if true.
+ * @param log - Logger reference.
+ */
+export const generateBundle = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
+                                     bundleConfig: RollupFileOptions, type: PackageModuleType, minify: boolean,
+                                     log: Logger): Promise<void> => {
   log.trace('%s bundle build start', type);
-  const bundle = await rollup(bundleConfig);
-  const { code, map } = await bundle.write(bundleConfig.output);
+  const bundle = await rollup({
+    ...bundleConfig,
+    ...packerConfig.compiler.advanced.rollup.inputOptions
+  });
+  const { code, map } = await bundle.write({
+    ...bundleConfig.output,
+    ...packerConfig.compiler.advanced.rollup.outputOptions
+  });
   log.trace('%s bundle build end', type);
 
   if (minify) {
@@ -292,9 +382,9 @@ export const bundleBuild = async (config: PackerConfig, packageData: PackageConf
       filename: minFileName
     };
 
-    if (config.compiler.sourceMap === 'inline') {
+    if (packerConfig.compiler.sourceMap === 'inline') {
       minSourceMapConfig.url = 'inline';
-    } else if (config.compiler.sourceMap) {
+    } else if (packerConfig.compiler.sourceMap) {
       minSourceMapConfig.url = minMapFileName;
     } else {
       minSourceMapConfig = undefined;
@@ -304,7 +394,8 @@ export const bundleBuild = async (config: PackerConfig, packageData: PackageConf
       sourceMap: minSourceMapConfig,
       output: {
         comments: /@preserve|@license|@cc_on/i
-      }
+      },
+      ...packerConfig.compiler.advanced.other.terser
     });
     log.trace('%s minified bundle terser config\n%o', type, minData);
 
@@ -321,7 +412,7 @@ export const bundleBuild = async (config: PackerConfig, packageData: PackageConf
       }
 
       const task = log.taskName.replace(' ', '');
-      const sizeDetail = bundleSizeLoggerPlugin(task, `${type} minified`);
+      const sizeDetail = getBundleSizeLoggerPlugin(packerConfig, task, `${type} minified`);
       sizeDetail.ongenerate(null, { code:  minData.code });
     }
 
@@ -329,13 +420,22 @@ export const bundleBuild = async (config: PackerConfig, packageData: PackageConf
   }
 };
 
-export const externalFilter = (config: PackerConfig) => {
-  const filter = config.bundle.externals.map((external) => glob(external));
+/**
+ * Get external dependency filter function.
+ * @param packerConfig - Packer config object.
+ */
+export const getExternalFilter = (packerConfig: PackerConfig) => {
+  const filter = packerConfig.bundle.externals.map((external) => glob(external));
   return (id: string) => {
     return filter.some((include) => include.test(id));
   };
 };
 
-export const extractBundleExternals = (config: PackerConfig) => {
-  return config.bundle.mapExternals ? Object.keys(config.bundle.globals) : externalFilter(config);
+/**
+ * Extract bundle external.
+ * @param packerConfig - Packer config object.
+ */
+export const extractBundleExternals = (packerConfig: PackerConfig) => {
+  // Map externals from globals if mapExternals is true.
+  return packerConfig.bundle.mapExternals ? Object.keys(packerConfig.bundle.globals) : getExternalFilter(packerConfig);
 };

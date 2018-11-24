@@ -11,18 +11,26 @@ import { PackageConfig } from '../model/package-config';
 import logger from '../common/logger';
 import { meta } from './meta';
 import {
-  buildPlugin,
-  bundleBuild, customRollupPlugins, externalFilter,
-  extractBundleExternals, generateMinCss,
+  getScriptBuildPlugin,
+  generateBundle, customRollupPlugins, getExternalFilter,
+  extractBundleExternals, generateMinStyleSheet,
   getBanner,
   getBaseConfig,
-  postBundlePlugins,
-  preBundlePlugins,
-  resolvePlugins,
-  rollupStyleBuildPlugins
+  getPostBundlePlugins,
+  getPreBundlePlugins,
+  getDependencyResolvePlugins,
+  getStyleBuildPlugins
 } from './build-util';
 
+/**
+ * Initialize build associated gulp tasks.
+ */
 export default function init() {
+
+  /**
+   * Copy build essentials gulp task.
+   * This task will copy dynamically generated package.json file and packer config specified copy globs.
+   */
   gulp.task('build:copy:essentials', () => {
     const log = logger.create('[build:copy:essentials]');
     try {
@@ -31,20 +39,9 @@ export default function init() {
       const config = meta.readPackerConfig(log);
 
       const targetPackage: PackageConfig = {};
-      const fieldsToCopy = [
-        'name',
-        'version',
-        'description',
-        'keywords',
-        'author',
-        'repository',
-        'license',
-        'bugs',
-        'homepage'
-      ];
 
       // only copy needed properties from project's package json
-      fieldsToCopy.forEach((field: string) => {
+      config.compiler.packageFieldsToCopy.forEach((field: string) => {
         targetPackage[field] = packageJson[field];
       });
 
@@ -134,6 +131,10 @@ export default function init() {
     }
   });
 
+  /**
+   * Copy bin artifacts gulp task.
+   * This task will copy bin artifact only when build mode is node-cli
+   */
   gulp.task('build:copy:bin', () => {
     const log = logger.create('[build:copy:bin]');
     try {
@@ -183,90 +184,101 @@ export default function init() {
     }
   });
 
+  /**
+   * Copy build artifacts gulp task.
+   * Run copy essentials and bin on parallel mode.
+   */
   gulp.task('build:copy', gulp.parallel('build:copy:essentials', 'build:copy:bin'));
 
+  /**
+   * Build distribution bundles gulp task.
+   * This task contains the core logic to build scripts and styles via rollup.
+   */
   gulp.task('build:bundle', async () => {
     const log = logger.create('[build:bundle]');
     try {
       log.trace(' start');
       const typescript = require('typescript');
-      const config = meta.readPackerConfig(log);
-      const packageJson = meta.readPackageData();
-      const banner = getBanner(config, packageJson);
-      const baseConfig = getBaseConfig(config, packageJson, banner);
-      const externals = extractBundleExternals(config);
+      const packerConfig = meta.readPackerConfig(log);
+      const packageConfig = meta.readPackageData();
+      const banner = await getBanner(packerConfig, packageConfig);
+      const baseConfig = getBaseConfig(packerConfig, packageConfig, banner);
+      const externals = extractBundleExternals(packerConfig);
       const buildTasks: Array<Promise<void>> = [];
+      const bundleFileName = `${packageConfig.name}.${packerConfig.bundle.format}.js`;
+
       // flat bundle.
       const flatConfig: RollupFileOptions = merge({}, baseConfig, {
         external: externals,
         output: {
-          amd: config.bundle.amd,
-          file: path.join(process.cwd(), config.dist, 'bundle', `${packageJson.name}.${config.bundle.format}.js`),
-          format: config.bundle.format,
-          globals: config.bundle.globals,
-          name: config.bundle.namespace
+          amd: packerConfig.bundle.amd,
+          file: path.join(process.cwd(), packerConfig.dist, 'bundle', bundleFileName),
+          format: packerConfig.bundle.format,
+          globals: packerConfig.bundle.globals,
+          name: packerConfig.bundle.namespace
         },
         plugins: [
-          ...rollupStyleBuildPlugins(config, packageJson, false, true, log),
-          ...preBundlePlugins(config),
-          ...resolvePlugins(config),
-          ...buildPlugin('bundle', true, true, config, typescript),
-          ...postBundlePlugins('[build:bundle]', 'flat'),
-          ...customRollupPlugins(config, 'bundle')
+          ...getStyleBuildPlugins(packerConfig, packageConfig, false, true, log),
+          ...getPreBundlePlugins(packerConfig),
+          ...getDependencyResolvePlugins(packerConfig),
+          ...getScriptBuildPlugin('bundle', true, true, packerConfig, typescript, log),
+          ...getPostBundlePlugins(packerConfig, '[build:bundle]', 'bundle'),
+          ...customRollupPlugins(packerConfig, 'bundle')
         ]
       });
 
       log.trace('flat bundle rollup config:\n%o', flatConfig);
       buildTasks.push(
-        bundleBuild(config, packageJson, flatConfig, 'flat', config.compiler.build.bundleMin, log));
+        generateBundle(packerConfig, packageConfig, flatConfig, 'bundle', packerConfig.compiler.build.bundleMin, log));
 
-      if (config.compiler.build.es5) {
+      if (packerConfig.compiler.build.es5) {
         // FESM+ES5 flat module bundle.
         const es5config: RollupFileOptions = merge({}, baseConfig, {
-          external: externalFilter(config),
+          external: getExternalFilter(packerConfig),
           output: {
-            file: path.join(process.cwd(), config.dist, 'fesm5', `${packageJson.name}.esm.js`),
+            file: path.join(process.cwd(), packerConfig.dist, 'fesm5', `${packageConfig.name}.esm.js`),
             format: 'esm' as ModuleFormat
           },
           plugins: [
-            ...rollupStyleBuildPlugins(config, packageJson, false, false, log),
-            ...preBundlePlugins(config),
-            ...resolvePlugins(config),
-            ...buildPlugin('es5', false, true, config, typescript),
-            ...postBundlePlugins('[build:bundle]', 'es5'),
-            ...customRollupPlugins(config, 'es5')
+            ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),
+            ...getPreBundlePlugins(packerConfig),
+            ...getDependencyResolvePlugins(packerConfig),
+            ...getScriptBuildPlugin('es5', false, true, packerConfig, typescript, log),
+            ...getPostBundlePlugins(packerConfig, '[build:bundle]', 'es5'),
+            ...customRollupPlugins(packerConfig, 'es5')
           ]
         });
 
         log.trace('es5 bundle rollup config:\n%o', es5config);
         buildTasks.push(
-          bundleBuild(config,  packageJson, es5config, 'es5', config.compiler.build.es5Min, log));
+          generateBundle(packerConfig,  packageConfig, es5config, 'es5', packerConfig.compiler.build.es5Min, log));
       }
 
-      if (config.compiler.build.esnext) {
+      if (packerConfig.compiler.build.esnext) {
         // FESM+ESNEXT flat module bundle.
         const esnextConfig: RollupFileOptions = merge({}, baseConfig, {
-          external: externalFilter(config),
+          external: getExternalFilter(packerConfig),
           output: {
-            file: path.join(process.cwd(), config.dist, 'fesmnext', `${packageJson.name}.esm.js`),
+            file: path.join(process.cwd(), packerConfig.dist, 'fesmnext', `${packageConfig.name}.esm.js`),
             format: 'esm' as ModuleFormat
           },
           plugins: [
-            ...rollupStyleBuildPlugins(config, packageJson, false, false, log),
-            ...preBundlePlugins(config),
-            ...resolvePlugins(config),
-            ...buildPlugin('esnext', false, true, config, typescript),
-            ...postBundlePlugins('[build:bundle]', 'esnext'),
-            ...customRollupPlugins(config, 'esnext')
+            ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),
+            ...getPreBundlePlugins(packerConfig),
+            ...getDependencyResolvePlugins(packerConfig),
+            ...getScriptBuildPlugin('esnext', false, true, packerConfig, typescript, log),
+            ...getPostBundlePlugins(packerConfig, '[build:bundle]', 'esnext'),
+            ...customRollupPlugins(packerConfig, 'esnext')
           ]
         });
 
         log.trace('esnext bundle rollup config:\n%o', esnextConfig);
         buildTasks.push(
-          bundleBuild(config,  packageJson, esnextConfig, 'esnext', config.compiler.build.esnextMin, log));
+          generateBundle(packerConfig,  packageConfig, esnextConfig, 'esnext',
+            packerConfig.compiler.build.esnextMin, log));
       }
 
-      if (config.compiler.concurrentBuild) {
+      if (packerConfig.compiler.concurrentBuild) {
         await Promise.all(buildTasks);
       } else {
         for (const task of buildTasks) {
@@ -274,7 +286,7 @@ export default function init() {
         }
       }
 
-      await generateMinCss(config, packageJson, log);
+      await generateMinStyleSheet(packerConfig, packageConfig, log);
 
       log.trace('end');
     } catch (e) {
@@ -283,5 +295,9 @@ export default function init() {
     }
   });
 
+  /**
+   * Library build gulp task.
+   * Clean distribution directory and run build copy and bundle tasks on parallel mode.
+   */
   gulp.task('build', gulp.series('build:clean', gulp.parallel('build:copy', 'build:bundle')));
 }
