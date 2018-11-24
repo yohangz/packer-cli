@@ -345,7 +345,7 @@ module.exports = {
     /**
      * If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
      * the resulting output file as a data URI.
-     * @type {boolean|string}
+     * @type {(boolean|string)}
      * @default true
      */
     sourceMap: true,
@@ -860,7 +860,7 @@ module.exports = {
   /**
    * Watch mode configuration
    * Set false if not required to serve on watch build.
-   * @type {{}|false}
+   * @type {({}|false)}
    * @default {}
    */
   watch: {

@@ -21,7 +21,7 @@ import {
 
 /**
  * Parse package dependency map mode.
- * @param packerOptions - Packger options object.
+ * @param packerOptions - Packer options object.
  */
 export const parseDependencyMapMode = (packerOptions: PackerOptions): DependencyMap => {
   if (packerOptions.cliProject) {
@@ -840,4 +840,3 @@ export const copyCommonConfig = (packageConfig: PackageConfig, projectDir: strin
       .pipe(gulp.dest(projectDir));
   };
 };
-
