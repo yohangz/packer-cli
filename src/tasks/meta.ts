@@ -7,11 +7,15 @@ import mergeWith from 'lodash/mergeWith';
 import { PackerConfig } from '../model/packer-config';
 import { PackageConfig } from '../model/package-config';
 import { BabelConfig } from '../model/babel-config';
+import { PackageModuleType } from '../model/package-module-type';
+
 import { Logger } from '../common/logger';
 import { packerSchema } from './validation';
-import { args } from './util';
+import { args, readFile } from './util';
 
-// TODO: handle concurrent reads, implement a locking mechanism
+/**
+ * Metadata reader class.
+ */
 class MetaData {
   private packerConfig: PackerConfig;
   private packageConfig: PackageConfig;
@@ -23,6 +27,13 @@ class MetaData {
   private packerHelpSummary: string;
   private packerBanner: string;
 
+  /**
+   * Fetch packer configuration object.
+   * Return if already exist in cache, else read -> validate -> sanitize configuration data.
+   * Configuration read logic will lookup for all extend packer config paths and merged configuration
+   * from base to local order.
+   * @param log - Logger reference.
+   */
   public fetchPackerConfig(log: Logger): void {
     if (this.packerConfig) {
       return;
@@ -30,6 +41,7 @@ class MetaData {
 
     const projectConf: PackerConfig = require(this.readConfigPath(log));
 
+    // Read all parent packer configuration.
     const readConf = (sourceConf) => {
       const conf = sourceConf[sourceConf.length - 1];
       if (conf && typeof conf === 'object' && conf.extend) {
@@ -73,6 +85,10 @@ class MetaData {
     this.packerConfig = inspector.sanitize(packerSchema, packerConfig).data;
   }
 
+  /**
+   * Read and cache packer configuration.
+   * @param log - Logger reference.
+   */
   public readPackerConfig(log: Logger): PackerConfig {
     if (this.packerConfig) {
       return this.packerConfig;
@@ -82,6 +98,9 @@ class MetaData {
     return this.packerConfig;
   }
 
+  /**
+   * Read and cache local package.json file configuration.
+   */
   public readPackageData(): PackageConfig {
     if (this.packageConfig) {
       return this.packageConfig;
@@ -91,6 +110,9 @@ class MetaData {
     return this.packageConfig;
   }
 
+  /**
+   * Read and cache packer cli package.json file configuration.
+   */
   public readCLIPackageData(): PackageConfig {
     if (this.cliPackageConfig) {
       return this.cliPackageConfig;
@@ -100,42 +122,60 @@ class MetaData {
     return this.cliPackageConfig;
   }
 
-  public readBabelConfig(esVersion: string): BabelConfig {
-    if (this.babelConfig[esVersion]) {
-      return this.babelConfig[esVersion];
+  /**
+   * Read and cache babel configuration by package module type.
+   * @param packageModuleType - Package module type.
+   */
+  public readBabelConfig(packageModuleType: PackageModuleType): BabelConfig {
+    if (this.babelConfig[packageModuleType]) {
+      return this.babelConfig[packageModuleType];
     }
 
-    this.babelConfig[esVersion] = require(path.join(process.cwd(), `.babelrc.${esVersion}.js`));
-    return this.babelConfig[esVersion];
+    this.babelConfig[packageModuleType] = require(path.join(process.cwd(), `.babelrc.${packageModuleType}.js`));
+    return this.babelConfig[packageModuleType];
   }
 
-  public readBannerTemplate(): string {
+  /**
+   * Read and cache banner template.
+   */
+  public async readBannerTemplate(): Promise<string> {
     if (this.bannerTemplate) {
       return this.bannerTemplate;
     }
 
-    this.bannerTemplate = fs.readFileSync(path.join(process.cwd(), '.packer/banner.hbs'), 'utf8');
+    this.bannerTemplate = await readFile(path.join(process.cwd(), '.packer/banner.hbs'));
     return this.bannerTemplate;
   }
 
-  public readPackerHelpSummary(): string {
+  /**
+   * Read and cache packer help summary.
+   */
+  public async readPackerHelpSummary(): Promise<string> {
     if (this.packerHelpSummary) {
       return this.packerHelpSummary;
     }
 
-    this.packerHelpSummary = fs.readFileSync(path.join(__dirname, '../resources/dynamic/packer-help.txt'), 'utf8');
+    this.packerHelpSummary = await readFile(path.join(__dirname, '../resources/dynamic/packer-help.txt'));
     return this.packerHelpSummary;
   }
 
-  public readPackerBanner(): string {
+  /**
+   * Read and cache packer banner.
+   */
+  public async readPackerBanner(): Promise<string> {
     if (this.packerBanner) {
       return this.packerBanner;
     }
 
-    this.packerBanner = fs.readFileSync(path.join(__dirname, '../resources/dynamic/banner.txt'), 'utf8');
+    this.packerBanner = await readFile(path.join(__dirname, '../resources/dynamic/banner.txt'));
     return this.packerBanner;
   }
 
+  /**
+   * Read packer configuration path.
+   * Use dynamic packer config path if available, else use .packerrc.js config in project root.
+   * @param log - Logger reference.
+   */
   private readConfigPath(log: Logger): string {
     const dynamicConfIndex = args.findIndex((value: string): boolean => {
       return value.startsWith('--config') || value.startsWith('-c');
@@ -171,4 +211,7 @@ class MetaData {
   }
 }
 
+/**
+ * Export static meta instance.
+ */
 export const meta = new MetaData();
