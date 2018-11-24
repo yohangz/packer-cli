@@ -5,7 +5,15 @@ import path from 'path';
 import { meta } from './meta';
 import logger from '../common/logger';
 
+/**
+ * Initialize clean gulp tasks
+ */
 export default function init() {
+
+  /**
+   * Temporary file clean gulp task.
+   * Clean tmp directory specified in packer config.
+   */
   gulp.task('tmp:clean', () => {
     const log = logger.create('[tmp:clean]');
     try {
@@ -22,6 +30,10 @@ export default function init() {
     }
   });
 
+  /**
+   * Build distribution clean gulp task.
+   * Clean dist directory specified in packer config.
+   */
   gulp.task('build:clean',  () => {
     const log = logger.create('[build:clean]');
     try {
@@ -38,5 +50,9 @@ export default function init() {
     }
   });
 
+  /**
+   * Clean all temporary and distribution artifacts gulp task.
+   * Clean temporary and build artifact directories on parallel mode.
+   */
   gulp.task('clean', gulp.parallel('tmp:clean', 'build:clean'));
 }

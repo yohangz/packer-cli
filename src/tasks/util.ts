@@ -8,6 +8,13 @@ const isWindows = process.platform === 'win32';
 
 export const args = process.argv.splice(2);
 
+/**
+ * Run shell command in node environment.
+ * @param command - Shell command.
+ * @param inputArguments - Input arguments to the command.
+ * @param dir - Execution dir.
+ * @param log - Logger reference.
+ */
 export const runShellCommand = (command: string, inputArguments: string[], dir: string, log: Logger) => {
   const cmd = isWindows ? `${command}.cmd` : command;
   const options: SpawnOptions = {
@@ -27,6 +34,11 @@ export const runShellCommand = (command: string, inputArguments: string[], dir: 
   });
 };
 
+/**
+ * Make relative directory path by fragments.
+ * Create none existing fragments and ignore existing.
+ * @param fragments - Directory path fragments.
+ */
 export const makeRelativeDirPath = (...fragments: string[]): void => {
   let currentPath = process.cwd();
   for (const fragment of fragments) {
@@ -37,6 +49,11 @@ export const makeRelativeDirPath = (...fragments: string[]): void => {
   }
 };
 
+/**
+ * Write file async.
+ * @param filePath - Path to write the file.
+ * @param data - Data to include in the file being written.
+ */
 export const writeFile = (filePath: string, data: any): Promise<void> => {
   return new Promise<void>((resolve: () => void, reject: (e: Error) => void) => {
     fs.writeFile(filePath, data, (err: NodeJS.ErrnoException): void => {
@@ -45,6 +62,22 @@ export const writeFile = (filePath: string, data: any): Promise<void> => {
       }
 
       resolve();
+    });
+  });
+};
+
+/**
+ * Read file async.
+ * @param filePath - Path to read the file from.
+ */
+export const readFile = (filePath: string): Promise<string> => {
+  return new Promise<string>((resolve: (data: string) => void, reject: (e: Error) => void) => {
+    fs.readFile(filePath, (err: NodeJS.ErrnoException, data: Buffer): void => {
+      if (err) {
+        reject(err);
+      }
+
+      resolve(data.toString('utf8'));
     });
   });
 };
