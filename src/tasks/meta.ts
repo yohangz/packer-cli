@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import * as inspector from 'schema-inspector';
-import mergeWith from 'lodash/mergeWith';
 
 import { PackerConfig } from '../model/packer-config';
 import { PackageConfig } from '../model/package-config';
