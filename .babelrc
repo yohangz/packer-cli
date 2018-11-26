@@ -1,0 +1,52 @@
+{
+  "env": {
+    "bundle": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "esmodules": true
+            }
+          }
+        ]
+      ]
+    },
+    "es5": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "esmodules": false
+            },
+            "useBuiltIns": "usage"
+          }
+        ]
+      ],
+      "plugins": [
+        [
+          "@babel/plugin-transform-runtime",
+          {
+            "corejs": false,
+            "helpers": false,
+            "regenerator": true,
+            "useESModules": false
+          }
+        ]
+      ]
+    },
+    "esnext": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "esmodules": true
+            }
+          }
+        ]
+      ]
+    }
+  }
+}
