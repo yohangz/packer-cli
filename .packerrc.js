@@ -108,21 +108,21 @@ module.exports = {
       bundleMin: true,
 
       /**
-       * Generate flat es5 build artifact.
+       * Generate flat es5 build artifact based on .babelrc es5 environment configuration.
        * @type {boolean}
        * @default false
        */
       es5: false,
 
       /**
-       * Generate flat es5 minified build artifact based on .babelrc.es5.js.
+       * Generate flat es5 minified build artifact.
        * @type {boolean}
        * @default false
        */
       es5Min: false,
 
       /**
-       * Generate flat esnext build artifact based on .babelrc.esnext.js.
+       * Generate flat esnext build artifact based on .babelrc esnext environment configuration.
        * @type {boolean}
        * @default true
        */
@@ -161,6 +161,14 @@ module.exports = {
        * @default 'none'
        */
       preprocessor: 'typescript',
+
+      /**
+       * Directory to copy typescript typescript definition files of target build if typescript preprocessor is used.
+       * Path relative to dist directory. Empty string denote copy to distribution root.
+       * @type {string}
+       * @default 'typings'
+       */
+      tsd: 'typings',
 
       /**
        * Script required image compile configuration.
@@ -342,7 +350,7 @@ module.exports = {
     mapExternals: false,
 
     /**
-     * Browser compliant bundle modules formats (based on .babelrc.bundle.js)
+     * Browser compliant bundle modules formats (based on .babelrc bundle environment configuration)
      * - 'umd' – Universal Module Definition, works as amd, cjs and iife all in one
      * - 'amd' – Asynchronous Module Definition, used with module loaders like RequireJS
      * - 'iife' – A self-executing function, suitable for inclusion as a DOM script tag. (If you want to create a bundle
