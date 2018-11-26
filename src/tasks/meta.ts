@@ -7,11 +7,10 @@ import mergeWith from 'lodash/mergeWith';
 import { PackerConfig } from '../model/packer-config';
 import { PackageConfig } from '../model/package-config';
 import { BabelConfig } from '../model/babel-config';
-import { PackageModuleType } from '../model/package-module-type';
 
 import { Logger } from '../common/logger';
 import { packerSchema } from './validation-util';
-import { args, readFile } from './util';
+import { args, mergeDeep, readConfigFile, readFile } from './util';
 
 /**
  * Metadata reader class.
@@ -20,9 +19,7 @@ class MetaData {
   private packerConfig: PackerConfig;
   private packageConfig: PackageConfig;
   private cliPackageConfig: PackageConfig;
-  private babelConfig: {
-    [key: string]: BabelConfig
-  } = {};
+  private babelConfig: BabelConfig;
   private bannerTemplate: string;
   private packerHelpSummary: string;
   private packerBanner: string;
@@ -63,15 +60,7 @@ class MetaData {
     let packerConfig: PackerConfig = null;
     if (confCollection.length > 1) {
       const baseConf = confCollection.shift();
-      packerConfig = mergeWith(baseConf, ...confCollection, (objValue, srcValue) => {
-        if (Array.isArray(objValue)) {
-          if (Array.isArray(srcValue)) {
-            return srcValue;
-          }
-
-          return [];
-        }
-      });
+      packerConfig = mergeDeep(baseConf, ...confCollection);
     } else {
       packerConfig = confCollection[0];
     }
@@ -123,16 +112,15 @@ class MetaData {
   }
 
   /**
-   * Read and cache babel configuration by package module type.
-   * @param packageModuleType - Package module type.
+   * Read and cache babel configuration.
    */
-  public readBabelConfig(packageModuleType: PackageModuleType): BabelConfig {
-    if (this.babelConfig[packageModuleType]) {
-      return this.babelConfig[packageModuleType];
+  public readBabelConfig(): BabelConfig {
+    if (this.babelConfig) {
+      return this.babelConfig;
     }
 
-    this.babelConfig[packageModuleType] = require(path.join(process.cwd(), `.babelrc.${packageModuleType}.js`));
-    return this.babelConfig[packageModuleType];
+    this.babelConfig = readConfigFile(path.join(process.cwd(), '.babelrc'));
+    return this.babelConfig;
   }
 
   /**
