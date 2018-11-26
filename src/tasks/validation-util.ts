@@ -526,7 +526,14 @@ inspector.Sanitization.extend({
   // Do not use arrow functions for this.
   // tslint:disable-next-line
   mapDef: function (schema, candidate) {
-    if (schema.$mapDef && (typeof candidate !== 'object' || candidate === null)) {
+    let invalidType: boolean;
+    if (Array.isArray(schema.type)) {
+      invalidType = !schema.type.includes(typeof candidate);
+    } else {
+      invalidType = typeof candidate !== schema.type;
+    }
+
+    if (schema.$mapDef && candidate === null && invalidType) {
       return mapObjectDefaults(schema);
     }
 
