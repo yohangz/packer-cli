@@ -225,7 +225,7 @@ export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateD
       buildConf.tsconfigOverride = {
         compilerOptions: {
           declaration: true,
-          declarationDir: path.join(process.cwd(), packerConfig.dist)
+          declarationDir: path.join(process.cwd(), packerConfig.dist, packerConfig.compiler.script.tsd)
         }
       };
 

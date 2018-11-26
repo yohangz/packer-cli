@@ -118,6 +118,11 @@ export const packerSchema = {
               def: 'none',
               pattern: /^(none|typescript)$/
             },
+            tsd: {
+              type: 'string',
+              optional: false,
+              def: 'typings',
+            },
             image: {
               type: 'object',
               optional: false,

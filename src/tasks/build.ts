@@ -56,7 +56,8 @@ export default function init() {
       }
 
       if (config.compiler.script.preprocessor === 'typescript') {
-        targetPackage.typings = 'index.d.ts';
+        targetPackage.typings =
+          config.compiler.script.tsd ? path.join(config.compiler.script.tsd, 'index.d.ts') : 'index.d.ts';
       }
 
       if (config.compiler.build.es5Min) {

@@ -72,6 +72,7 @@ export interface PackerConfig {
     buildMode: BuildMode;
     script: {
       preprocessor: ScriptPreprocessor;
+      tsd: string;
       image: {
         inlineLimit: number;
         outDir: string;
