@@ -3,6 +3,7 @@ import handlebars from 'handlebars';
 import glob from 'glob-to-regexp';
 import chalk from 'chalk';
 import terser from 'terser';
+import get from 'lodash/get';
 
 import codeFrameColumns from '@babel/code-frame';
 
@@ -28,6 +29,7 @@ import logger, { Logger } from '../common/logger';
 import { LogLevel } from '../model/log-level';
 import { mergeDeep, readFile, writeFile } from './util';
 import { PackageModuleType } from '../model/package-module-type';
+import { BabelConfig } from '../model/babel-config';
 
 /**
  * Get distribution banner comment.
@@ -202,11 +204,13 @@ export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
  * @param generateDefinition - Generate type definitions if true.
  * @param check - Set to false to avoid doing any diagnostic checks on the code.
  * @param packerConfig - Packer configuration object.
+ * @param babelConfig - Babel configuration object.
  * @param typescript - Typescript compiler reference.
  * @param log -  Logger reference.
  */
 export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateDefinition: boolean, check: boolean,
-                                     packerConfig: PackerConfig, typescript: any, log: Logger) => {
+                                     packerConfig: PackerConfig, babelConfig: BabelConfig, typescript: any,
+                                     log: Logger) => {
   const plugins = [];
   if (packerConfig.compiler.script.preprocessor === 'typescript') {
     const buildConf: RollupPluginTypescriptOptions = {
@@ -233,11 +237,9 @@ export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateD
     );
   }
 
-  let babelConfig;
-  try {
-    babelConfig = meta.readBabelConfig(packageModule);
-  } catch (e) {
-    log.error('Babel config read failure: %s', e.stack || e.message);
+  const moduleConfig = get(babelConfig, `env.${packageModule}`);
+  if (!moduleConfig) {
+    log.error('%s module configuration not found in .babelrc', packageModule);
     process.exit(1);
   }
 
@@ -246,8 +248,8 @@ export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateD
       babelrc: false,
       exclude: 'node_modules/**',
       extensions: ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx'],
-      plugins: babelConfig.plugins || [],
-      presets: babelConfig.presets || [],
+      plugins: moduleConfig.plugins || [],
+      presets: moduleConfig.presets || [],
       runtimeHelpers: true,
     }, packerConfig.compiler.advanced.rollup.pluginOptions.babel))
   );

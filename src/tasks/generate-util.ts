@@ -87,9 +87,6 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
     description: packerOptions.description || '',
     keywords: String(packerOptions.keywords || '').split(','),
     scripts: {
-      'lint': 'packer lint',
-      'lint:style': 'packer lint --style',
-      'lint:script': 'packer lint --script',
       'build': 'packer build',
       'watch': 'packer watch',
       'start': 'npm run watch',
@@ -101,7 +98,9 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
       'preversion': 'npm run build',
       'postversion': 'git push && git push --tags',
       'prerelease': 'npm run build',
-      'release': 'npm publish dist'
+      'release': 'npm publish dist',
+      'lint': 'packer lint',
+      'lint:script': 'packer lint --script'
     },
     author: projectAuthor,
     repository: projectRepository,
@@ -111,6 +110,10 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
     devDependencies: {},
     private: false
   };
+
+  if (packerOptions.styleSupport) {
+    packageConfig.scripts['lint:style'] = 'packer lint --style';
+  }
 
   let dependencies = {
     '@babel/runtime-corejs2': '^7.1.5'
@@ -591,8 +594,8 @@ export const copyDemoSource = (packerOptions: PackerOptions, buildMode: BuildMod
 export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMode, projectDir: string,
                                 log: Logger): TaskFunction => {
   log.trace('copy babel config');
-  const babelConfigGlob = path.join(__dirname, '../resources/dynamic/babel/.*.hbs');
-  log.trace('babel config glob: %s', babelConfigGlob);
+  const babelrc = path.join(__dirname, '../resources/dynamic/.babelrc.hbs');
+  log.trace('babel config glob: %s', babelrc);
 
   const templateData = {
     browserCompliant: buildMode === 'browser',
@@ -602,7 +605,7 @@ export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMo
 
   return () => {
     return gulp.src([
-      babelConfigGlob
+      babelrc
     ])
       .pipe(gulpHbsRuntime(templateData, {
         replaceExt: ''

@@ -201,6 +201,7 @@ export default function init() {
       const typescript = require('typescript');
       const packerConfig = meta.readPackerConfig(log);
       const packageConfig = meta.readPackageData();
+      const babelConfig = meta.readBabelConfig();
       const banner = await getBanner(packerConfig, packageConfig);
       const baseConfig = getBaseConfig(packerConfig, packageConfig, banner);
       const externals = extractBundleExternals(packerConfig);
@@ -221,7 +222,7 @@ export default function init() {
           ...getStyleBuildPlugins(packerConfig, packageConfig, false, true, log),
           ...getPreBundlePlugins(packerConfig),
           ...getDependencyResolvePlugins(packerConfig),
-          ...getScriptBuildPlugin('bundle', true, true, packerConfig, typescript, log),
+          ...getScriptBuildPlugin('bundle', true, true, packerConfig, babelConfig, typescript, log),
           ...getPostBundlePlugins(packerConfig, '[build:bundle]', 'bundle'),
           ...customRollupPlugins(packerConfig, 'bundle')
         ]
@@ -243,7 +244,7 @@ export default function init() {
             ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),
             ...getPreBundlePlugins(packerConfig),
             ...getDependencyResolvePlugins(packerConfig),
-            ...getScriptBuildPlugin('es5', false, true, packerConfig, typescript, log),
+            ...getScriptBuildPlugin('es5', false, true, packerConfig, babelConfig, typescript, log),
             ...getPostBundlePlugins(packerConfig, '[build:bundle]', 'es5'),
             ...customRollupPlugins(packerConfig, 'es5')
           ]
@@ -266,7 +267,7 @@ export default function init() {
             ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),
             ...getPreBundlePlugins(packerConfig),
             ...getDependencyResolvePlugins(packerConfig),
-            ...getScriptBuildPlugin('esnext', false, true, packerConfig, typescript, log),
+            ...getScriptBuildPlugin('esnext', false, true, packerConfig, babelConfig, typescript, log),
             ...getPostBundlePlugins(packerConfig, '[build:bundle]', 'esnext'),
             ...customRollupPlugins(packerConfig, 'esnext')
           ]

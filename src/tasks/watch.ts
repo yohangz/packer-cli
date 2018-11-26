@@ -36,6 +36,7 @@ export default function init() {
       const typescript = require('typescript');
       const packerConfig = meta.readPackerConfig(log);
       const packageConfig = meta.readPackageData();
+      const babelConfig = meta.readBabelConfig();
       const banner = await getBanner(packerConfig, packageConfig);
       const baseConfig = getBaseConfig(packerConfig, packageConfig, banner, 'inline');
 
@@ -81,7 +82,7 @@ export default function init() {
           ...getStyleBuildPlugins(packerConfig, packageConfig, true, true, log),
           ...getPreBundlePlugins(packerConfig),
           ...getDependencyResolvePlugins(packerConfig),
-          ...getScriptBuildPlugin('bundle', false, false, packerConfig, typescript, log),
+          ...getScriptBuildPlugin('bundle', false, false, packerConfig, babelConfig, typescript, log),
           ...rollupServePlugins,
           ...customRollupPlugins(packerConfig, 'bundle')
         ],

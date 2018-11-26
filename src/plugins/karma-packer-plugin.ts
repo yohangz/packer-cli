@@ -24,10 +24,11 @@ export function karmaPackerPlugin() {
 
   try {
     const typescript = require('typescript');
-    const config = meta.readPackerConfig(log);
+    const packerConfig = meta.readPackerConfig(log);
+    const babelConfig = meta.readBabelConfig();
 
-    const testGlob: string = path.join(config.source,
-      '**/*.spec.' + parseScriptPreprocessorExtension(config.compiler.script.preprocessor));
+    const testGlob: string = path.join(packerConfig.source,
+      '**/*.spec.' + parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor));
     log.trace('test glob: %s', testGlob);
 
     const packerPreprocess = {};
@@ -47,27 +48,27 @@ export function karmaPackerPlugin() {
      * This is just a normal Rollup config object,
      * except that `input` is handled for you.
      */
-    const externals = extractBundleExternals(config);
+    const externals = extractBundleExternals(packerConfig);
     const packerPlugin = {
       external: externals,
       output: {
         format: 'iife',
         name: 'test',
         sourcemap: 'inline',
-        globals: config.bundle.globals,
+        globals: packerConfig.bundle.globals,
       },
       plugins: [
         rollupIgnoreImport({
           extensions: ['.scss', '.sass', '.styl', '.css', '.less']
         }),
-        ...getPreBundlePlugins(config),
-        ...getDependencyResolvePlugins(config),
-        ...getScriptBuildPlugin('bundle', false, false, config, typescript, log),
+        ...getPreBundlePlugins(packerConfig),
+        ...getDependencyResolvePlugins(packerConfig),
+        ...getScriptBuildPlugin('bundle', false, false, packerConfig, babelConfig, typescript, log),
         ...coveragePlugins
       ]
     };
 
-    const testFramework = String(config.testFramework).toLowerCase();
+    const testFramework = String(packerConfig.testFramework).toLowerCase();
 
     return {
       packerPlugin,

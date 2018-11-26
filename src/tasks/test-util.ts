@@ -10,12 +10,13 @@ import { args, mergeDeep, runShellCommand } from './util';
 import { meta } from './meta';
 import {
   getScriptBuildPlugin,
-  extractBundleExternals,
   getBanner,
   getBaseConfig,
   getPreBundlePlugins,
   getDependencyResolvePlugins,
-  getStyleBuildPlugins, customRollupPlugins
+  getStyleBuildPlugins,
+  customRollupPlugins,
+  getExternalFilter
 } from './build-util';
 
 /**
@@ -66,24 +67,23 @@ const runNodeUnitTest = async (packerConfig: PackerConfig, log: Logger): Promise
 export const buildUnitTestSource = async (packerConfig: PackerConfig, srcFile: string, log: Logger): Promise<void> => {
   const typescript = require('typescript');
   const packageConfig = meta.readPackageData();
+  const babelConfig = meta.readBabelConfig();
   const banner = await getBanner(packerConfig, packageConfig);
   const baseConfig = getBaseConfig(packerConfig, packageConfig, banner, 'inline');
 
-  const externals = extractBundleExternals(packerConfig);
+  // const externals = extractBundleExternals(packerConfig);
   const rollupConfig: RollupFileOptions = merge({}, baseConfig, {
     input: srcFile,
-    external: externals,
+    external: getExternalFilter(packerConfig),
     output: {
       file: path.join(process.cwd(), packerConfig.tmp, 'test/index.bundled.spec.js'),
       format: 'cjs' as ModuleFormat,
-      globals: packerConfig.bundle.globals,
-      name: packerConfig.bundle.namespace
     },
     plugins: [
       ...getStyleBuildPlugins(packerConfig, packageConfig, true, true, log),
       ...getPreBundlePlugins(packerConfig),
       ...getDependencyResolvePlugins(packerConfig),
-      ...getScriptBuildPlugin('bundle', false, false, packerConfig, typescript, log),
+      ...getScriptBuildPlugin('bundle', false, false, packerConfig, babelConfig, typescript, log),
       ...customRollupPlugins(packerConfig, 'bundle')
     ]
   });

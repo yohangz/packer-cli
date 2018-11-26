@@ -60,6 +60,7 @@ export const writeFile = (filePath: string, data: any): Promise<void> => {
     fs.writeFile(filePath, data, (err: NodeJS.ErrnoException): void => {
       if (err) {
         reject(err);
+        return;
       }
 
       resolve();
@@ -76,11 +77,25 @@ export const readFile = (filePath: string): Promise<string> => {
     fs.readFile(filePath, (err: NodeJS.ErrnoException, data: Buffer): void => {
       if (err) {
         reject(err);
+        return;
       }
 
       resolve(data.toString('utf8'));
     });
   });
+};
+
+export const readConfigFile = <T>(filePath: string): T => {
+  if (fs.existsSync(filePath)) {
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  }
+
+  const jsPath = `${filePath}.js`;
+  if (fs.existsSync(jsPath)) {
+    return require(jsPath);
+  }
+
+  throw Error('%s configuration file not found');
 };
 
 /**
@@ -96,6 +111,10 @@ export const mergeDeep = (object, ...sources) => {
       }
 
       return [];
+    }
+
+    if (typeof objValue !== typeof sources) {
+      return srcValue;
     }
   });
 };
