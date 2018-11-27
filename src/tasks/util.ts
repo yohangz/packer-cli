@@ -95,7 +95,7 @@ export const readConfigFile = <T>(filePath: string): T => {
     return require(jsPath);
   }
 
-  throw Error('%s configuration file not found');
+  throw Error(`${path.basename(filePath)} configuration file not found in ${filePath}`);
 };
 
 /**
