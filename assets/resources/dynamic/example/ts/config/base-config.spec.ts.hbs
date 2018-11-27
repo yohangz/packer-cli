@@ -1,9 +1,6 @@
-import { conf } from './base-config';
-{{#if isMocha}}
-import assert from 'assert';
-{{/if}}
-
 {{#if isJasmine}}
+import { conf } from './base-config';
+
 describe('replace configuration test suite', () => {
   it('title is required', () => {
     expect(conf.title).toBe('Packer CLI');
@@ -15,17 +12,22 @@ describe('replace configuration test suite', () => {
 });
 {{/if}}
 {{#if isMocha}}
+import { expect } from 'chai';
+import { conf } from './base-config';
+
 describe('replace configuration test suite', () => {
   it('title is required', () => {
-    assert.equal(conf.title, 'Packer CLI');
+    expect(conf.title).to.equal('Packer CLI');
   });
 
   it('config type should be replace', () => {
-    assert.equal(conf.configType, 'BASE');
+    expect(conf.configType).to.equal('BASE');
   });
 });
 {{/if}}
 {{#if isJest}}
+import { conf } from './base-config';
+
 describe('replace configuration test suite', () => {
   test('title is required', () => {
     expect(conf.title).toBe('Packer CLI');

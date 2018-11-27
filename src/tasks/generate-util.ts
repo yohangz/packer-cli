@@ -167,7 +167,7 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
 
     if (packerOptions.testFramework === 'mocha') {
       devDependencies = Object.assign({
-        '@types/assert': '^1.4.0',
+        '@types/chai': '^4.1.7',
         '@types/mocha': '^5.2.5'
       }, devDependencies);
     }
@@ -214,7 +214,7 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
         devDependencies = Object.assign({
           'karma-mocha': '^1.3.0',
           'mocha': '^5.2.0',
-          'assert': '^1.4.1'
+          'chai': '^4.2.0',
         }, devDependencies);
       }
     } else {
@@ -240,7 +240,7 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
       if (packerOptions.testFramework === 'mocha') {
         devDependencies = Object.assign({
           mocha: '^5.2.0',
-          assert: '^1.4.1'
+          chai: '^4.2.0'
         }, devDependencies);
       }
     }

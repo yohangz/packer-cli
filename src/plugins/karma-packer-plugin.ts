@@ -8,7 +8,7 @@ import {
   getScriptBuildPlugin,
   extractBundleExternals,
   getPreBundlePlugins,
-  getDependencyResolvePlugins
+  getDependencyResolvePlugins, getStyleBuildPlugins, getPostBundlePlugins, customRollupPlugins
 } from '../tasks/build-util';
 import { args } from '../tasks/util';
 import { parseScriptPreprocessorExtension } from '../tasks/parser';
@@ -58,12 +58,11 @@ export function karmaPackerPlugin() {
         globals: packerConfig.bundle.globals,
       },
       plugins: [
-        rollupIgnoreImport({
-          extensions: ['.scss', '.sass', '.styl', '.css', '.less']
-        }),
+        ...getStyleBuildPlugins(packerConfig, null, false, true, log),
         ...getPreBundlePlugins(packerConfig),
         ...getDependencyResolvePlugins(packerConfig),
         ...getScriptBuildPlugin('bundle', false, false, packerConfig, babelConfig, typescript, log),
+        ...customRollupPlugins(packerConfig, 'bundle'),
         ...coveragePlugins
       ]
     };
