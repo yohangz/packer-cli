@@ -1,6 +1,5 @@
 import rollupIstanbul from 'rollup-plugin-istanbul';
 import rollupPreprocessor from 'karma-rollup-preprocessor';
-import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 
 import path from 'path';
 
@@ -8,7 +7,9 @@ import {
   getScriptBuildPlugin,
   extractBundleExternals,
   getPreBundlePlugins,
-  getDependencyResolvePlugins, getStyleBuildPlugins, getPostBundlePlugins, customRollupPlugins
+  getDependencyResolvePlugins,
+  getStyleBuildPlugins,
+  customRollupPlugins
 } from '../tasks/build-util';
 import { args } from '../tasks/util';
 import { parseScriptPreprocessorExtension } from '../tasks/parser';
