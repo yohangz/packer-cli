@@ -25,9 +25,7 @@
 ├── /src/                       # Library source of the project
 │   ├── /sub_srcs               # Contain any sub sources(files or folders)
 │   └── /index.ts               # Expose the accesible properties to the global
-├── .babelrc.bundle.js          # Bundle build babel config.
-├── .babelrc.es5.js             # ES5 build babel config.
-├── .babelrc.esnext.js          # ESNext build babel config.
+├── .babelrc                    # Babel configuration file.
 ├── .editorconfig               # Define and maintain consistent coding styles between different editors and IDEs.
 ├── .gitignore                  # Contains files to be ignored when pushing to git.
 ├── .packerrc.js                # This file contains library build configuration options.
