@@ -16,14 +16,6 @@ import logger from './common/logger';
 export const initPacker = async () => {
   const log = logger.create('');
   try {
-    initClean();
-    initBuild();
-    initGenerate();
-    initLint();
-    initTest();
-    initWatch();
-    initVersion();
-
     switch (args[0]) {
       case '--help':
       case '-h':
@@ -31,12 +23,14 @@ export const initPacker = async () => {
         break;
       case '--version':
       case '-v':
+        initVersion();
         gulp.series('version')(() => {
           // no implementation
         });
         break;
       case 'generate':
       case 'g':
+        initGenerate();
         console.log(chalk.red(await meta.readPackerBanner()));
         gulp.series('generate')(() => {
           // no implementation
@@ -44,6 +38,8 @@ export const initPacker = async () => {
         break;
       case 'build':
       case 'b':
+        initClean();
+        initBuild();
         meta.fetchPackerConfig(log);
         gulp.series('build')(() => {
           // no implementation
@@ -51,6 +47,8 @@ export const initPacker = async () => {
         break;
       case 'watch':
       case 'w':
+        initClean();
+        initWatch();
         meta.fetchPackerConfig(log);
         gulp.series('watch')(() => {
           // no implementation
@@ -58,6 +56,7 @@ export const initPacker = async () => {
         break;
       case 'test':
       case 't':
+        initTest();
         meta.fetchPackerConfig(log);
         gulp.series('test')(() => {
           // no implementation
@@ -65,6 +64,7 @@ export const initPacker = async () => {
         break;
       case 'clean':
       case 'c':
+        initClean();
         meta.fetchPackerConfig(log);
         gulp.series('clean')(() => {
           // no implementation
@@ -72,6 +72,7 @@ export const initPacker = async () => {
         break;
       case 'lint':
       case 'l': {
+        initLint();
         meta.fetchPackerConfig(log);
         if (args.includes('--style') || args.includes('-st')) {
           gulp.series('lint:style')(() => {
@@ -100,3 +101,4 @@ export const initPacker = async () => {
 };
 
 export { karmaPackerPlugin } from './plugins/karma-packer-plugin';
+export { meta };
