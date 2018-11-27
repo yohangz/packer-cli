@@ -1,9 +1,4 @@
 const { karmaPackerPlugin } = require('packer-cli');
-const karmaJasmine = require('karma-jasmine');
-const karmaMocha = require('karma-mocha');
-const karmaChromeLauncher = require('karma-chrome-launcher');
-const karmaJasmineHtmlReporter = require('karma-jasmine-html-reporter');
-const karmaCoverage = require('karma-coverage');
 
 const packerPlugin = karmaPackerPlugin();
 process.env.CHROME_BIN = require('puppeteer').executablePath();
@@ -15,13 +10,13 @@ const client = {};
 switch (packerPlugin.testFramework) {
   case 'jasmine': {
     reporters.push('kjhtml');
-    plugins.push(karmaJasmine);
-    plugins.push(karmaJasmineHtmlReporter);
+    plugins.push(require('karma-jasmine'));
+    plugins.push(require('karma-jasmine-html-reporter'));
     client.clearContext = false;
     break;
   }
   case 'mocha': {
-    plugins.push(karmaMocha);
+    plugins.push(require('karma-mocha'));
     client.mocha = {
       // change Karma's debug.html to the mocha web reporter
       reporter: 'html'
@@ -30,8 +25,8 @@ switch (packerPlugin.testFramework) {
   }
 }
 
-plugins.push(karmaChromeLauncher);
-plugins.push(karmaCoverage);
+plugins.push(require('karma-chrome-launcher'));
+plugins.push(require('karma-coverage'));
 plugins.push(packerPlugin.rollupPreprocessor);
 
 module.exports = function (config) {
