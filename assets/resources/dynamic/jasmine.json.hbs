@@ -1,0 +1,24 @@
+{
+  "spec_dir": "",
+  "spec_files": [
+{{#if isTypescript}}
+    "src/**/*[sS]pec.{js,ts,tsx}"
+{{else}}
+    "src/**/*[sS]pec.{js,jsx}"
+{{/if}}
+  ],
+  "helpers": [
+{{#if isTypescript}}
+    "helpers/typescript.js",
+{{else}}
+    "helpers/babel.js",
+{{/if}}
+{{#if isReactLib}}
+    "helpers/enzyme.js",
+{{/if}}
+{{#if useJsDom}}
+    "helpers/jsdom.js",
+{{/if}}
+    "helpers/exclude.js"
+  ]
+}
