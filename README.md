@@ -257,6 +257,7 @@ Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
     build | b                trigger build
     watch | w                trigger serve on watch mode
     test | t                 execute project test suite
+      [--watch | -W]         execute test on watch mode
       [--coverage | -C]      execute test suite with coverage
     clean | c                clean project build artifacts and temporary files generated
     lint | l                 execute lint for project source
@@ -841,14 +842,30 @@ module.exports = {
   },
 
   /**
-   * Unit test framework
-   *  - 'jasmine'
-   *  - 'mocha'
-   *  - 'jest'
-   * @type {string}
-   * @default 'jasmine'
+   * Unit test configuration.
+   * @type {{}}
    */
-  testFramework: '{{testFramework}}',
+  test: {
+
+    /**
+     * Unit test framework
+     *  - 'jasmine' - https://jasmine.github.io/
+     *  - 'mocha' - https://mochajs.org/
+     *  - 'jest' - https://jestjs.io/
+     * @type {string}
+     * @default 'jasmine'
+     */
+    framework: 'mocha',
+
+    /**
+     * Unit test environment.
+     * - 'node' - node unit test environment with jsdom.
+     * - 'browser' - browser based unit test environment with karma.
+     * @type {string}
+     * @default 'node'
+     */
+    environment: 'node'
+  },
 
   /**
    * Watch mode configuration
