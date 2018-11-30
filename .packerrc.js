@@ -404,7 +404,7 @@ module.exports = {
    * @type {string}
    * @default 'jasmine'
    */
-  testFramework: 'jasmine',
+  testFramework: 'mocha',
 
   /**
    * Unit test configuration.
@@ -420,7 +420,7 @@ module.exports = {
      * @type {string}
      * @default 'jasmine'
      */
-    framework: 'jasmine',
+    framework: 'mocha',
 
     /**
      * Unit test environment.
