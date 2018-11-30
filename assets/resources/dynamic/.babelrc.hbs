@@ -85,6 +85,23 @@
           "@babel/preset-react"
         ]{{/if}}
       ]
+    },
+{{#unless isBrowserEnvironment}}
+    "test": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {{#if cjsTestModule}}
+          {
+            "modules": "commonjs"
+          }
+          {{/if}}
+        ]{{#if reactLib}},
+        [
+          "@babel/preset-react"
+        ]{{/if}}
+      ]
     }
+{{/unless}}
   }
 }
