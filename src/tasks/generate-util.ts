@@ -90,10 +90,10 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
       'build': 'packer build',
       'watch': 'packer watch',
       'start': 'npm run watch',
-      'test': 'packer test',
-      'test:coverage': 'packer test --coverage',
-      'test:ci': 'CI=true packer test',
-      'test:coverage:ci': 'CI=true packer test --coverage',
+      'test': 'packer test --watch',
+      'test:coverage': 'packer test --coverage --watch',
+      'test:ci': 'packer test',
+      'test:coverage:ci': 'packer test --coverage',
       'clean': 'packer clean',
       'preversion': 'npm run build',
       'postversion': 'git push && git push --tags',
@@ -110,10 +110,6 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
     devDependencies: {},
     private: false
   };
-
-  if (packerOptions.styleSupport) {
-    packageConfig.scripts['lint:style'] = 'packer lint --style';
-  }
 
   let dependencies = {
     '@babel/runtime-corejs2': '^7.1.5'
@@ -153,25 +149,6 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
       tslint: '^5.11.0'
     }, devDependencies);
 
-    if (packerOptions.testFramework === 'jest') {
-      devDependencies = Object.assign({
-        '@types/jest': '^23.3.9'
-      }, devDependencies);
-    }
-
-    if (packerOptions.testFramework === 'jasmine') {
-      devDependencies = Object.assign({
-        '@types/jasmine': '^3.3.0'
-      }, devDependencies);
-    }
-
-    if (packerOptions.testFramework === 'mocha') {
-      devDependencies = Object.assign({
-        '@types/chai': '^4.1.7',
-        '@types/mocha': '^5.2.5'
-      }, devDependencies);
-    }
-
     if (packerOptions.reactLib) {
       devDependencies = Object.assign({
         '@types/react': '^16.7.6',
@@ -193,30 +170,42 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
     devDependencies = Object.assign({
       jest: '^23.6.0'
     }, devDependencies);
-  } else {
-    if (packerOptions.browserCompliant) {
+
+    if (packerOptions.scriptPreprocessor === 'typescript') {
+      devDependencies = Object.assign({
+        '@types/jest': '^23.3.9',
+        'ts-jest': '^23.10.5'
+      }, devDependencies);
+    } else if (packerOptions.scriptPreprocessor === 'none') {
+      devDependencies = Object.assign({
+        'babel-jest': '^23.6.0'
+      }, devDependencies);
+    }
+  }
+
+  if (packerOptions.testFramework === 'jasmine') {
+    if (packerOptions.scriptPreprocessor === 'typescript') {
+      devDependencies = Object.assign({
+        '@types/jasmine': '^3.3.0'
+      }, devDependencies);
+
+      if (packerOptions.testEnvironment !== 'browser') {
+        devDependencies = Object.assign({
+          'ts-node': '^7.0.1'
+        }, devDependencies);
+      }
+    }
+
+    if (packerOptions.testEnvironment === 'browser') {
       devDependencies = Object.assign({
         'puppeteer': '^1.10.0',
         'karma': '^3.1.1',
         'karma-chrome-launcher': '^2.2.0',
-        'karma-coverage': '^1.1.2'
+        'karma-coverage': '^1.1.2',
+        'jasmine-core': '^3.3.0',
+        'karma-jasmine': '^2.0.1',
+        'karma-jasmine-html-reporter': '^1.4.0'
       }, devDependencies);
-
-      if (packerOptions.testFramework === 'jasmine') {
-        devDependencies = Object.assign({
-          'jasmine-core': '^3.3.0',
-          'karma-jasmine': '^2.0.1',
-          'karma-jasmine-html-reporter': '^1.4.0'
-        }, devDependencies);
-      }
-
-      if (packerOptions.testFramework === 'mocha') {
-        devDependencies = Object.assign({
-          'karma-mocha': '^1.3.0',
-          'mocha': '^5.2.0',
-          'chai': '^4.2.0',
-        }, devDependencies);
-      }
     } else {
       packageConfig.nyc = {
         'reporter': [
@@ -228,25 +217,79 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
       };
 
       devDependencies = Object.assign({
-        nyc: '^13.1.0'
+        'jasmine': '^3.3.0',
+        'nyc': '^13.1.0',
+        'ignore-styles': '^5.0.1',
       }, devDependencies);
 
-      if (packerOptions.testFramework === 'jasmine') {
+      if (packerOptions.testEnvironment === 'jsdom') {
         devDependencies = Object.assign({
-          jasmine: '^3.3.0'
+          jsdom: '^13.0.0',
+        }, devDependencies);
+      }
+    }
+  }
+
+  if (packerOptions.testFramework === 'mocha') {
+    if (packerOptions.scriptPreprocessor === 'typescript') {
+      devDependencies = Object.assign({
+        '@types/chai': '^4.1.7',
+        '@types/mocha': '^5.2.5'
+      }, devDependencies);
+
+      if (packerOptions.testEnvironment !== 'browser') {
+        devDependencies = Object.assign({
+          'ts-node': '^7.0.1'
+        }, devDependencies);
+      }
+    }
+
+    if (packerOptions.testEnvironment === 'browser') {
+      devDependencies = Object.assign({
+        'puppeteer': '^1.10.0',
+        'karma': '^3.1.1',
+        'karma-chrome-launcher': '^2.2.0',
+        'karma-coverage': '^1.1.2',
+        'karma-mocha': '^1.3.0',
+        'mocha': '^5.2.0',
+        'chai': '^4.2.0',
+      }, devDependencies);
+    } else {
+      packageConfig.nyc = {
+        'reporter': [
+          'lcov',
+          'text-summary',
+          'html'
+        ],
+        'temp-dir': '.tmp/nyc_output'
+      };
+
+      devDependencies = Object.assign({
+        'mocha': '^5.2.0',
+        'chai': '^4.2.0',
+        'nyc': '^13.1.0',
+        'ignore-styles': '^5.0.1'
+      }, devDependencies);
+
+      if (packerOptions.testEnvironment === 'jsdom') {
+        devDependencies = Object.assign({
+          jsdom: '^13.0.0',
         }, devDependencies);
       }
 
-      if (packerOptions.testFramework === 'mocha') {
+      if (packerOptions.reactLib) {
         devDependencies = Object.assign({
-          mocha: '^5.2.0',
-          chai: '^4.2.0'
+          'enzyme': '^3.7.0', // todo: add version
+          'chai-enzyme': '^1.0.0-beta.1',
+          'enzyme-adapter-react-16': '^7.0.1'
         }, devDependencies);
       }
     }
   }
 
   if (packerOptions.styleSupport) {
+    packageConfig.scripts['lint:style'] = 'packer lint --style';
+
     devDependencies = Object.assign({
       'stylelint': '^9.8.0',
       'stylelint-config-standard': '^18.2.0',
@@ -317,6 +360,7 @@ export const copyPackerConfig = (packerOptions: PackerOptions, buildMode: BuildM
         namespace: packerOptions.namespace,
         amdId: packerOptions.amdId,
         testFramework: packerOptions.testFramework,
+        testEnvironment: packerOptions.testEnvironment || 'node',
         serveSupport: packerOptions.browserCompliant,
         dependencyMapMode: mapMode
       }, {
@@ -599,7 +643,9 @@ export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMo
 
   const templateData = {
     browserCompliant: buildMode === 'browser',
-    reactLib: packerOptions.reactLib
+    reactLib: packerOptions.reactLib,
+    isBrowserEnvironment: packerOptions.testEnvironment === 'browser',
+    cjsTestModule: packerOptions.testFramework === 'jasmine' || packerOptions.testFramework === 'mocha'
   };
   log.trace('template data: %o', templateData);
 
@@ -666,7 +712,7 @@ export const copyPackerAssets = (projectDir: string, log: Logger): TaskFunction 
 };
 
 /**
- * Copy typescript configuration (tsconfig.json) file.
+ * Copy typescript configuration tsconfig.json and tslint.json files.
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
  */
@@ -681,6 +727,27 @@ export const copyTypescriptConfig = (projectDir: string, log: Logger): TaskFunct
     return gulp.src([
       tsconfig,
       tslint
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulp.dest(projectDir));
+  };
+};
+
+/**
+ * Copy test typescript configuration (tsconfig.test.json) file.
+ * @param projectDir - Project root directory.
+ * @param log - Logger reference.
+ */
+export const copyTestTypescriptConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+  const tsconfig = path.join(__dirname, '../resources/static/tsconfig.test.json');
+  log.trace('tsconfig.test.json path: %s', tsconfig);
+
+  return () => {
+    return gulp.src([
+      tsconfig
     ])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
@@ -734,11 +801,12 @@ export const copyPostCssConfig = (projectDir: string, log: Logger): TaskFunction
 
 /**
  * Copy jasmine configuration file.
+ * @param packerOptions - Packer options object.
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
  */
-export const copyJasmineConfig = (projectDir: string, log: Logger): TaskFunction =>  {
-  const jasmine = path.join(__dirname, '../resources/static/jasmine.json');
+export const copyJasmineConfig = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction =>  {
+  const jasmine = path.join(__dirname, '../resources/dynamic/jasmine.json.hbs');
   log.trace('jasmine.json path: %s', jasmine);
 
   return () => {
@@ -749,17 +817,96 @@ export const copyJasmineConfig = (projectDir: string, log: Logger): TaskFunction
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
       })
+      .pipe(gulpHbsRuntime({
+        isTypescript: packerOptions.scriptPreprocessor === 'typescript',
+        isReactLib: packerOptions.reactLib,
+        useJsDom: packerOptions.testEnvironment
+      }, {
+        replaceExt: ''
+      }))
       .pipe(gulp.dest(projectDir));
   };
 };
 
 /**
- * Copy jest configuration file.
+ * Copy jasmine helper script files.
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
  */
-export const copyJestConfig = (projectDir: string, log: Logger): TaskFunction =>  {
-  const jest = path.join(__dirname, '../resources/static/jest.config.js');
+export const copyJasmineHelpers = (projectDir: string, log: Logger): TaskFunction =>  {
+  const helpersGlob = path.join(__dirname, '../resources/dynamic/example/common/test/jasmine-helpers/**/*');
+  log.trace('jasmine helpers path glob: %s', helpersGlob);
+
+  return () => {
+    return gulp.src([
+      helpersGlob
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulp.dest(path.join(projectDir, 'helpers')));
+  };
+};
+
+/**
+ * Copy jasmine configuration file.
+ * @param packerOptions - Packer options object.
+ * @param projectDir - Project root directory.
+ * @param log - Logger reference.
+ */
+export const copyMochaConfig = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction =>  {
+  const mocha = path.join(__dirname, '../resources/dynamic/mocha.opts.hbs');
+  log.trace('mocha.opts path: %s', mocha);
+
+  return () => {
+    return gulp.src([
+      mocha
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulpHbsRuntime({
+        isTypescript: packerOptions.scriptPreprocessor === 'typescript',
+        isReactLib: packerOptions.reactLib,
+        useJsDom: packerOptions.testEnvironment
+      }, {
+        replaceExt: ''
+      }))
+      .pipe(gulp.dest(projectDir));
+  };
+};
+
+/**
+ * Copy mocha helper script files. Used as mocha require scripts.
+ * @param projectDir - Project root directory.
+ * @param log - Logger reference.
+ */
+export const copyMochaHelpers = (projectDir: string, log: Logger): TaskFunction =>  {
+  const helpersGlob = path.join(__dirname, '../resources/dynamic/example/common/test/mocha-helpers/**/*');
+  log.trace('mocha helpers path glob: %s', helpersGlob);
+
+  return () => {
+    return gulp.src([
+      helpersGlob
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulp.dest(path.join(projectDir, 'helpers')));
+  };
+};
+
+/**
+ * Copy jest configuration file.
+ * @param packerOptions - Packer options object.
+ * @param projectDir - Project root directory.
+ * @param log - Logger reference.
+ */
+export const copyJestConfig = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction =>  {
+  const jest = path.join(__dirname, '../resources/dynamic/jest.config.js.hbs');
   log.trace('jest.config.js path: %s', jest);
 
   return () => {
@@ -770,7 +917,34 @@ export const copyJestConfig = (projectDir: string, log: Logger): TaskFunction =>
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
       })
+      .pipe(gulpHbsRuntime({
+        isTypescript: packerOptions.scriptPreprocessor === 'typescript',
+        testEnvironment: packerOptions.testEnvironment
+      }, {
+        replaceExt: ''
+      }))
       .pipe(gulp.dest(projectDir));
+  };
+};
+
+/**
+ * Copy jest mock scripts.
+ * @param projectDir - Project root directory.
+ * @param log - Logger reference.
+ */
+export const copyJestMockScripts = (projectDir: string, log: Logger): TaskFunction =>  {
+  const mockScriptGlob = path.join(__dirname, '../resources/dynamic/example/common/test/jest-mocks/**/*');
+  log.trace('mock script glob bath: %s', mockScriptGlob);
+
+  return () => {
+    return gulp.src([
+      mockScriptGlob
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulp.dest(path.join(projectDir, '__mocks__')));
   };
 };
 

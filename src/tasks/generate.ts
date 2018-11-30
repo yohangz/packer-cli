@@ -26,13 +26,20 @@ import {
   copyJasmineConfig,
   copyJestConfig,
   copyKarmaConfig,
-  licenseCopy, parseBuildMode, copyPostCssConfig,
+  licenseCopy,
+  parseBuildMode,
+  copyPostCssConfig,
   copyReadme,
   copyExampleSource,
   copyExampleStyleSheets,
   copyStyleLintConfig,
   copyExampleTemplates,
-  copyTypescriptConfig
+  copyTypescriptConfig,
+  copyJestMockScripts,
+  copyJasmineHelpers,
+  copyMochaHelpers,
+  copyMochaConfig,
+  copyTestTypescriptConfig
 } from './generate-util';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
@@ -215,6 +222,21 @@ export default function init() {
           type: 'list'
         },
         {
+          choices: [
+            'browser',
+            'jsdom',
+            'node'
+          ],
+          default: 0,
+          message: 'Choose the test environment that will be used for testing?',
+          name: 'testEnvironment',
+          type: 'list',
+          when: (answers) => {
+            return answers.browserCompliant
+              && (answers.testFramework === 'mocha' || answers.testFramework === 'jasmine');
+          }
+        },
+        {
           default: (new Date()).getFullYear(),
           message: 'What\'s the library copyright year (optional)?',
           name: 'year',
@@ -302,18 +324,29 @@ export default function init() {
         tasks.push(copyEsLintConfig(projectDir, log));
       }
 
-      if (buildMode === 'browser') {
-        if (options.testFramework !== 'jest') {
+      if (options.testEnvironment === 'browser') {
+        if (options.testFramework === 'jasmine' || options.testFramework === 'mocha') {
           tasks.push(copyKarmaConfig(projectDir, log));
         }
       } else {
+        if (options.testFramework === 'jasmine' || options.testFramework === 'mocha') {
+          tasks.push(copyTestTypescriptConfig(projectDir, log));
+        }
+
         if (options.testFramework === 'jasmine') {
-          tasks.push(copyJasmineConfig(projectDir, log));
+          tasks.push(copyJasmineConfig(options, projectDir, log));
+          tasks.push(copyJasmineHelpers(projectDir, log));
+        }
+
+        if (options.testFramework === 'mocha') {
+          tasks.push(copyMochaConfig(options, projectDir, log));
+          tasks.push(copyMochaHelpers(projectDir, log));
         }
       }
 
       if (options.testFramework === 'jest') {
-        tasks.push(copyJestConfig(projectDir, log));
+        tasks.push(copyJestConfig(options, projectDir, log));
+        tasks.push(copyJestMockScripts(projectDir, log));
       }
 
       if (options.styleSupport) {
@@ -331,7 +364,7 @@ export default function init() {
 
       await gulp.series([gulp.parallel(tasks), async () => {
         if (!args.includes('--skipInstall') && !args.includes('-sk')) {
-          await runShellCommand(options.isYarn ? 'yarn' : 'npm', ['install'], projectDir, log);
+          await runShellCommand(options.isYarn ? 'yarn install' : 'npm install', projectDir, log);
         }
 
         log.info('📦 package generated 🚀');

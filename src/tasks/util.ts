@@ -4,6 +4,7 @@ import path from 'path';
 
 import { Logger } from '../common/logger';
 import mergeWith from 'lodash/mergeWith';
+import chokidar from 'chokidar';
 
 const isWindows = process.platform === 'win32';
 
@@ -11,13 +12,14 @@ export const args = process.argv.splice(2);
 
 /**
  * Run shell command in node environment.
- * @param command - Shell command.
- * @param inputArguments - Input arguments to the command.
+ * @param command - Shell command with arguments.
  * @param dir - Execution dir.
  * @param log - Logger reference.
  */
-export const runShellCommand = (command: string, inputArguments: string[], dir: string, log: Logger) => {
-  const cmd = isWindows ? `${command}.cmd` : command;
+export const runShellCommand = (command: string, dir: string, log: Logger) => {
+  const commandSegments = command.split(' ');
+  const baseCmd = commandSegments.shift();
+  const cmd = isWindows ? `${baseCmd}.cmd` : baseCmd;
   const options: SpawnOptions = {
     cwd: dir,
     detached: false,
@@ -25,10 +27,10 @@ export const runShellCommand = (command: string, inputArguments: string[], dir: 
   };
 
   log.trace('shell command execution options:\n%o', options);
-  log.trace('shell command: %s %s', cmd, inputArguments.join(' '));
+  log.trace('shell command: %s %s', cmd, commandSegments.join(' '));
 
   return new Promise((resolve: () => void): void => {
-    const childProcess = spawn(cmd, inputArguments, options);
+    const childProcess = spawn(cmd, commandSegments, options);
     childProcess.on('close', () => {
       resolve();
     });
@@ -116,5 +118,20 @@ export const mergeDeep = (object, ...sources) => {
     if (typeof objValue !== typeof sources) {
       return srcValue;
     }
+  });
+};
+
+/**
+ * Watch source for changes and execute callback function
+ * @param watchPath - Watch path or paths glob collection.
+ * @param callback - Callback function to execute on change
+ */
+export const watchSource = async (watchPath: string | string[], callback: () => Promise<void>) => {
+  await callback();
+  const watcher = chokidar.watch(watchPath);
+  await new Promise(() => {
+    watcher.on('change', async () => {
+      await callback();
+    });
   });
 };

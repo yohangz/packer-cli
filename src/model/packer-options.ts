@@ -3,6 +3,7 @@ import { StylePreprocessor } from './style-preprocessor';
 import { BrowserBundleFormat } from './browser-bundle-format';
 import { NodeBundleFormat } from './node-bundle-format';
 import { TestFramework } from './test-framework';
+import { TestEnvironment } from './test-environment';
 
 /**
  * Packer questioner options schema.
@@ -24,6 +25,7 @@ export interface PackerOptions {
   amdId: string;
   namespace: string;
   testFramework: TestFramework;
+  testEnvironment: TestEnvironment;
   year: string;
   license: string;
   isYarn: boolean;

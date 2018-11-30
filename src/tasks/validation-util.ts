@@ -442,11 +442,24 @@ export const packerSchema = {
         }
       }
     },
-    testFramework: {
-      type: 'string',
+    test: {
+      type: 'object',
       optional: false,
-      def: 'jasmine',
-      pattern: /^(jasmine|mocha|jest)$/
+      $mapDef: true,
+      properties: {
+        framework: {
+          type: 'string',
+          optional: false,
+          def: 'jasmine',
+          pattern: /^(jasmine|mocha|jest)$/
+        },
+        environment: {
+          type: 'string',
+          optional: false,
+          def: 'jasmine',
+          pattern: /^(browser|jsdom|node)$/
+        }
+      }
     },
     watch: {
       type: ['object', 'boolean'],

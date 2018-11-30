@@ -101,4 +101,3 @@ export const initPacker = async () => {
 };
 
 export { karmaPackerPlugin } from './plugins/karma-packer-plugin';
-export { meta };

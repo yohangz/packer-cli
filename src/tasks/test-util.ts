@@ -1,23 +1,9 @@
 import path from 'path';
-import merge from 'lodash/merge';
-import debounce from 'lodash/debounce';
-
-import { ModuleFormat, rollup, RollupFileOptions, RollupWatchOptions, watch } from 'rollup';
 
 import { PackerConfig } from '../model/packer-config';
 import { Logger } from '../common/logger';
-import { args, mergeDeep, runShellCommand } from './util';
-import { meta } from './meta';
-import {
-  getScriptBuildPlugin,
-  getBanner,
-  getBaseConfig,
-  getPreBundlePlugins,
-  getDependencyResolvePlugins,
-  getStyleBuildPlugins,
-  customRollupPlugins,
-  getExternalFilter
-} from './build-util';
+import { args, runShellCommand, watchSource } from './util';
+import { parseScriptPreprocessorExtension } from './parser';
 
 /**
  * Run unit test framework in node environment.
@@ -25,108 +11,71 @@ import {
  * @param packerConfig - Packer config object.
  * @param log - Logger reference.
  */
-const runNodeUnitTest = async (packerConfig: PackerConfig, log: Logger): Promise<void> => {
+export const runNodeUnitTest = async (packerConfig: PackerConfig, log: Logger): Promise<void> => {
   try {
-    const specBundlePath = path.join(packerConfig.tmp, 'test/index.bundled.spec.js');
+    process.env.BABEL_ENV = process.env.BABEL_ENV || 'test';
+
+    const scriptExt = parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor);
+    const globScriptExtensions = `{${scriptExt},${scriptExt}x}`;
+    const specBundlePath = path.join(packerConfig.source, `**/*.spec.${globScriptExtensions}`);
+
+    const watchMode = args.includes('--watch') || args.includes('-W');
     if (args.includes('--coverage') || args.includes('-C')) {
-      switch (packerConfig.testFramework) {
+      switch (packerConfig.test.framework) {
         case 'jasmine':
-          await runShellCommand('nyc', ['jasmine', 'JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
+          const watchGlob = path.join(packerConfig.source, `**/*.${globScriptExtensions}`);
+          if (watchMode) {
+            await watchSource(watchGlob, async () => {
+              await runShellCommand('nyc jasmine --config=jasmine.json', process.cwd(), log);
+            });
+          } else {
+            await runShellCommand('nyc jasmine --config=jasmine.json', process.cwd(), log);
+          }
           break;
         case 'mocha':
-          await runShellCommand('nyc', ['mocha', specBundlePath], process.cwd(), log);
+          if (watchMode) {
+            await runShellCommand(`nyc mocha --opts mocha.opts --watch ${specBundlePath}`, process.cwd(), log);
+          } else {
+            await runShellCommand(`nyc mocha --opts mocha.opts ${specBundlePath}`, process.cwd(), log);
+          }
           break;
         case 'jest':
-          await runShellCommand('jest', ['--config=jest.config.js', '--coverage'], process.cwd(), log);
+          if (watchMode) {
+            await runShellCommand('jest --config=jest.config.js --coverage --watch', process.cwd(), log);
+          } else {
+            await runShellCommand('jest --config=jest.config.js --coverage', process.cwd(), log);
+          }
           break;
       }
     } else {
-      switch (packerConfig.testFramework) {
+      switch (packerConfig.test.framework) {
         case 'jasmine':
-          await runShellCommand('jasmine', ['JASMINE_CONFIG_PATH=jasmine.json'], process.cwd(), log);
+          const watchGlob = path.join(packerConfig.source, `**/*.${globScriptExtensions}`);
+          if (watchMode) {
+            await watchSource(watchGlob, async () => {
+              await runShellCommand('jasmine --config=jasmine.json', process.cwd(), log);
+            });
+          } else {
+            await runShellCommand('jasmine --config=jasmine.json', process.cwd(), log);
+          }
           break;
         case 'mocha':
-          await runShellCommand('mocha', [specBundlePath], process.cwd(), log);
+          if (watchMode) {
+            await runShellCommand(`mocha --opts mocha.opts --watch ${specBundlePath}`, process.cwd(), log);
+          } else {
+            await runShellCommand(`mocha --opts mocha.opts ${specBundlePath}`, process.cwd(), log);
+          }
           break;
         case 'jest':
-          await runShellCommand('jest', ['--config=jest.config.js'], process.cwd(), log);
+          if (watchMode) {
+            await runShellCommand('jest --config=jest.config.js --watch', process.cwd(), log);
+          } else {
+            await runShellCommand('jest --config=jest.config.js', process.cwd(), log);
+          }
           break;
       }
     }
   } catch (e) {
     log.error('test execution failure\n%o', e);
-  }
-};
-
-/**
- * Run rollup on watch mode and invoke test framework on source change.
- * @param packerConfig - Packer config object.
- * @param srcFile - Dynamic source spec file which include references to all project spec files.
- * @param log - Logger reference.
- */
-export const buildUnitTestSource = async (packerConfig: PackerConfig, srcFile: string, log: Logger): Promise<void> => {
-  const typescript = require('typescript');
-  const packageConfig = meta.readPackageData();
-  const babelConfig = meta.readBabelConfig();
-  const banner = await getBanner(packerConfig, packageConfig);
-  const baseConfig = getBaseConfig(packerConfig, packageConfig, banner, 'inline');
-
-  // const externals = extractBundleExternals(packerConfig);
-  const rollupConfig: RollupFileOptions = merge({}, baseConfig, {
-    input: srcFile,
-    external: getExternalFilter(packerConfig),
-    output: {
-      file: path.join(process.cwd(), packerConfig.tmp, 'test/index.bundled.spec.js'),
-      format: 'cjs' as ModuleFormat,
-    },
-    plugins: [
-      ...getStyleBuildPlugins(packerConfig, packageConfig, true, true, log),
-      ...getPreBundlePlugins(packerConfig),
-      ...getDependencyResolvePlugins(packerConfig),
-      ...getScriptBuildPlugin('bundle', false, false, packerConfig, babelConfig, typescript, log),
-      ...customRollupPlugins(packerConfig, 'bundle')
-    ]
-  });
-
-  // Run test spec only once if CI environment, else watch test source and execute spec on change.
-  if (process.env.CI) {
-    log.trace('rollup CI config:\n%o', rollupConfig);
-    const bundle = await rollup(rollupConfig);
-    await bundle.write(rollupConfig.output);
-    await runNodeUnitTest(packerConfig, log);
-  } else {
-    const rollupWatchConfig: RollupWatchOptions = merge({}, rollupConfig, {
-      watch: {
-        exclude: ['node_modules/**']
-      }
-    });
-    log.trace('rollup config:\n%o', rollupWatchConfig);
-
-    const debounced = debounce(async () => {
-      await runNodeUnitTest(packerConfig, log);
-    }, 2000);
-
-    const watcher = await watch([
-      mergeDeep(rollupWatchConfig, packerConfig.compiler.advanced.rollup.watchOptions)
-    ]);
-    watcher.on('event', async (event) => {
-      switch (event.code) {
-        case 'START':
-          log.info('%s - %s', 'watch', 'bundling start');
-          debounced.cancel();
-          break;
-        case 'END':
-          log.info('%s - %s', 'watch', 'bundling end');
-          debounced();
-          break;
-        case 'ERROR':
-          log.error('%s - %s\n%o', 'watch', 'bundling failure', event.error);
-          debounced.cancel();
-          break;
-        case 'FATAL':
-          log.error('%s - %s\n%o', 'watch', 'bundling crashed', event);
-          break;
-      }
-    });
   }
 };

@@ -7,6 +7,7 @@ import { BuildMode } from './build-mode';
 import { TestFramework } from './test-framework';
 import { PathReplacePattern } from './path-replace-pattern';
 import { PackageModuleType } from './package-module-type';
+import { TestEnvironment } from './test-environment';
 
 /**
  * Packer style configuration schema.
@@ -125,7 +126,10 @@ export interface PackerConfig {
       id: string;
     };
   };
-  testFramework: TestFramework;
+  test: {
+    framework: TestFramework;
+    environment: TestEnvironment;
+  };
   watch: false | PackerWatchConfig;
   license: {
     banner: boolean;

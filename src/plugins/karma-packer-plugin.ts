@@ -68,7 +68,7 @@ export function karmaPackerPlugin() {
       ]
     };
 
-    const testFramework = String(packerConfig.testFramework).toLowerCase();
+    const testFramework = String(packerConfig.test.framework).toLowerCase();
 
     return {
       packerPlugin,
