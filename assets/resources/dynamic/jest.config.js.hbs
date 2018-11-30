@@ -53,11 +53,15 @@ module.exports = {
   // globalTeardown: null,
 
   // A set of global variables that need to be available in all test environments
-  // globals: {
-  //   "ts-jest": {
-  //     "tsConfigFile": "tsconfig.json"
-  //   }
-  // },
+{{#if isTypescript}}
+  globals: {
+    'ts-jest': {
+      'tsConfigFile': 'tsconfig.json'
+    }
+  },
+{{else}}
+  globals: {},
+{{/if}}
 
   // An array of directory names to be searched recursively up from the requiring module's location
   // moduleDirectories: [
@@ -69,11 +73,16 @@ module.exports = {
     'ts',
     'tsx',
     'js',
-    'jsx'
+    'jsx',
+    'json',
+    'node'
   ],
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  moduleNameMapper: {
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/file-mock.js',
+    '\\.(css|scss|sass|less|styl)$': '<rootDir>/__mocks__/style-mock.js'
+  },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -109,9 +118,9 @@ module.exports = {
   // rootDir: null,
 
   // A list of paths to directories that Jest should use to search for files in
-  // roots: [
-  //   "<rootDir>"
-  // ],
+  roots: [
+    '<rootDir>/src'
+  ],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
@@ -126,7 +135,7 @@ module.exports = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  // testEnvironment: "jest-environment-jsdom",
+  testEnvironment: '{{testEnvironment}}',
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -135,9 +144,9 @@ module.exports = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: [
-    '**/index.bundled.spec.js'
-  ]
+  // testMatch: [
+  //   '**/*.+spec.(ts|tsx|js)'
+  // ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
@@ -145,7 +154,11 @@ module.exports = {
   // ],
 
   // The regexp pattern Jest uses to detect test files
-  // testRegex: "",
+{{#if isTypescript}}
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
+{{else}}
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$',
+{{/if}}
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,
@@ -160,9 +173,15 @@ module.exports = {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  // transform: {
-  //   "^.+\\.(ts|tsx)$": "ts-jest"
-  // },
+{{#if isTypescript}}
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest'
+  },
+{{else}}
+  transform: {
+    '^.+\\.jsx?$': 'babel-jest'
+  },
+{{/if}}
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
