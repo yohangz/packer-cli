@@ -1,0 +1,17 @@
+###
+### mocha.opts
+###
+
+{{#if isTypescript}}
+--require ./helpers/typescript.js
+{{else}}
+--require ./helpers/babel.js
+{{/if}}
+{{#if isReactLib}}
+--require ./helpers/enzyme.js
+{{/if}}
+{{#if useJsDom}}
+--require ./helpers/jsdom.js
+{{/if}}
+--require ./helpers/exclude.js
+--watch-extensions ts,tsx,js,jsx
