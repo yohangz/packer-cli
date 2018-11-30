@@ -1,6 +1,6 @@
 import path from 'path';
 import gulp from 'gulp';
-import gulpFile from 'gulp-file';
+import gulpAdd from 'gulp-add';
 import chmod from 'gulp-chmod';
 import merge from 'lodash/merge';
 import { ModuleFormat, RollupFileOptions } from 'rollup';
@@ -114,14 +114,14 @@ export default function init() {
             log.error('copy source missing: %s\n', e.stack || e.message);
             process.exit(1);
           })
-          .pipe(gulpFile('package.json', JSON.stringify(targetPackage, null, 2)))
+          .pipe(gulpAdd('package.json', JSON.stringify(targetPackage, null, 2)))
           .pipe(gulp.dest(path.join(process.cwd(), config.dist)))
           .on('finish', () => {
             log.trace('end');
           });
       } else {
         log.trace('copy package.json');
-        return gulpFile('package.json', JSON.stringify(targetPackage, null, 2))
+        return gulpAdd('package.json', JSON.stringify(targetPackage, null, 2))
           .pipe(gulp.dest(path.join(process.cwd(), config.dist)))
           .on('finish', () => {
             log.trace('end');

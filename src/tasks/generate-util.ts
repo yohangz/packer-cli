@@ -1,7 +1,7 @@
 import { meta } from './meta';
 import path from 'path';
 import gulp from 'gulp';
-import gulpFile from 'gulp-file';
+import gulpAdd from 'gulp-add';
 import { TaskFunction } from 'undertaker';
 
 import { DependencyMap } from '../model/dependency-map';
@@ -1035,7 +1035,7 @@ export const copyCommonConfig = (packageConfig: PackageConfig, projectDir: strin
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
       })
-      .pipe(gulpFile('package.json', JSON.stringify(packageConfig, null, 2)))
+      .pipe(gulpAdd('package.json', JSON.stringify(packageConfig, null, 2)))
       .pipe(gulp.dest(projectDir));
   };
 };

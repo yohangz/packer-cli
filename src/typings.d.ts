@@ -2,8 +2,8 @@ declare module 'gulp-clean' {
   export default function(): NodeJS.ReadWriteStream;
 }
 
-declare module 'gulp-file' {
-  export default function(fileName: string, fileContent: string): NodeJS.ReadWriteStream;
+declare module 'gulp-add' {
+  export default function(filename: string|{ [key: string]: string }, fileContent: string): NodeJS.ReadWriteStream;
 }
 
 declare interface PermissionOptions {

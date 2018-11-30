@@ -2555,6 +2555,14 @@ graceful-fs@^4.0.0, graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6:
   version "4.1.15"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.15.tgz#ffb703e1066e8a0eeaa4c8b80ba9253eeefbfb00"
 
+gulp-add@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/gulp-add/-/gulp-add-0.1.0.tgz#e686765c9cb91d61131a4070fe90416e3af2be00"
+  dependencies:
+    plugin-error "^1.0.1"
+    through2 "^2.0.3"
+    vinyl "^2.1.0"
+
 gulp-chmod@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/gulp-chmod/-/gulp-chmod-2.0.0.tgz#00c390b928a0799b251accf631aa09e01cc6299c"
