@@ -331,7 +331,8 @@ module.exports = {
       'path',
       'fs',
       'child_process',
-      'terser'
+      'terser',
+      'chokidar'
     ],
 
     /**
@@ -404,6 +405,32 @@ module.exports = {
    * @default 'jasmine'
    */
   testFramework: 'jasmine',
+
+  /**
+   * Unit test configuration.
+   * @type {{}}
+   */
+  test: {
+
+    /**
+     * Unit test framework
+     *  - 'jasmine' - https://jasmine.github.io/
+     *  - 'mocha' - https://mochajs.org/
+     *  - 'jest' - https://jestjs.io/
+     * @type {string}
+     * @default 'jasmine'
+     */
+    framework: 'jasmine',
+
+    /**
+     * Unit test environment.
+     * - 'node' - node unit test environment with jsdom.
+     * - 'browser' - browser based unit test environment with karma.
+     * @type {string}
+     * @default 'node'
+     */
+    environment: 'node'
+  },
 
   /**
    * Watch mode configuration
