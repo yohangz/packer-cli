@@ -1,4 +1,4 @@
-# Generated Project Structure
+# :open_file_folder: Generated Project Structure
 
 ```
 .

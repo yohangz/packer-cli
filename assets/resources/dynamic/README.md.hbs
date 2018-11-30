@@ -1,4 +1,4 @@
-# {{packageName}}
+# :rocket: {{packageName}}
 
 [![Build Status](https://travis-ci.org/yohangz/packer-cli.svg?branch=master)](https://travis-ci.org/yohangz/packer-cli)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/yohangz/packer-cli/blob/master/LICENSE)
@@ -6,7 +6,19 @@
 
 > {{packageDescription}}
 
-# Usage
+## :book: Table of Contents
+  <!-- START doctoc generated TOC please keep comment here to allow auto update -->
+  <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+  
+  - [Usage](#mag_right-basic-usage)
+  - [Standalone Usage](#gear-standalone-usage)
+  - [Project Structure](#open_file_folder_project_structure)
+  - [Build Configuration](#hammer_and_pick-build-configuration)
+  - [Contributions](#seedling-contributions)
+  
+  <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## :mag_right: Usage
 
 ```sh
 # Run project on watch mode
@@ -43,7 +55,44 @@ npm version major|minor|patch
 npm run release
 ```
 
-# Project Structure
+## :gear: Standalone Usage
+
+You can also use packer CLI standalone on any packer compliant project to customize the NPM scripts generated.
+
+```text
+Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
+
+  Arguments supported with all commands
+
+  + Logging flags
+    [--trace]          set console log level to trace
+    [--info]           set console log level to information
+    [--warn]           set console log level to warning
+    [--error]          set console log level to error
+    [--silent]         set console log level to silent
+
+  + Other Flags
+    [--config | -c]    dynamic packer config path
+
+  Generate a new library project via packer
+
+  generate | g <project name>
+    [--skipInstall | -sk]   skip dependency install after project
+
+  These are packer commands can be used on generated project
+    build | b                trigger build
+    watch | w                trigger serve on watch mode
+    test | t                 execute project test suite
+      [--watch | -W]         execute test on watch mode
+      [--coverage | -C]      execute test suite with coverage
+    clean | c                clean project build artifacts and temporary files generated
+    lint | l                 execute lint for project source
+      [--style | -sc]        execute only style lint
+      [--script | -sr]       execute only script lint
+```
+
+
+## :open_file_folder: Project Structure
 
 ```
 .
@@ -94,43 +143,7 @@ npm run release
 └── yarn.lock                   # Yarn package lock file (https://yarnpkg.com). Optional: applicable only when package manager is 'yarn'.
 ```
 
-# Standalone Usage
-
-You can also use packer CLI standalone on any packer compliant project to customize the NPM scripts generated.
-
-```text
-Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
-
-  Arguments supported with all commands
-
-  + Logging flags
-    [--trace]          set console log level to trace
-    [--info]           set console log level to information
-    [--warn]           set console log level to warning
-    [--error]          set console log level to error
-    [--silent]         set console log level to silent
-
-  + Other Flags
-    [--config | -c]    dynamic packer config path
-
-  Generate a new library project via packer
-
-  generate | g <project name>
-    [--skipInstall | -sk]   skip dependency install after project
-
-  These are packer commands can be used on generated project
-    build | b                trigger build
-    watch | w                trigger serve on watch mode
-    test | t                 execute project test suite
-      [--watch | -W]         execute test on watch mode
-      [--coverage | -C]      execute test suite with coverage
-    clean | c                clean project build artifacts and temporary files generated
-    lint | l                 execute lint for project source
-      [--style | -sc]        execute only style lint
-      [--script | -sr]       execute only script lint
-```
-
-# Build Configuration
+## :hammer_and_pick: Build Configuration
 
 Build configuration can be updated after project generation via ``.packerrc.js``.
 
@@ -145,7 +158,7 @@ module.exports = {
    * @default '~/packer-cli/resources/static/.packerrc.base.js'
    */
   extend: '~/packer-cli/resources/static/.packerrc.base.js',
-
+    
   /**
    * Entry source file.
    * @type {string}
@@ -190,7 +203,7 @@ module.exports = {
      * @default 'cross-map-peer-dependency'
      */
     dependencyMapMode: 'cross-map-peer-dependency',
-
+    
     /**
      * Specified package fields will be copied to target package.json file.
      * @type {Array<string>}
@@ -211,11 +224,11 @@ module.exports = {
     /**
      * If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
      * the resulting output file as a data URI.
-     * @type {boolean|string}
+     * @type {(boolean|string)}
      * @default true
      */
     sourceMap: true,
-
+    
     /**
      * Custom rollup plugin extractor callback.
      * @callback customRollupPluginExtractorCallback
@@ -232,7 +245,7 @@ module.exports = {
 
     /**
      * Compile build target config.
-     * @type \{{}}
+     * @type {{}}
      * @default {}
      */
     build: {
@@ -285,7 +298,7 @@ module.exports = {
 
     /**
      * Script compile configuration.
-     * @type \{{}}
+     * @type {{}}
      * @default {}
      */
     script: {
@@ -298,14 +311,6 @@ module.exports = {
        * @default 'none'
        */
       preprocessor: 'none',
-
-      /**
-       * Directory to copy typescript typescript definition files of target build if typescript preprocessor is used.
-       * Path relative to dist directory. Empty string denote copy to distribution root.
-       * @type {string}
-       * @default 'typings'
-       */
-      tsd: 'typings',
 
       /**
        * Script required image compile configuration.
@@ -395,53 +400,53 @@ module.exports = {
      * @default true
      */
     concurrentBuild: true,
-
+    
     /**
      * Advance compiler options to override plugin configuration.
      * Caution! change only if you know what you are doing.
-     * @type \{{}}
+     * @type {{}}
      */
     advanced: {
 
       /**
        * Rollup plugins.
        * refer: https://rollupjs.org
-       * @type \{{}}
+       * @type {{}}
        */
       rollup: {
 
         /**
          * Override rollup build task input options.
          * refer: https://rollupjs.org inputOptions section.
-         * @type \{{}}
+         * @type {{}}
          */
         inputOptions: {},
 
         /**
          * Override rollup build task output options.
          * refer: https://rollupjs.org outputOptions section.
-         * @type \{{}}
+         * @type {{}}
          */
         outputOptions: {},
 
         /**
          * Override rollup watch task options.
          * refer: https://rollupjs.org watchOptions section.
-         * @type \{{}}
+         * @type {{}}
          */
         watchOptions: {},
 
         /**
          * Override rollup plugin options.
          * refer: https://rollupjs.org plugins section.
-         * @type \{{}}
+         * @type {{}}
          */
         pluginOptions: {
 
           /**
            * Override ignore import plugin options
            * refer: https://github.com/yohangz/rollup-plugin-ignore-import
-           * @type \{{}}
+           * @type {{}}
            */
           ignoreImport: {},
 
@@ -454,42 +459,42 @@ module.exports = {
           /**
            * Override node resolve plugin options.
            * refer: https://github.com/rollup/rollup-plugin-node-resolve
-           * @type \{{}}
+           * @type {{}}
            */
           nodeResolve: {},
 
           /**
            * Override commonjs plugin options.
            * refer: https://github.com/rollup/rollup-plugin-commonjs
-           * @type \{{}}
+           * @type {{}}
            */
           commonjs: {},
 
           /**
            * Override json plugin options.
            * refer: https://github.com/rollup/rollup-plugin-json
-           * @type \{{}}
+           * @type {{}}
            */
           json: {},
 
           /**
            * Override globals plugin options.
            * refer: https://github.com/calvinmetcalf/rollup-plugin-node-globals
-           * @type \{{}}
+           * @type {{}}
            */
           globals: {},
 
           /**
            * Override babel plugin options.
            * refer: https://github.com/rollup/rollup-plugin-babel
-           * @type \{{}}
+           * @type {{}}
            */
           babel: {},
 
           /**
            * Override typescript plugin options.
            * refer: https://github.com/ezolenko/rollup-plugin-typescript2
-           * @type \{{}}
+           * @type {{}}
            */
           typescript: {},
 
@@ -502,35 +507,35 @@ module.exports = {
           /**
            * Override image plugin options.
            * refer: https://github.com/alwaysonlinetxm/rollup-plugin-img
-           * @type \{{}}
+           * @type {{}}
            */
           image: {},
 
           /**
            * Override handlebars plugin options.
            * refer: https://github.com/yohangz/rollup-plugin-hbs
-           * @type \{{}}
+           * @type {{}}
            */
           handlebars: {},
 
           /**
            * Override filesize plugin options.
            * refer: https://github.com/ritz078/rollup-plugin-filesize
-           * @type \{{}}
+           * @type {{}}
            */
           filesize: {},
 
           /**
            * Override serve plugin options.
            * refer: https://github.com/thgh/rollup-plugin-serve
-           * @type \{{}}
+           * @type {{}}
            */
           serve: {},
 
           /**
            * Override live reload plugin options.
            * refer: https://github.com/thgh/rollup-plugin-livereload
-           * @type \{{}}
+           * @type {{}}
            */
           liveReload: {}
         }
@@ -544,14 +549,14 @@ module.exports = {
         /**
          * Override terser plugin options.
          * refer: https://github.com/terser-js/terser
-         * @type \{{}}
+         * @type {{}}
          */
         terser: {},
 
         /**
          * Override cssnano options.
          * refer: https://github.com/cssnano/cssnano
-         * @type \{{}}
+         * @type {{}}
          */
         cssnano: {}
       }
@@ -576,7 +581,8 @@ module.exports = {
    */
   copy: [
     'README.md',
-    'LICENSE'
+    'LICENSE',
+    'assets/**/{.*,*}'
   ],
 
   /**
@@ -633,7 +639,7 @@ module.exports = {
 
   /**
    * Bundle artifact build configuration.
-   * @type \{{}}
+   * @type {{}}
    */
   bundle: {
 
@@ -652,7 +658,7 @@ module.exports = {
     /**
      * Bundle output global dependencies (dependency modules to tread as globals).
      * Refer rollup options for more info.
-     * @type \{{}}
+     * @type {{}}
      * @default {}
      */
     globals: {
@@ -692,7 +698,7 @@ module.exports = {
 
     /**
      * AMD flat bundle configuration
-     * @type \{{}}
+     * @type {{}}
      * @default {}
      */
     amd: {
@@ -715,7 +721,7 @@ module.exports = {
 
   /**
    * Unit test configuration.
-   * @type \{{}}
+   * @type {{}}
    */
   test: {
 
@@ -742,7 +748,7 @@ module.exports = {
   /**
    * Watch mode configuration
    * Set false if not required to serve on watch build.
-   * @type \{{}|false}
+   * @type {({}|false)}
    * @default {}
    */
   watch: {
@@ -791,7 +797,7 @@ module.exports = {
 
   /**
    * Bundle license configuration
-   * @type \{{}}
+   * @type {{}}
    * @default {}
    */
   license: {
@@ -806,6 +812,6 @@ module.exports = {
 };
 ```
 
-# Contributions
+## :seedling: Contributions
 
 Feel free to open an issue or create a PR
