@@ -99,11 +99,6 @@
     "tslint": "^5.11.0",
     "typescript": "^3.1.1"
   },
-  "resolutions": {
-    "gulp-file/through2/xtend/object-keys": "^1.0.12",
-    "rollup-plugin-node-builtins/browserify-fs/level-filesystem/level-sublevel/xtend/object-keys": "^1.0.12",
-    "rollup-plugin-postcss/cssnano": "^4.1.7"
-  },
   "private": false,
   "bin": {
     "packer": "bin/packer-cli.js"

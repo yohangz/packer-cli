@@ -292,7 +292,7 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
     packageConfig.scripts['lint:style'] = 'packer lint --style';
 
     devDependencies = Object.assign({
-      'stylelint': '^9.8.0',
+      'stylelint': '^9.9.0',
       'stylelint-config-standard': '^18.2.0',
       'autoprefixer': '^8.6.3',
       'postcss-url': '^8.0.0',
