@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "esnext",
+    "module": "esnext",
+    "allowJs": true,
     "sourceMap": true,
     "noImplicitAny": false,
     "preserveConstEnums": true,
