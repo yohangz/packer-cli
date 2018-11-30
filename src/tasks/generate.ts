@@ -39,7 +39,8 @@ import {
   copyJasmineHelpers,
   copyMochaHelpers,
   copyMochaConfig,
-  copyTestTypescriptConfig
+  copyTestTypescriptConfig,
+  copyKarmaHelpers
 } from './generate-util';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
@@ -327,6 +328,10 @@ export default function init() {
       if (options.testEnvironment === 'browser') {
         if (options.testFramework === 'jasmine' || options.testFramework === 'mocha') {
           tasks.push(copyKarmaConfig(projectDir, log));
+
+          if (options.reactLib) {
+            tasks.push(copyKarmaHelpers(projectDir, log));
+          }
         }
       } else {
         if (options.testFramework === 'jasmine' || options.testFramework === 'mocha') {

@@ -949,6 +949,27 @@ export const copyJestMockScripts = (projectDir: string, log: Logger): TaskFuncti
 };
 
 /**
+ * Copy karma helper script files. Used in spec files.
+ * @param projectDir - Project root directory.
+ * @param log - Logger reference.
+ */
+export const copyKarmaHelpers = (projectDir: string, log: Logger): TaskFunction =>  {
+  const helpersGlob = path.join(__dirname, '../resources/dynamic/example/common/test/karma-helpers/**/*');
+  log.trace('karma helpers path glob: %s', helpersGlob);
+
+  return () => {
+    return gulp.src([
+      helpersGlob
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulp.dest(path.join(projectDir, 'helpers')));
+  };
+};
+
+/**
  * Copy ESLint configuration file.
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
