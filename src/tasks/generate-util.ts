@@ -118,6 +118,7 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
   let devDependencies = {};
 
   devDependencies = Object.assign({
+    '@babel/core': '^7.1.6',
     '@babel/polyfill': '^7.0.0',
     '@babel/preset-env': '^7.1.0',
     '@babel/register': '^7.0.0',
