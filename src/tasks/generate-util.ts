@@ -279,7 +279,7 @@ export const getPackageConfig = (packerOptions: PackerOptions, packageName: stri
 
       if (packerOptions.reactLib) {
         devDependencies = Object.assign({
-          'enzyme': '^3.7.0', // todo: add version
+          'enzyme': '^3.7.0',
           'chai-enzyme': '^1.0.0-beta.1',
           'enzyme-adapter-react-16': '^7.0.1'
         }, devDependencies);
