@@ -107,7 +107,9 @@ export default function init() {
         log.trace('copy static files and package.json');
         return gulp.src(config.copy.map((copyFile: string) => {
           return path.join(process.cwd(), copyFile);
-        }))
+        }), {
+          base: process.cwd()
+        })
           .on('error', (e) => {
             log.error('copy source missing: %s\n', e.stack || e.message);
             process.exit(1);
