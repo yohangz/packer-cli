@@ -429,14 +429,30 @@ module.exports = {
   },
 
   /**
-   * Unit test framework
-   *  - 'jasmine'
-   *  - 'mocha'
-   *  - 'jest'
-   * @type {string}
-   * @default 'jasmine'
+   * Unit test configuration.
+   * @type \{{}}
    */
-  testFramework: '{{testFramework}}',
+  test: {
+
+    /**
+     * Unit test framework
+     *  - 'jasmine' - https://jasmine.github.io/
+     *  - 'mocha' - https://mochajs.org/
+     *  - 'jest' - https://jestjs.io/
+     * @type {string}
+     * @default 'jasmine'
+     */
+    framework: '{{testFramework}}',
+
+    /**
+     * Unit test environment.
+     * - 'node' - node unit test environment with jsdom.
+     * - 'browser' - browser based unit test environment with karma.
+     * @type {string}
+     * @default 'node'
+     */
+    environment: '{{testEnvironment}}',
+  },
 
   /**
    * Watch mode configuration
