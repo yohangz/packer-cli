@@ -28,7 +28,7 @@ module.exports = {
    * @type {string}
    * @default 'src'
    */
-  spec: 'src',
+  spec: 'test',
 
   /**
    * Build artifact output directory
