@@ -28,7 +28,7 @@ export function karmaPackerPlugin() {
     const packerConfig = meta.readPackerConfig(log);
     const babelConfig = meta.readBabelConfig();
 
-    const testGlob: string = path.join(packerConfig.source,
+    const testGlob: string = path.join(packerConfig.spec,
       '**/*.spec.' + parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor));
     log.trace('test glob: %s', testGlob);
 

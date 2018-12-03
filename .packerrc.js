@@ -17,11 +17,18 @@ module.exports = {
   entry: 'index.ts',
 
   /**
-   * Source directory
+   * Source directory.
    * @type {string}
    * @default 'src'
    */
   source: 'src',
+
+  /**
+   * Test spec directory.
+   * @type {string}
+   * @default 'src'
+   */
+  spec: 'src',
 
   /**
    * Build artifact output directory
@@ -288,7 +295,6 @@ module.exports = {
       'gulp',
       'gulp-chmod',
       'gulp-clean',
-      'gulp-file',
       'handlebars',
       'inquirer',
       'karma-rollup-preprocessor',
@@ -332,7 +338,8 @@ module.exports = {
       'fs',
       'child_process',
       'terser',
-      'chokidar'
+      'chokidar',
+      'gulp-add'
     ],
 
     /**

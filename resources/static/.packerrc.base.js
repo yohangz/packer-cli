@@ -17,6 +17,13 @@ module.exports = {
   source: 'src',
 
   /**
+   * Test spec directory.
+   * @type {string}
+   * @default 'src'
+   */
+  spec: 'src',
+
+  /**
    * Build artifact output directory
    * @type {string}
    * @default 'dist'

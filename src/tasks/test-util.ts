@@ -17,13 +17,13 @@ export const runNodeUnitTest = async (packerConfig: PackerConfig, log: Logger): 
 
     const scriptExt = parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor);
     const globScriptExtensions = `{${scriptExt},${scriptExt}x}`;
-    const specBundlePath = path.join(packerConfig.source, `**/*.spec.${globScriptExtensions}`);
+    const specBundlePath = path.join(packerConfig.spec, `**/*.spec.${globScriptExtensions}`);
 
     const watchMode = args.includes('--watch') || args.includes('-W');
     if (args.includes('--coverage') || args.includes('-C')) {
       switch (packerConfig.test.framework) {
         case 'jasmine':
-          const watchGlob = path.join(packerConfig.source, `**/*.${globScriptExtensions}`);
+          const watchGlob = path.join(packerConfig.spec, `**/*.${globScriptExtensions}`);
           if (watchMode) {
             await watchSource(watchGlob, async () => {
               await runShellCommand('nyc jasmine --config=jasmine.json', process.cwd(), log);
@@ -50,7 +50,7 @@ export const runNodeUnitTest = async (packerConfig: PackerConfig, log: Logger): 
     } else {
       switch (packerConfig.test.framework) {
         case 'jasmine':
-          const watchGlob = path.join(packerConfig.source, `**/*.${globScriptExtensions}`);
+          const watchGlob = path.join(packerConfig.spec, `**/*.${globScriptExtensions}`);
           if (watchMode) {
             await watchSource(watchGlob, async () => {
               await runShellCommand('jasmine --config=jasmine.json', process.cwd(), log);

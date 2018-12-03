@@ -56,6 +56,7 @@ export interface PackerConfig {
   extend: string;
   entry: string;
   source: string;
+  spec: string;
   dist: string;
   tmp: string;
   compiler: {

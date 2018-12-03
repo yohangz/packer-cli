@@ -19,6 +19,11 @@ export const packerSchema = {
       optional: false,
       def: 'src'
     },
+    spec: {
+      type: 'string',
+      optional: false,
+      def: 'src'
+    },
     dist: {
       type: 'string',
       optional: false,
