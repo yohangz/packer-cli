@@ -27,7 +27,7 @@ import { PackageConfig } from '../model/package-config';
 import { PackerConfig } from '../model/packer-config';
 import logger, { Logger } from '../common/logger';
 import { LogLevel } from '../model/log-level';
-import { mergeDeep, readFile, writeFile } from './util';
+import { mergeDeep, readFile, requireDependency, writeFile } from './util';
 import { PackageModuleType } from '../model/package-module-type';
 import { BabelConfig } from '../model/babel-config';
 
@@ -126,7 +126,7 @@ export const generateMinStyleSheet = async (packerConfig: PackerConfig, packageC
     return;
   }
 
-  const nano = require('cssnano');
+  const nano = requireDependency('cssnano', log);
 
   const srcPath = path.join(process.cwd(), packerConfig.dist, packerConfig.compiler.style.outDir);
   const srcFileName = `${packageConfig.name}.css`;

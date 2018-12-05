@@ -1,49 +1,23 @@
-import gulp from 'gulp';
+import gulp, { TaskFunction } from 'gulp';
+import path from 'path';
+import chalk from 'chalk';
 import isEmail from 'validator/lib/isEmail';
 import isUrl from 'validator/lib/isURL';
 import npmValidate from 'validate-npm-package-name';
 import inquirer, { Questions } from 'inquirer';
-import path from 'path';
-import chalk from 'chalk';
-import { TaskFunction } from 'undertaker';
 
 import { args, runShellCommand } from './util';
 import logger from '../common/logger';
 
-import { parseStylePreprocessorExtension } from './parser';
-import {
-  copyExampleAsset,
-  copyBabelConfig,
-  copyCommonConfig,
-  copyGitIgnore,
-  copyPackerAssets,
-  copyPackerConfig,
-  copyDemoSource,
-  copyDemoHelperRequireJs,
-  copyDemoHelperSystemJs,
-  copyEsLintConfig,
-  getPackageConfig,
-  copyJasmineConfig,
-  copyJestConfig,
-  copyKarmaConfig,
-  licenseCopy,
-  parseBuildMode,
-  copyPostCssConfig,
-  copyReadme,
-  copyExampleSource,
-  copyExampleStyleSheets,
-  copyStyleLintConfig,
-  copyExampleTemplates,
-  copyTypescriptConfig,
-  copyJestMockScripts,
-  copyJasmineHelpers,
-  copyMochaHelpers,
-  copyMochaConfig,
-  copyTestTypescriptConfig,
-  copyKarmaHelpers
-} from './generate-util';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
+
+import { parseBuildMode, parseScriptPreprocessorExtension, parseStylePreprocessorExtension } from './parser';
+import { getConfigFileGenerateTasks, } from './generate-config-util';
+import { getTestSpecGeneratorTasks } from './generate-test-util';
+import { getExampleSourceGenerationsTasks } from './generate-source-util';
+import { getDemoSourceGenerationTasks } from './generate-demo-source-util';
+import { buildPackageConfig } from './generate-package-config';
 
 /**
  * Initialize project generation associated gulp tasks
@@ -287,85 +261,18 @@ export default function init() {
       }
 
       const options: PackerOptions = await inquirer.prompt<PackerOptions>(questions);
-      const packageConfig = getPackageConfig(options, packageName);
+      const packageConfig = buildPackageConfig(options, packageName);
+      const scriptExt = parseScriptPreprocessorExtension(options.scriptPreprocessor);
       const projectDir = path.join(process.cwd(), packageName);
       const styleExt = parseStylePreprocessorExtension(options.stylePreprocessor);
       const buildMode = parseBuildMode(options);
 
-      const tasks: TaskFunction[] = [];
-      tasks.push(copyExampleAsset(projectDir, log));
-
-      if (!options.reactLib) {
-        tasks.push(copyExampleTemplates(projectDir, log));
-      }
-
-      if (options.styleSupport) {
-        tasks.push(copyExampleStyleSheets(styleExt, projectDir, log));
-      }
-
-      if (buildMode !== 'node-cli') {
-        tasks.push(copyDemoSource(options, buildMode, packageName, projectDir, log));
-      }
-
-      if (buildMode === 'browser') {
-        if (options.bundleFormat === 'system') {
-          tasks.push(copyDemoHelperSystemJs(projectDir, log));
-        }
-
-        if (options.bundleFormat === 'amd') {
-          tasks.push(copyDemoHelperRequireJs(projectDir, log));
-        }
-      }
-
-      tasks.push(copyExampleSource(options, buildMode, styleExt, projectDir, log));
-
-      if (options.scriptPreprocessor === 'typescript') {
-        tasks.push(copyTypescriptConfig(projectDir, log));
-      } else {
-        tasks.push(copyEsLintConfig(projectDir, log));
-      }
-
-      if (options.testEnvironment === 'browser') {
-        if (options.testFramework === 'jasmine' || options.testFramework === 'mocha') {
-          tasks.push(copyKarmaConfig(projectDir, log));
-
-          if (options.reactLib) {
-            tasks.push(copyKarmaHelpers(projectDir, log));
-          }
-        }
-      } else {
-        if (options.testFramework === 'jasmine' || options.testFramework === 'mocha') {
-          tasks.push(copyTestTypescriptConfig(projectDir, log));
-        }
-
-        if (options.testFramework === 'jasmine') {
-          tasks.push(copyJasmineConfig(options, projectDir, log));
-          tasks.push(copyJasmineHelpers(projectDir, log));
-        }
-
-        if (options.testFramework === 'mocha') {
-          tasks.push(copyMochaConfig(options, projectDir, log));
-          tasks.push(copyMochaHelpers(projectDir, log));
-        }
-      }
-
-      if (options.testFramework === 'jest') {
-        tasks.push(copyJestConfig(options, projectDir, log));
-        tasks.push(copyJestMockScripts(projectDir, log));
-      }
-
-      if (options.styleSupport) {
-        tasks.push(copyPostCssConfig(projectDir, log));
-        tasks.push(copyStyleLintConfig(projectDir, log));
-      }
-
-      tasks.push(licenseCopy(options, projectDir, log));
-      tasks.push(copyReadme(packageConfig, projectDir, log));
-      tasks.push(copyBabelConfig(options, buildMode, projectDir, log));
-      tasks.push(copyGitIgnore(projectDir, log));
-      tasks.push(copyPackerAssets(projectDir, log));
-      tasks.push(copyCommonConfig(packageConfig, projectDir, log));
-      tasks.push(copyPackerConfig(options, buildMode, projectDir));
+      const tasks: TaskFunction[] = [
+        ...getExampleSourceGenerationsTasks(options, styleExt, scriptExt, buildMode, projectDir, log),
+        ...getTestSpecGeneratorTasks(options, scriptExt, projectDir, log),
+        ...getDemoSourceGenerationTasks(options, buildMode, packageName, projectDir, log),
+        ...getConfigFileGenerateTasks(options, packageConfig, buildMode, scriptExt, projectDir, log)
+      ];
 
       await gulp.series([gulp.parallel(tasks), async () => {
         if (!args.includes('--skipInstall') && !args.includes('-sk')) {

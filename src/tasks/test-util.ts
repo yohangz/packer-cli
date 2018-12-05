@@ -1,9 +1,8 @@
-import path from 'path';
-
 import { PackerConfig } from '../model/packer-config';
+
 import { Logger } from '../common/logger';
 import { args, runShellCommand, watchSource } from './util';
-import { parseScriptPreprocessorExtension } from './parser';
+import { parseScriptPreprocessorExtensionGlob } from './parser';
 
 /**
  * Run unit test framework in node environment.
@@ -15,62 +14,59 @@ export const runNodeUnitTest = async (packerConfig: PackerConfig, log: Logger): 
   try {
     process.env.BABEL_ENV = process.env.BABEL_ENV || 'test';
 
-    const scriptExt = parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor);
-    const globScriptExtensions = `{${scriptExt},${scriptExt}x}`;
-    const specBundlePath = path.join(packerConfig.spec, `**/*.spec.${globScriptExtensions}`);
+    const globScriptExtensions = parseScriptPreprocessorExtensionGlob(packerConfig.compiler.script.preprocessor);
+    const watchGlob = `**/*.${globScriptExtensions}`;
 
     const watchMode = args.includes('--watch') || args.includes('-W');
     if (args.includes('--coverage') || args.includes('-C')) {
       switch (packerConfig.test.framework) {
         case 'jasmine':
-          const watchGlob = path.join(packerConfig.spec, `**/*.${globScriptExtensions}`);
           if (watchMode) {
             await watchSource(watchGlob, async () => {
-              await runShellCommand('nyc jasmine --config=jasmine.json', process.cwd(), log);
+              await runShellCommand(packerConfig.test.advanced.jasmine.coverageWatch, process.cwd(), log);
             });
           } else {
-            await runShellCommand('nyc jasmine --config=jasmine.json', process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.jasmine.coverageDefault, process.cwd(), log);
           }
           break;
         case 'mocha':
           if (watchMode) {
-            await runShellCommand(`nyc mocha --opts mocha.opts --watch ${specBundlePath}`, process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.mocha.coverageWatch, process.cwd(), log);
           } else {
-            await runShellCommand(`nyc mocha --opts mocha.opts ${specBundlePath}`, process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.mocha.coverageDefault, process.cwd(), log);
           }
           break;
         case 'jest':
           if (watchMode) {
-            await runShellCommand('jest --config=jest.config.js --coverage --watch', process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.jest.coverageWatch, process.cwd(), log);
           } else {
-            await runShellCommand('jest --config=jest.config.js --coverage', process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.jest.coverageDefault, process.cwd(), log);
           }
           break;
       }
     } else {
       switch (packerConfig.test.framework) {
         case 'jasmine':
-          const watchGlob = path.join(packerConfig.spec, `**/*.${globScriptExtensions}`);
           if (watchMode) {
             await watchSource(watchGlob, async () => {
-              await runShellCommand('jasmine --config=jasmine.json', process.cwd(), log);
+              await runShellCommand(packerConfig.test.advanced.jasmine.watch, process.cwd(), log);
             });
           } else {
-            await runShellCommand('jasmine --config=jasmine.json', process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.jasmine.default, process.cwd(), log);
           }
           break;
         case 'mocha':
           if (watchMode) {
-            await runShellCommand(`mocha --opts mocha.opts --watch ${specBundlePath}`, process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.mocha.watch, process.cwd(), log);
           } else {
-            await runShellCommand(`mocha --opts mocha.opts ${specBundlePath}`, process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.mocha.default, process.cwd(), log);
           }
           break;
         case 'jest':
           if (watchMode) {
-            await runShellCommand('jest --config=jest.config.js --watch', process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.jest.watch, process.cwd(), log);
           } else {
-            await runShellCommand('jest --config=jest.config.js', process.cwd(), log);
+            await runShellCommand(packerConfig.test.advanced.jest.default, process.cwd(), log);
           }
           break;
       }

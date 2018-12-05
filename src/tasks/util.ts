@@ -128,10 +128,22 @@ export const mergeDeep = (object, ...sources) => {
  */
 export const watchSource = async (watchPath: string | string[], callback: () => Promise<void>) => {
   await callback();
-  const watcher = chokidar.watch(watchPath);
+  const watcher = chokidar.watch(watchPath, {
+    ignored: 'node_modules/**',
+    cwd: process.cwd()
+  });
   await new Promise(() => {
     watcher.on('change', async () => {
       await callback();
     });
   });
+};
+
+export const requireDependency = (module: string, log: Logger): any => {
+  const requirePath = require.resolve(module, {
+    paths: [ path.join(process.cwd(), 'node_modules') ]
+  });
+
+  log.trace('import \'%s\' module from \'%s\'', module, requirePath);
+  return require(requirePath);
 };

@@ -1,8 +1,6 @@
 import rollupIstanbul from 'rollup-plugin-istanbul';
 import rollupPreprocessor from 'karma-rollup-preprocessor';
 
-import path from 'path';
-
 import {
   getScriptBuildPlugin,
   extractBundleExternals,
@@ -11,7 +9,7 @@ import {
   getStyleBuildPlugins,
   customRollupPlugins
 } from '../tasks/build-util';
-import { args } from '../tasks/util';
+import { args, requireDependency } from '../tasks/util';
 import { parseScriptPreprocessorExtension } from '../tasks/parser';
 import logger from '../common/logger';
 
@@ -24,12 +22,11 @@ export function karmaPackerPlugin() {
   const log = logger.create('[test]');
 
   try {
-    const typescript = require('typescript');
+    const typescript = requireDependency('typescript', log);
     const packerConfig = meta.readPackerConfig(log);
     const babelConfig = meta.readBabelConfig();
 
-    const testGlob: string = path.join(packerConfig.spec,
-      '**/*.spec.' + parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor));
+    const testGlob: string = '**/*.spec.' + parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor);
     log.trace('test glob: %s', testGlob);
 
     const packerPreprocess = {};

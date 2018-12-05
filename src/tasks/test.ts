@@ -4,6 +4,7 @@ import path from 'path';
 import { meta } from './meta';
 import logger from '../common/logger';
 import { runNodeUnitTest } from './test-util';
+import { requireDependency } from './util';
 
 /**
  * Initialize test associated gulp tasks.
@@ -25,7 +26,7 @@ export default function init() {
        */
       if (config.test.environment === 'browser') {
         log.trace('start test suite execution via karma');
-        const karma = require('karma');
+        const karma = requireDependency('karma', log);
 
         const server = new karma.Server({
           configFile: path.join(process.cwd(), 'karma.conf.js')

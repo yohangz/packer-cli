@@ -17,13 +17,6 @@ module.exports = {
   source: 'src',
 
   /**
-   * Test spec directory.
-   * @type {string}
-   * @default 'src'
-   */
-  spec: 'src',
-
-  /**
    * Build artifact output directory
    * @type {string}
    * @default 'dist'
@@ -600,6 +593,125 @@ module.exports = {
      * @default 'node'
      */
     environment: 'node',
+
+    /**
+     * Unit test framework advanced options.
+     * Caution! change only if you know what you are doing.
+     * @type {{}}
+     * @default {}
+     */
+    advanced: {
+
+      /**
+       * Jasmine CLI commands used with none browser test environments.
+       * @type {{}}
+       * @default {}
+       */
+      jasmine: {
+
+        /**
+         * Execute test spec on single run mode command.
+         * @type {string}
+         * @default 'jasmine --config=jasmine.json'
+         */
+        default: 'jasmine --config=jasmine.json',
+
+        /**
+         * Execute test spec on watch mode command.
+         * Note: Jasmine does not support watch mode out of the box, hence chokidar is used to watch source changes.
+         * @type {string}
+         * @default 'jasmine --config=jasmine.json'
+         */
+        watch: 'jasmine --config=jasmine.json',
+
+        /**
+         * Execute test spec on single run mode with coverage support command.
+         * @type {string}
+         * @default 'nyc jasmine --config=jasmine.json'
+         */
+        coverageDefault: 'nyc jasmine --config=jasmine.json',
+
+        /**
+         * Execute test spec on watch mode with coverage support command.
+         * Note: Jasmine does not support watch mode out of the box, hence chokidar is used to watch source changes.
+         * @type {string}
+         * @default 'nyc jasmine --config=jasmine.json'
+         */
+        coverageWatch: 'nyc jasmine --config=jasmine.json',
+      },
+
+      /**
+       * Mocha CLI commands used with none browser test environments.
+       * @type {{}}
+       * @default {}
+       */
+      mocha: {
+
+        /**
+         * Execute test spec on single run mode command.
+         * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
+         * @type {string}
+         */
+        default: 'mocha --opts mocha.opts "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"',
+
+        /**
+         * Execute test spec on watch mode command.
+         * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
+         * @type {string}
+         */
+        watch: 'mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"',
+
+        /**
+         * Execute test spec on single run mode with coverage support command.
+         * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
+         * @type {string}
+         */
+        coverageDefault: 'nyc mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"',
+
+        /**
+         * Execute test spec on watch mode with coverage support command.
+         * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
+         * @type {string}
+         */
+        coverageWatch: 'nyc mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"',
+      },
+
+      /**
+       * Jest CLI commands used with all test environments.
+       * @type {{}}
+       * @default {}
+       */
+      jest: {
+
+        /**
+         * Execute test spec on single run mode command.
+         * @type {string}
+         * @default 'jest --config=jest.config.js'
+         */
+        default: 'jest --config=jest.config.js',
+
+        /**
+         * Execute test spec on watch mode command.
+         * @type {string}
+         * @default 'jest --config=jest.config.js --watch'
+         */
+        watch: 'jest --config=jest.config.js --watch',
+
+        /**
+         * Execute test spec on single run mode with coverage support command.
+         * @type {string}
+         * @default 'jest --config=jest.config.js --coverage'
+         */
+        coverageDefault: 'jest --config=jest.config.js --coverage',
+
+        /**
+         * Execute test spec on watch mode with coverage support command.
+         * @type {string}
+         * @default 'jest --config=jest.config.js --coverage --watch'
+         */
+        coverageWatch: 'jest --config=jest.config.js --coverage --watch',
+      }
+    }
   },
 
   /**

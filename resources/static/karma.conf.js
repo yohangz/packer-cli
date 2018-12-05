@@ -1,4 +1,5 @@
 const { karmaPackerPlugin } = require('packer-cli');
+const path = require('path');
 
 const packerPlugin = karmaPackerPlugin();
 process.env.CHROME_BIN = require('puppeteer').executablePath();
@@ -52,7 +53,7 @@ module.exports = function (config) {
        * Make sure to disable Karma’s file watcher
        * because the preprocessor will use its own.
        */
-      { pattern: packerPlugin.testGlob, watched: false }
+      { pattern: path.join('src', packerPlugin.testGlob), watched: false }
     ],
 
     preprocessors: packerPlugin.packerPreprocess,

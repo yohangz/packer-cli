@@ -17,7 +17,7 @@ import {
 } from './build-util';
 
 import { meta } from './meta';
-import { makeRelativeDirPath, mergeDeep } from './util';
+import { makeRelativeDirPath, mergeDeep, requireDependency } from './util';
 import logger from '../common/logger';
 
 /**
@@ -33,7 +33,7 @@ export default function init() {
   gulp.task('build:watch', async () => {
     const log = logger.create('[watch]');
     try {
-      const typescript = require('typescript');
+      const typescript = requireDependency('typescript', log);
       const packerConfig = meta.readPackerConfig(log);
       const packageConfig = meta.readPackageData();
       const babelConfig = meta.readBabelConfig();

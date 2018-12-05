@@ -10,6 +10,8 @@ import { BabelConfig } from '../model/babel-config';
 import { Logger } from '../common/logger';
 import { packerSchema } from './validation-util';
 import { args, mergeDeep, readConfigFile, readFile } from './util';
+import { parseScriptPreprocessorExtensionGlob } from './parser';
+import { ScriptPreprocessor } from '../model/script-preprocessor';
 
 /**
  * Metadata reader class.
@@ -43,7 +45,7 @@ class MetaData {
       if (conf && typeof conf === 'object' && conf.extend) {
         let parentConfPath;
         if (conf.extend.startsWith('~/packer-cli')) {
-          parentConfPath = path.join(__dirname, conf.extend.replace('~/packer-cli', '../'));
+          parentConfPath = path.join(__dirname, conf.extend.replace('~/packer-cli', '..'));
         } else {
           parentConfPath = path.isAbsolute(conf.extend) ? conf.extend : path.join(process.cwd(), conf.extend);
         }
@@ -70,7 +72,20 @@ class MetaData {
       log.warn('malformed packer config (.packerrc.js):\n%s\nusing default configuration', validation.format());
     }
 
-    this.packerConfig = inspector.sanitize(packerSchema, packerConfig).data;
+    const sanitizedData = inspector.sanitize(packerSchema, packerConfig).data as PackerConfig;
+
+    // Replace glob extension pattern with dynamic extensions.
+    const mochaConf = sanitizedData.test.advanced.mocha;
+    mochaConf.coverageWatch =
+      this.replaceExtensionGlob(sanitizedData.compiler.script.preprocessor, mochaConf.coverageWatch);
+    mochaConf.coverageDefault =
+      this.replaceExtensionGlob(sanitizedData.compiler.script.preprocessor, mochaConf.coverageDefault);
+    mochaConf.watch =
+      this.replaceExtensionGlob(sanitizedData.compiler.script.preprocessor, mochaConf.watch);
+    mochaConf.default =
+      this.replaceExtensionGlob(sanitizedData.compiler.script.preprocessor, mochaConf.default);
+
+    this.packerConfig = sanitizedData;
   }
 
   /**
@@ -195,6 +210,16 @@ class MetaData {
     }
 
     return confPath;
+  }
+
+  /**
+   * Replace extension glob pattern with actual extension.
+   * @param preprocessor - Script preprocessor.
+   * @param command - Target command string.
+   */
+  private replaceExtensionGlob(preprocessor: ScriptPreprocessor, command: string): string {
+    const extGlob = parseScriptPreprocessorExtensionGlob(preprocessor);
+    return command.replace('<ext-glob>', extGlob);
   }
 }
 

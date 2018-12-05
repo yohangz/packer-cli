@@ -1,6 +1,8 @@
 import { ScriptPreprocessor } from '../model/script-preprocessor';
 import { StylePreprocessor } from '../model/style-preprocessor';
 import { LicenseType } from '../model/license-type';
+import { PackerOptions } from '../model/packer-options';
+import { BuildMode } from '../model/build-mode';
 
 /**
  * Parse style extension by preprocessor type.
@@ -73,4 +75,27 @@ export const parseScriptPreprocessorExtension = (preprocessor: ScriptPreprocesso
     default:
       return 'js';
   }
+};
+
+/**
+ * Parse script transpiler by preprocessor type and extract extension glob.
+ * @param preprocessor - Script preprocessor type.
+ */
+export const parseScriptPreprocessorExtensionGlob = (preprocessor: ScriptPreprocessor): string => {
+  const scriptExt = parseScriptPreprocessorExtension(preprocessor);
+  return `{${scriptExt},${scriptExt}x}`;
+};
+
+/**
+ * Parse package build mode.
+ * @param packerOptions - Packer options object.
+ */
+export const parseBuildMode = (packerOptions: PackerOptions): BuildMode => {
+  if (packerOptions.browserCompliant) {
+    return 'browser';
+  } else if (packerOptions.cliProject) {
+    return 'node-cli';
+  }
+
+  return 'node';
 };

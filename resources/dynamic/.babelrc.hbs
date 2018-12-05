@@ -85,8 +85,7 @@
           "@babel/preset-react"
         ]{{/if}}
       ]
-    },
-{{#unless isBrowserEnvironment}}
+    }{{#unless isBrowserEnvironment}},
     "test": {
       "presets": [
         [
@@ -101,7 +100,6 @@
           "@babel/preset-react"
         ]{{/if}}
       ]
-    }
-{{/unless}}
+    }{{/unless}}
   }
 }

@@ -21,6 +21,7 @@ import {
   getDependencyResolvePlugins,
   getStyleBuildPlugins
 } from './build-util';
+import { requireDependency } from './util';
 
 /**
  * Initialize build associated gulp tasks.
@@ -201,7 +202,7 @@ export default function init() {
     const log = logger.create('[build:bundle]');
     try {
       log.trace(' start');
-      const typescript = require('typescript');
+      const typescript = requireDependency('typescript', log);
       const packerConfig = meta.readPackerConfig(log);
       const packageConfig = meta.readPackageData();
       const babelConfig = meta.readBabelConfig();

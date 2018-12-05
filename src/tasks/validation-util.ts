@@ -1,5 +1,6 @@
 import inspector from 'schema-inspector';
 import forOwn from 'lodash/forOwn';
+import { parseScriptPreprocessorExtensionGlob } from './parser';
 
 /**
  * Schema inspector packer config validation schema.
@@ -15,11 +16,6 @@ export const packerSchema = {
       def: 'index.js'
     },
     source: {
-      type: 'string',
-      optional: false,
-      def: 'src'
-    },
-    spec: {
       type: 'string',
       optional: false,
       def: 'src'
@@ -463,6 +459,79 @@ export const packerSchema = {
           optional: false,
           def: 'jasmine',
           pattern: /^(browser|jsdom|node)$/
+        },
+        advanced: {
+          type: 'object',
+          optional: false,
+          $mapDef: true,
+          properties: {
+            jasmine: {
+              default: {
+                type: 'string',
+                optional: false,
+                def: 'jasmine --config=jasmine.json'
+              },
+              watch: {
+                type: 'string',
+                optional: false,
+                def: 'jasmine --config=jasmine.json'
+              },
+              coverageDefault: {
+                type: 'string',
+                optional: false,
+                def: 'nyc jasmine --config=jasmine.json'
+              },
+              coverageWatch: {
+                type: 'string',
+                optional: false,
+                def: 'nyc jasmine --config=jasmine.json'
+              }
+            },
+            mocha: {
+              default: {
+                type: 'string',
+                optional: false,
+                def: 'mocha --opts mocha.opts "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"'
+              },
+              watch: {
+                type: 'string',
+                optional: false,
+                def: 'mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"'
+              },
+              coverageDefault: {
+                type: 'string',
+                optional: false,
+                def: 'nyc mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"'
+              },
+              coverageWatch: {
+                type: 'string',
+                optional: false,
+                def: 'nyc mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"'
+              }
+            },
+            jest: {
+              default: {
+                type: 'string',
+                optional: false,
+                def: 'jest --config=jest.config.js'
+              },
+              watch: {
+                type: 'string',
+                optional: false,
+                def: 'jest --config=jest.config.js --watch'
+              },
+              coverageDefault: {
+                type: 'string',
+                optional: false,
+                def: 'jest --config=jest.config.js --coverage'
+              },
+              coverageWatch: {
+                type: 'string',
+                optional: false,
+                def: 'jest --config=jest.config.js --coverage --watch'
+              }
+            }
+          }
         }
       }
     },

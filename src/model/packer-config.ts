@@ -49,6 +49,13 @@ interface ObjectLiteral {
   [key: string]: any;
 }
 
+interface UnitTestCommand {
+  default: string;
+  watch: string;
+  coverageDefault: string;
+  coverageWatch: string;
+}
+
 /**
  * Packer configuration schema.
  */
@@ -56,7 +63,6 @@ export interface PackerConfig {
   extend: string;
   entry: string;
   source: string;
-  spec: string;
   dist: string;
   tmp: string;
   compiler: {
@@ -130,6 +136,11 @@ export interface PackerConfig {
   test: {
     framework: TestFramework;
     environment: TestEnvironment;
+    advanced: {
+      jasmine: UnitTestCommand;
+      mocha: UnitTestCommand;
+      jest: UnitTestCommand;
+    }
   };
   watch: false | PackerWatchConfig;
   license: {
