@@ -1,6 +1,0 @@
-###
-### mocha.opts
-###
-
---require ./helpers/typescript.js
---watch-extensions ts,tsx,js,jsx

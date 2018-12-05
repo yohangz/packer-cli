@@ -24,18 +24,11 @@ module.exports = {
   source: 'src',
 
   /**
-   * Test spec directory.
-   * @type {string}
-   * @default 'src'
-   */
-  spec: 'test',
-
-  /**
    * Build artifact output directory
    * @type {string}
    * @default 'dist'
    */
-  dist: 'dist',
+  dist: 'dist2',
 
   /**
    * Watch and build temporary file directory
@@ -404,16 +397,6 @@ module.exports = {
   },
 
   /**
-   * Unit test framework
-   *  - 'jasmine'
-   *  - 'mocha'
-   *  - 'jest'
-   * @type {string}
-   * @default 'jasmine'
-   */
-  testFramework: 'mocha',
-
-  /**
    * Unit test configuration.
    * @type {{}}
    */
@@ -427,7 +410,7 @@ module.exports = {
      * @type {string}
      * @default 'jasmine'
      */
-    framework: 'mocha',
+    framework: 'jest',
 
     /**
      * Unit test environment.
