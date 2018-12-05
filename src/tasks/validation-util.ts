@@ -1,6 +1,5 @@
 import inspector from 'schema-inspector';
 import forOwn from 'lodash/forOwn';
-import { parseScriptPreprocessorExtensionGlob } from './parser';
 
 /**
  * Schema inspector packer config validation schema.
