@@ -1,40 +1,36 @@
-const { karmaPackerPlugin } = require('packer-cli');
-const path = require('path');
-
-const packerPlugin = karmaPackerPlugin();
 process.env.CHROME_BIN = require('puppeteer').executablePath();
 
-const reporters = ['progress', 'coverage'];
-const plugins = [];
-const client = {};
-
-switch (packerPlugin.testFramework) {
-  case 'jasmine': {
-    reporters.push('kjhtml');
-    plugins.push(require('karma-jasmine'));
-    plugins.push(require('karma-jasmine-html-reporter'));
-    client.clearContext = false;
-    break;
-  }
-  case 'mocha': {
-    plugins.push(require('karma-mocha'));
-    client.mocha = {
-      // change Karma's debug.html to the mocha web reporter
-      reporter: 'html'
-    };
-    break;
-  }
-}
-
-plugins.push(require('karma-chrome-launcher'));
-plugins.push(require('karma-coverage'));
-plugins.push(packerPlugin.rollupPreprocessor);
-
 module.exports = function (config) {
+  const reporters = ['progress', 'coverage'];
+  const plugins = [];
+  const client = {};
+
+  switch (config.packer.framework) {
+    case 'jasmine': {
+      reporters.push('kjhtml');
+      plugins.push(require('karma-jasmine'));
+      plugins.push(require('karma-jasmine-html-reporter'));
+      client.clearContext = false;
+      break;
+    }
+    case 'mocha': {
+      plugins.push(require('karma-mocha'));
+      client.mocha = {
+        // change Karma's debug.html to the mocha web reporter
+        reporter: 'html'
+      };
+      break;
+    }
+  }
+
+  plugins.push(require('karma-chrome-launcher'));
+  plugins.push(require('karma-coverage'));
+  plugins.push(config.packer.karmaRollupPreprocessor);
+
   config.set({
     basePath: '',
 
-    frameworks: [ packerPlugin.testFramework ],
+    frameworks: [ config.packer.framework ],
 
     browsers: [ process.env.CI ? 'ChromeHeadless' : 'Chrome' ],
 
@@ -53,10 +49,10 @@ module.exports = function (config) {
        * Make sure to disable Karma’s file watcher
        * because the preprocessor will use its own.
        */
-      { pattern: path.join('src', packerPlugin.testGlob), watched: false }
+      { pattern: config.packer.testGlob, watched: false }
     ],
 
-    preprocessors: packerPlugin.packerPreprocess,
+    preprocessors: config.packer.preprocessors,
 
     plugins: plugins,
 
@@ -66,6 +62,6 @@ module.exports = function (config) {
 
     client: client,
 
-    rollupPreprocessor: packerPlugin.packerPlugin
+    rollupPreprocessor: config.packer.rollupPreprocessor
   });
 };

@@ -3870,7 +3870,7 @@ just-debounce@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/just-debounce/-/just-debounce-1.0.0.tgz#87fccfaeffc0b68cd19d55f6722943f929ea35ea"
 
-karma-rollup-preprocessor@^6.0.0:
+karma-rollup-preprocessor@^6.0.0, karma-rollup-preprocessor@^6.1.1:
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/karma-rollup-preprocessor/-/karma-rollup-preprocessor-6.1.1.tgz#9e0b140fc57ab966952c19b0d9fffc3ce21e44c1"
   dependencies:

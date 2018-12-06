@@ -1,5 +1,5 @@
 import rollupIstanbul from 'rollup-plugin-istanbul';
-import rollupPreprocessor from 'karma-rollup-preprocessor';
+import karmaRollupPreprocessor from 'karma-rollup-preprocessor';
 
 import {
   getScriptBuildPlugin,
@@ -11,33 +11,32 @@ import {
 } from '../tasks/build-util';
 import { args, requireDependency } from '../tasks/util';
 import { parseScriptPreprocessorExtension } from '../tasks/parser';
-import logger from '../common/logger';
+import { Logger } from '../common/logger';
 
 import { meta } from '../tasks/meta';
 
 /**
  * Get karma packer plugin
  */
-export function karmaPackerPlugin() {
-  const log = logger.create('[test]');
-
+export const karmaPackerPlugin = (log: Logger) => {
   try {
     const typescript = requireDependency('typescript', log);
     const packerConfig = meta.readPackerConfig(log);
+    const packageConfig = meta.readPackageData();
     const babelConfig = meta.readBabelConfig();
 
-    const testGlob: string = '**/*.spec.' + parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor);
+    const testGlob = `spec/**/*.spec.${parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor)}`;
     log.trace('test glob: %s', testGlob);
 
-    const packerPreprocess = {};
-    packerPreprocess[testGlob] = ['rollup'];
+    const preprocessors = {};
+    preprocessors[testGlob] = ['rollup'];
 
     let coveragePlugins = [];
     if (args.includes('--coverage') || args.includes('-C')) {
       log.trace('identified as coverage task');
       coveragePlugins = [
         rollupIstanbul({
-          exclude: [ testGlob, 'node_modules/**' ]
+          exclude: [ 'node_modules/**' ]
         })
       ];
     }
@@ -47,7 +46,7 @@ export function karmaPackerPlugin() {
      * except that `input` is handled for you.
      */
     const externals = extractBundleExternals(packerConfig);
-    const packerPlugin = {
+    const rollupPreprocessor = {
       external: externals,
       output: {
         format: 'iife',
@@ -56,7 +55,7 @@ export function karmaPackerPlugin() {
         globals: packerConfig.bundle.globals,
       },
       plugins: [
-        ...getStyleBuildPlugins(packerConfig, null, false, true, log),
+        ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),
         ...getPreBundlePlugins(packerConfig),
         ...getDependencyResolvePlugins(packerConfig),
         ...getScriptBuildPlugin('bundle', false, false, packerConfig, babelConfig, typescript, log),
@@ -65,17 +64,17 @@ export function karmaPackerPlugin() {
       ]
     };
 
-    const testFramework = String(packerConfig.test.framework).toLowerCase();
+    const framework = String(packerConfig.test.framework).toLowerCase();
 
     return {
-      packerPlugin,
-      packerPreprocess,
       rollupPreprocessor,
-      testFramework,
+      preprocessors,
+      karmaRollupPreprocessor,
+      framework,
       testGlob
     };
   } catch (e) {
     log.error('task failure: %s\n', e.stack || e.message);
     process.exit(1);
   }
-}
+};
