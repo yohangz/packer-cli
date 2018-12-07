@@ -211,7 +211,7 @@ export default function init() {
       const externals = extractBundleExternals(packerConfig);
       const buildTasks: Array<Promise<void>> = [];
       const bundleFileName = `${packageConfig.name}.${packerConfig.bundle.format}.js`;
-      const trackBuildPerformance = args.includes('--perf');
+      const trackBuildPerformance = args.includes('--perf') || args.includes('-p');
 
       // flat bundle.
       const flatConfig: RollupFileOptions = merge({}, baseConfig, {
