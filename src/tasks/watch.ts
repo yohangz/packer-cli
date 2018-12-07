@@ -121,5 +121,5 @@ export default function init() {
    * Watch source gulp task.
    * Clean watch temporary files and start watch build task in series.
    */
-  gulp.task('watch', gulp.series('tmp:clean', 'build:watch'));
+  gulp.task('watch', gulp.series('watch:tmp:clean', 'build:watch'));
 }

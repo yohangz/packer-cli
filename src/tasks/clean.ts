@@ -31,6 +31,26 @@ export default function init() {
   });
 
   /**
+   * Watch build temporary file clean gulp task.
+   * Clean tmp directory specified in packer config.
+   */
+  gulp.task('watch:tmp:clean', () => {
+    const log = logger.create('[watch:tmp:clean]');
+    try {
+      log.trace('start');
+      const config = meta.readPackerConfig(log);
+      return gulp.src([path.join(process.cwd(), config.tmp, 'watch')], {
+        allowEmpty: true,
+        read: false
+      })
+        .pipe(clean());
+    } catch (e) {
+      log.error('task failure:\n', e.stack || e.message);
+      process.exit(1);
+    }
+  });
+
+  /**
    * Build distribution clean gulp task.
    * Clean dist directory specified in packer config.
    */
