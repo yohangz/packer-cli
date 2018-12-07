@@ -44,13 +44,26 @@ export class Logger {
   }
 
   /**
+   * Get formatted current time.
+   */
+  public static get currentTime(): string {
+    const d = new Date();
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const s = d.getSeconds();
+    const ms = d.getMilliseconds();
+    const time = `[${h}:${m}:${s}:${ms}]`;
+    return chalk.gray(time);
+  }
+
+  /**
    * Log error message.
    * @param message - log message with console format expressions.
    * @param optionalParams - Optional arguments to message.
    */
   public error(message: string, ...optionalParams: any[]): void {
     if (Logger.level <= LogLevel.ERROR) {
-      console.log(`${this.taskName}${chalk.red(message)}`, ...optionalParams);
+      console.log(`${Logger.currentTime} ${this.taskName}${chalk.red(message)}`, ...optionalParams);
     }
   }
 
@@ -61,7 +74,7 @@ export class Logger {
    */
   public warn(message: string, ...optionalParams: any[]): void {
     if (Logger.level <= LogLevel.WARN) {
-      console.log(`${this.taskName}${chalk.yellow(message)}`, ...optionalParams);
+      console.log(`${Logger.currentTime} ${this.taskName}${chalk.yellow(message)}`, ...optionalParams);
     }
   }
 
@@ -72,7 +85,7 @@ export class Logger {
    */
   public info(message: string, ...optionalParams: any[]): void {
     if (Logger.level <= LogLevel.INFO) {
-      console.log(`${this.taskName}${chalk.blue(message)}`, ...optionalParams);
+      console.log(`${Logger.currentTime} ${this.taskName}${chalk.blue(message)}`, ...optionalParams);
     }
   }
 
@@ -83,7 +96,7 @@ export class Logger {
    */
   public trace(message: string, ...optionalParams: any[]): void {
     if (Logger.level <= LogLevel.TRACE) {
-      console.log(`${this.taskName}${message}`, ...optionalParams);
+      console.log(`${Logger.currentTime} ${this.taskName}${message}`, ...optionalParams);
     }
   }
 }

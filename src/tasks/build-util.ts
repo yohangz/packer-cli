@@ -295,7 +295,8 @@ const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string,
     render: (options: any, sourceBundle: any, { gzipSize, bundleSize }): string => {
       const bundleFormatted = `bundle size: ${chalk.red(bundleSize)}`;
       const gzippedFormatted = `gzipped size: ${chalk.red(gzipSize)}`;
-      return chalk.yellow(`${chalk.green(taskName)} ${type} ${bundleFormatted}, ${gzippedFormatted}`);
+      const message = `${type} ${bundleFormatted}, ${gzippedFormatted}`;
+      return chalk.yellow(`${logger.currentTime} ${chalk.green(taskName)} ${message}`);
     }
   }, packerConfig.compiler.advanced.rollup.pluginOptions.filesize));
 };
@@ -336,16 +337,23 @@ export const customRollupPlugins = (packerConfig: PackerConfig, type: PackageMod
  * @param bundleConfig - Rollup bundle configuration object.
  * @param type - Package module type.
  * @param minify - Generate minified bundle artifact if true.
+ * @param trackBuildPerformance - Track rollup build performance.
  * @param log - Logger reference.
  */
 export const generateBundle = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
                                      bundleConfig: RollupFileOptions, type: PackageModuleType, minify: boolean,
-                                     log: Logger): Promise<void> => {
+                                     trackBuildPerformance: boolean, log: Logger): Promise<void> => {
   log.trace('%s bundle build start', type);
   const bundle = await rollup(mergeDeep(bundleConfig, packerConfig.compiler.advanced.rollup.inputOptions));
   const outputOptions = mergeDeep(bundleConfig.output, packerConfig.compiler.advanced.rollup.outputOptions);
   const { code, map } = await bundle.write(outputOptions);
   log.trace('%s bundle build end', type);
+
+  if (trackBuildPerformance) {
+    // Performance stats should be available on any log level
+    const messageBase = `${logger.currentTime} ${chalk.green(type)}`;
+    console.log(chalk.blue('%s bundle performance statistics:\n%o'), messageBase, bundle.getTimings());
+  }
 
   if (minify) {
     log.trace('%s minified bundle build start', type);
@@ -387,9 +395,11 @@ export const generateBundle = async (packerConfig: PackerConfig, packageConfig: 
         await writeFile(minMapFileDist, minData.map);
       }
 
-      const task = log.taskName.replace(' ', '');
-      const sizeDetail = getBundleSizeLoggerPlugin(packerConfig, task, `${type} minified`);
-      sizeDetail.ongenerate(null, { code: minData.code });
+      if (logger.level <= LogLevel.INFO) {
+        const task = log.taskName.replace(' ', '');
+        const sizeDetail = getBundleSizeLoggerPlugin(packerConfig, task, `${type} minified`);
+        sizeDetail.ongenerate(null, { code: minData.code });
+      }
     }
 
     log.trace('%s minified bundle build end', type);

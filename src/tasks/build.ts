@@ -21,7 +21,7 @@ import {
   getDependencyResolvePlugins,
   getStyleBuildPlugins
 } from './build-util';
-import { requireDependency } from './util';
+import { args, requireDependency } from './util';
 
 /**
  * Initialize build associated gulp tasks.
@@ -211,6 +211,7 @@ export default function init() {
       const externals = extractBundleExternals(packerConfig);
       const buildTasks: Array<Promise<void>> = [];
       const bundleFileName = `${packageConfig.name}.${packerConfig.bundle.format}.js`;
+      const trackBuildPerformance = args.includes('--perf');
 
       // flat bundle.
       const flatConfig: RollupFileOptions = merge({}, baseConfig, {
@@ -222,6 +223,7 @@ export default function init() {
           globals: packerConfig.bundle.globals,
           name: packerConfig.bundle.namespace
         },
+        perf: trackBuildPerformance,
         plugins: [
           ...getStyleBuildPlugins(packerConfig, packageConfig, false, true, log),
           ...getPreBundlePlugins(packerConfig),
@@ -234,7 +236,8 @@ export default function init() {
 
       log.trace('flat bundle rollup config:\n%o', flatConfig);
       buildTasks.push(
-        generateBundle(packerConfig, packageConfig, flatConfig, 'bundle', packerConfig.compiler.build.bundleMin, log));
+        generateBundle(packerConfig, packageConfig, flatConfig, 'bundle',
+          packerConfig.compiler.build.bundleMin, trackBuildPerformance, log));
 
       if (packerConfig.compiler.build.es5) {
         // FESM+ES5 flat module bundle.
@@ -244,6 +247,7 @@ export default function init() {
             file: path.join(process.cwd(), packerConfig.dist, 'fesm5', `${packageConfig.name}.esm.js`),
             format: 'esm' as ModuleFormat
           },
+          perf: trackBuildPerformance,
           plugins: [
             ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),
             ...getPreBundlePlugins(packerConfig),
@@ -256,7 +260,8 @@ export default function init() {
 
         log.trace('es5 bundle rollup config:\n%o', es5config);
         buildTasks.push(
-          generateBundle(packerConfig,  packageConfig, es5config, 'es5', packerConfig.compiler.build.es5Min, log));
+          generateBundle(packerConfig,  packageConfig, es5config, 'es5',
+            packerConfig.compiler.build.es5Min, trackBuildPerformance, log));
       }
 
       if (packerConfig.compiler.build.esnext) {
@@ -267,6 +272,7 @@ export default function init() {
             file: path.join(process.cwd(), packerConfig.dist, 'fesmnext', `${packageConfig.name}.esm.js`),
             format: 'esm' as ModuleFormat
           },
+          perf: trackBuildPerformance,
           plugins: [
             ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),
             ...getPreBundlePlugins(packerConfig),
@@ -280,7 +286,7 @@ export default function init() {
         log.trace('esnext bundle rollup config:\n%o', esnextConfig);
         buildTasks.push(
           generateBundle(packerConfig,  packageConfig, esnextConfig, 'esnext',
-            packerConfig.compiler.build.esnextMin, log));
+            packerConfig.compiler.build.esnextMin, trackBuildPerformance, log));
       }
 
       if (packerConfig.compiler.concurrentBuild) {
