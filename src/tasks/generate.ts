@@ -198,9 +198,9 @@ export default function init() {
         },
         {
           choices: [
-            'browser',
             'jsdom',
-            'node'
+            'node',
+            'browser'
           ],
           default: 0,
           message: 'Choose the test environment that will be used for testing?',

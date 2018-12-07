@@ -99,5 +99,3 @@ export const initPacker = async () => {
     log.error('packer init failure: %s\n', e.stack || e.message);
   }
 };
-
-export { karmaPackerPlugin } from './plugins/karma-packer-plugin';

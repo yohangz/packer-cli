@@ -456,7 +456,7 @@ export const packerSchema = {
         environment: {
           type: 'string',
           optional: false,
-          def: 'jasmine',
+          def: 'jsdom',
           pattern: /^(browser|jsdom|node)$/
         },
         advanced: {
