@@ -292,11 +292,10 @@ const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string,
   return rollupFilesize(mergeDeep({
     showMinifiedSize: false,
     showBrotliSize: false,
+    showGzippedSize: false,
     render: (options: any, sourceBundle: any, { gzipSize, bundleSize }): string => {
       const bundleFormatted = `bundle size: ${chalk.red(bundleSize)}`;
-      const gzippedFormatted = `gzipped size: ${chalk.red(gzipSize)}`;
-      const message = `${type} ${bundleFormatted}, ${gzippedFormatted}`;
-      return chalk.yellow(`${logger.currentTime} ${chalk.green(taskName)} ${message}`);
+      return chalk.yellow(`${logger.currentTime} ${chalk.green(taskName)} ${type} ${bundleFormatted}`);
     }
   }, packerConfig.compiler.advanced.rollup.pluginOptions.filesize));
 };
