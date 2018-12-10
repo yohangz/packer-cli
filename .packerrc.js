@@ -112,14 +112,14 @@ module.exports = {
        * @type {boolean}
        * @default false
        */
-      es5: true,
+      es5: false,
 
       /**
        * Generate flat es5 minified build artifact.
        * @type {boolean}
        * @default false
        */
-      es5Min: true,
+      es5Min: false,
 
       /**
        * Generate flat esnext build artifact based on .babelrc esnext environment configuration.

@@ -1,4 +1,11 @@
 /**
+ * Package configuration key value object literal.
+ */
+export interface PackageKeyValueLiteral {
+  [key: string]: string;
+}
+
+/**
  * Package configuration (package.json) schema.
  */
 export interface PackageConfig {
@@ -6,26 +13,16 @@ export interface PackageConfig {
   version?: string;
   description?: string;
   keywords?: string[];
-  scripts?: {
-    [key: string]: string;
-  };
+  scripts?: PackageKeyValueLiteral;
   author?: string;
   repository?: string;
   license?: string;
   homepage?: string;
-  dependencies?: {
-    [key: string]: string;
-  };
-  devDependencies?: {
-    [key: string]: string;
-  };
-  peerDependencies?: {
-    [key: string]: string;
-  };
+  dependencies?: PackageKeyValueLiteral;
+  devDependencies?: PackageKeyValueLiteral;
+  peerDependencies?: PackageKeyValueLiteral;
   private?: boolean;
-  bin?: {
-    [key: string]: string;
-  };
+  bin?: PackageKeyValueLiteral;
   main?: string;
   typings?: string;
   module?: string;

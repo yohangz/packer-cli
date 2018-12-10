@@ -8,6 +8,7 @@ import { TestFramework } from './test-framework';
 import { PathReplacePattern } from './path-replace-pattern';
 import { PackageModuleType } from './package-module-type';
 import { TestEnvironment } from './test-environment';
+import { ObjectLiteral } from './object-literal';
 
 /**
  * Packer style configuration schema.
@@ -41,13 +42,6 @@ export interface PackerWatchConfig {
  * @return {Array<{}>} Custom rollup plugin collection
  */
 export type CustomRollupPluginExtractorCallback = (buildType: PackageModuleType, packerConfig: PackerConfig) => any[];
-
-/**
- * generic object literal schema.
- */
-interface ObjectLiteral {
-  [key: string]: any;
-}
 
 interface UnitTestCommand {
   default: string;

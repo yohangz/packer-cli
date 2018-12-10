@@ -217,8 +217,7 @@ export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateD
       check,
       tsconfig: `tsconfig.json`,
       typescript,
-      clean: packerConfig.compiler.concurrentBuild,
-      cacheRoot: path.join(process.cwd(), packerConfig.tmp, '.rts2_cache')
+      cacheRoot: path.join(process.cwd(), packerConfig.tmp, 'build', packageModule, '.rts2_cache')
     };
 
     if (generateDefinition) {

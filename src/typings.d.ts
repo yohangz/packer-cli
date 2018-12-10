@@ -344,3 +344,5 @@ declare module '@babel/code-frame' {
 }
 
 declare module 'terser';
+
+declare module '*.json';
