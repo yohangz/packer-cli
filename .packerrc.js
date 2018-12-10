@@ -112,14 +112,14 @@ module.exports = {
        * @type {boolean}
        * @default false
        */
-      es5: false,
+      es5: true,
 
       /**
        * Generate flat es5 minified build artifact.
        * @type {boolean}
        * @default false
        */
-      es5Min: false,
+      es5Min: true,
 
       /**
        * Generate flat esnext build artifact based on .babelrc esnext environment configuration.
@@ -203,18 +203,11 @@ module.exports = {
     style: false,
 
     /**
-     * Enable build caching to improve performance in subsequent builds.
-     * @type {boolean}
-     * @default true
-     */
-    enableCaching: true,
-
-    /**
      * Run bundle build tasks concurrently to improve performance if true
      * @type {boolean}
      * @default true
      */
-    concurrentBuild: false
+    concurrentBuild: true
   },
 
   /**

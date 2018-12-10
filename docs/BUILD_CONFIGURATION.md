@@ -253,13 +253,6 @@ module.exports = {
      * @default true
      */
     concurrentBuild: true,
-
-    /**
-     * Enable build caching to improve performance in subsequent builds.
-     * @type {boolean}
-     * @default true
-     */
-    enableCaching: true,
     
     /**
      * Advance compiler options to override plugin configuration.

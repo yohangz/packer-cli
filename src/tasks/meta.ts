@@ -163,43 +163,6 @@ class MetaData {
   }
 
   /**
-   * Write rollup bundle cache to temporary directory if caching is enabled.
-   * @param packageModule - Package module type.
-   * @param cache - Rollup cache object.
-   * @param log - Logger reference.
-   */
-  public writeRollupCache(packageModule: PackageModuleType, cache: RollupCache, log: Logger): void {
-    if (!this.packerConfig.compiler.enableCaching) {
-      return;
-    }
-
-    const cachePath = path.join(process.cwd(), this.packerConfig.tmp, 'build', packageModule, '.rollupCache');
-    makeRelativeDirPath(this.packerConfig.tmp, 'build', packageModule);
-    const cacheData = JSON.stringify(cache);
-    fs.writeFile(cachePath, cacheData, () => {
-      log.trace('%s build cache saved', packageModule);
-    });
-  }
-
-  /**
-   * Read rollup bundle cache from previous build if caching is enabled, else return false.
-   * Return undefined if caching is enabled and cache file cannot be found.
-   * @param packageModule - Package module type.
-   */
-  public readRollupCache(packageModule: PackageModuleType): false | RollupCache {
-    if (!this.packerConfig.compiler.enableCaching) {
-      return false;
-    }
-
-    const cacheFilePath = path.join(process.cwd(), this.packerConfig.tmp, 'build', packageModule, '.rollupCache');
-    if (fs.existsSync(cacheFilePath)) {
-      return JSON.parse(String(fs.readFileSync(cacheFilePath)));
-    }
-
-    return undefined;
-  }
-
-  /**
    * Read packer configuration path.
    * Use dynamic packer config path if available, else use .packerrc.js config in project root.
    * @param log - Logger reference.
