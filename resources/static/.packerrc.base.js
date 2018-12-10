@@ -246,6 +246,13 @@ module.exports = {
     },
 
     /**
+     * Enable build caching to improve performance in subsequent builds.
+     * @type {boolean}
+     * @default true
+     */
+    enableCaching: true,
+
+    /**
      * Run bundle build tasks concurrently to improve performance if true
      * @type {boolean}
      * @default true

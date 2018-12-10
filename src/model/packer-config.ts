@@ -88,6 +88,7 @@ export interface PackerConfig {
     };
     style: false | PackerStyleConfig;
     concurrentBuild: boolean;
+    enableCaching: boolean;
     advanced: {
       rollup: {
         inputOptions: ObjectLiteral;

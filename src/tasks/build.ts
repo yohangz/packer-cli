@@ -223,6 +223,7 @@ export default function init() {
           globals: packerConfig.bundle.globals,
           name: packerConfig.bundle.namespace
         },
+        cache: meta.readRollupCache('bundle'),
         perf: trackBuildPerformance,
         plugins: [
           ...getStyleBuildPlugins(packerConfig, packageConfig, false, true, log),
@@ -247,6 +248,7 @@ export default function init() {
             file: path.join(process.cwd(), packerConfig.dist, 'fesm5', `${packageConfig.name}.esm.js`),
             format: 'esm' as ModuleFormat
           },
+          cache: meta.readRollupCache('es5'),
           perf: trackBuildPerformance,
           plugins: [
             ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),
@@ -272,6 +274,7 @@ export default function init() {
             file: path.join(process.cwd(), packerConfig.dist, 'fesmnext', `${packageConfig.name}.esm.js`),
             format: 'esm' as ModuleFormat
           },
+          cache: meta.readRollupCache('esnext'),
           perf: trackBuildPerformance,
           plugins: [
             ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),

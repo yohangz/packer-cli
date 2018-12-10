@@ -190,6 +190,11 @@ export const packerSchema = {
           optional: false,
           def: true
         },
+        enableCaching: {
+          type: 'boolean',
+          optional: false,
+          def: true
+        },
         advanced: {
           type: 'object',
           optional: false,

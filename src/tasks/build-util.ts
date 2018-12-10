@@ -348,6 +348,8 @@ export const generateBundle = async (packerConfig: PackerConfig, packageConfig: 
   const { code, map } = await bundle.write(outputOptions);
   log.trace('%s bundle build end', type);
 
+  meta.writeRollupCache(type, bundle.cache, log);
+
   if (trackBuildPerformance) {
     // Performance stats should be available on any log level
     const messageBase = `${logger.currentTime} ${chalk.green(type)}`;

@@ -9,9 +9,11 @@ import { BabelConfig } from '../model/babel-config';
 
 import { Logger } from '../common/logger';
 import { packerSchema } from './validation-util';
-import { args, mergeDeep, readConfigFile, readFile } from './util';
+import { args, makeRelativeDirPath, mergeDeep, readConfigFile, readFile } from './util';
 import { parseScriptPreprocessorExtensionGlob } from './parser';
 import { ScriptPreprocessor } from '../model/script-preprocessor';
+import { PackageModuleType } from '../model/package-module-type';
+import { RollupCache } from 'rollup';
 
 /**
  * Metadata reader class.
@@ -171,6 +173,43 @@ class MetaData {
 
     this.packerBanner = await readFile(path.join(__dirname, '../resources/dynamic/banner.txt'));
     return this.packerBanner;
+  }
+
+  /**
+   * Write rollup bundle cache to temporary directory if caching is enabled.
+   * @param type - Package module type.
+   * @param cache - Rollup cache object.
+   * @param log - Logger reference.
+   */
+  public writeRollupCache(type: PackageModuleType, cache: RollupCache, log: Logger): void {
+    if (!this.packerConfig.compiler.enableCaching) {
+      return;
+    }
+
+    const cachePath = path.join(process.cwd(), this.packerConfig.tmp, 'build', type, '.rollupCache');
+    makeRelativeDirPath(this.packerConfig.tmp, 'build', type);
+    const cacheData = JSON.stringify(cache);
+    fs.writeFile(cachePath, cacheData, () => {
+      log.trace('%s build cache saved', type);
+    });
+  }
+
+  /**
+   * Read rollup bundle cache from previous build if caching is enabled, else return false.
+   * Return undefined if caching is enabled and cache file cannot be found.
+   * @param type - Package module type.
+   */
+  public readRollupCache(type: PackageModuleType): RollupCache {
+    if (!this.packerConfig.compiler.enableCaching) {
+      return false;
+    }
+
+    const cacheFilePath = path.join(process.cwd(), this.packerConfig.tmp, 'build', type, '.rollupCache');
+    if (fs.existsSync(cacheFilePath)) {
+      return JSON.parse(String(fs.readFileSync(cacheFilePath)));
+    }
+
+    return undefined;
   }
 
   /**
