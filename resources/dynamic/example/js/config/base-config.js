@@ -1,7 +1,8 @@
 import logo from '../assets/logo.png';
 
 export let conf = {
-  tagLine: 'Full-fledged CLI tool to package library node module modules compliant with Browser and NodeJS with vanilla JS and Typescript source support | Inspired by Angular CLI',
+  tagLine: 'Full-fledged CLI tool to package library node module modules compliant with Browser and NodeJS with' +
+    ' vanilla JS and Typescript source support | Inspired by Angular CLI',
   title: 'Packer CLI',
   logo,
   configType: 'BASE',

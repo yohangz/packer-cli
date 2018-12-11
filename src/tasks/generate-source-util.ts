@@ -81,7 +81,7 @@ export const copyExampleSource = (packerOptions: PackerOptions, buildMode: Build
 
   const fileExtensions = [ scriptExt, 'hbs' ];
   if (packerOptions.reactLib) {
-    fileExtensions.push(`,${styleExt}x`);
+    fileExtensions.push(`${scriptExt}x`);
   }
 
   const exampleGlob = path.join(__dirname, '../resources/dynamic/example', scriptExt,

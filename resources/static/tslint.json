@@ -14,7 +14,10 @@
     "quotemark": [
       true,
       "single"
-    ]
+    ],
+    "trailing-comma": false,
+    "object-literal-sort-keys": false,
+    "interface-name": [true, "never-prefix"]
   },
   "rulesDirectory": []
 }

@@ -3,7 +3,8 @@ import logo from '../assets/logo.png';
 import { Configuration } from './configuration';
 
 export let conf: Configuration = {
-  tagLine: 'Full-fledged CLI tool to package library node module modules compliant with Browser and NodeJS with vanilla JS and Typescript source support | Inspired by Angular CLI',
+  tagLine: 'Full-fledged CLI tool to package library node module modules compliant with Browser and NodeJS with' +
+    ' vanilla JS and Typescript source support | Inspired by Angular CLI',
   title: 'Packer CLI',
   logo,
   configType: 'REPLACE',
@@ -23,6 +24,6 @@ export let conf: Configuration = {
       imageUrl: 'https://badge.fury.io/js/packer-cli.svg',
       title: 'Package Version',
       redirectUrl: 'https://badge.fury.io/js/packer-cli'
-    },
+    }
   }
 };
