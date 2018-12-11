@@ -6390,9 +6390,9 @@ package-hash@^2.0.0:
     md5-hex "^2.0.0"
     release-zalgo "^1.0.0"
 
-packer-cli@^2.10.0, packer-cli@^2.9.2:
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.10.0.tgz#b6b505339c6f6873ece46e10cf76f0395c8618bd"
+packer-cli@^2.11.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.11.0.tgz#773af9b69d0995592c6353d1dd6a59ca614e811c"
   dependencies:
     "@babel/code-frame" "^7.0.0"
     chalk "^2.4.1"
@@ -6406,7 +6406,6 @@ packer-cli@^2.10.0, packer-cli@^2.9.2:
     inquirer "^6.2.0"
     karma-rollup-preprocessor "^6.1.1"
     lodash "^4.17.10"
-    packer-cli "^2.9.2"
     plugin-error "^1.0.1"
     rollup "^0.67.4"
     rollup-plugin-babel "^4.0.3"
