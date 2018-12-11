@@ -159,6 +159,7 @@ export const copyMochaTestSpec = (scriptExt: string, projectDir: string, log: Lo
 export const copyJestConfig = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction =>  {
   const jest = path.join(__dirname, '../resources/dynamic/jest.config.js.hbs');
   log.trace('jest.config.js path: %s', jest);
+  const testEnvironment = packerOptions.testEnvironment || packerOptions.browserCompliant ? 'jsdom' : 'node';
 
   return () => {
     return gulp.src([
@@ -170,7 +171,7 @@ export const copyJestConfig = (packerOptions: PackerOptions, projectDir: string,
       })
       .pipe(gulpHbsRuntime({
         isTypescript: packerOptions.scriptPreprocessor === 'typescript',
-        testEnvironment: packerOptions.testEnvironment
+        testEnvironment: testEnvironment
       }, {
         replaceExt: ''
       }))
@@ -206,8 +207,8 @@ export const copyJestMockScripts = (projectDir: string, log: Logger): TaskFuncti
  * @param log - Logger reference.
  */
 export const copyJestTests = (scriptExt: string, projectDir: string, log: Logger): TaskFunction =>  {
-  const testsGlob = path.join(__dirname, '../resources/dynamic/example/test/jest', scriptExt, '__tests_/**/*');
-  log.trace('mocha tests path glob: %s', testsGlob);
+  const testsGlob = path.join(__dirname, '../resources/dynamic/example/test/jest', scriptExt, '__tests__/**/*');
+  log.trace('jest tests path glob: %s', testsGlob);
 
   return () => {
     return gulp.src([

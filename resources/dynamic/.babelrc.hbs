@@ -89,8 +89,7 @@
     "test": {
       "presets": [
         [
-          "@babel/preset-env",
-          {{#if cjsTestModule}}
+          "@babel/preset-env"{{#if cjsTestModule}},
           {
             "modules": "commonjs"
           }
