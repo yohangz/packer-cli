@@ -32,7 +32,7 @@ const IstanbulConfig = {
 const mapDependencies = (dependencies: string[]): PackageKeyValueLiteral => {
   return dependencies.reduce((previous: {}, current: string) => {
     return Object.assign(previous, {
-      current: sourceDevDependencies[current] || sourceDependencies[current]
+      [current]: sourceDevDependencies[current] || sourceDependencies[current]
     });
   }, {});
 };
