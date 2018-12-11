@@ -63,7 +63,7 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
     name: packageName,
     version: '1.0.0',
     description: packerOptions.description || '',
-    keywords: String(packerOptions.keywords || '').split(','),
+    keywords: packerOptions.keywords ? [] : packerOptions.keywords.split(','),
     scripts: {
       'build': 'packer build',
       'watch': 'packer watch',
@@ -126,7 +126,15 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
     if (packerOptions.scriptPreprocessor === 'typescript') {
       devDependencies.push('@types/jest', 'ts-jest');
     } else if (packerOptions.scriptPreprocessor === 'none') {
-      devDependencies.push('babel-jest');
+      devDependencies.push('babel-jest', 'babel-core');
+    }
+
+    if (packerOptions.reactLib) {
+      devDependencies.push('enzyme', 'jest-enzyme', 'jest-environment-enzyme', 'enzyme-adapter-react-16');
+
+      if (packerOptions.scriptPreprocessor === 'typescript') {
+        devDependencies.push('@types/enzyme');
+      }
     }
   }
 
@@ -151,6 +159,14 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
         devDependencies.push('jsdom');
       }
     }
+
+    if (packerOptions.reactLib) {
+      devDependencies.push('enzyme', 'jasmine-enzyme', 'enzyme-adapter-react-16');
+
+      if (packerOptions.scriptPreprocessor === 'typescript') {
+        devDependencies.push('@types/enzyme');
+      }
+    }
   }
 
   if (packerOptions.testFramework === 'mocha') {
@@ -173,9 +189,13 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
       if (packerOptions.testEnvironment === 'jsdom') {
         devDependencies.push('jsdom');
       }
+    }
 
-      if (packerOptions.reactLib) {
-        devDependencies.push('enzyme', 'chai-enzyme', 'cheerio', 'enzyme-adapter-react-16');
+    if (packerOptions.reactLib) {
+      devDependencies.push('enzyme', 'chai-enzyme', 'cheerio', 'enzyme-adapter-react-16');
+
+      if (packerOptions.scriptPreprocessor === 'typescript') {
+        devDependencies.push('@types/enzyme');
       }
     }
   }

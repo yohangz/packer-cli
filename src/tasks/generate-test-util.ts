@@ -79,6 +79,28 @@ export const copyJasmineSpec = (scriptExt: string, projectDir: string, log: Logg
 };
 
 /**
+ * Copy karma jasmine test spec files.
+ * @param scriptExt - Script file extension.
+ * @param projectDir - Project root directory.
+ * @param log - Logger reference.
+ */
+export const copyKarmaJasmineSpec = (scriptExt: string, projectDir: string, log: Logger): TaskFunction =>  {
+  const specGlob = path.join(__dirname, '../resources/dynamic/example/test/karma/jasmine', scriptExt, 'spec/**/*');
+  log.trace('jasmine spec path glob: %s', specGlob);
+
+  return () => {
+    return gulp.src([
+      specGlob
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulp.dest(path.join(projectDir, 'spec')));
+  };
+};
+
+/**
  * Copy jasmine configuration file.
  * @param packerOptions - Packer options object.
  * @param projectDir - Project root directory.
@@ -151,6 +173,28 @@ export const copyMochaTestSpec = (scriptExt: string, projectDir: string, log: Lo
 };
 
 /**
+ * Copy karma mocha test spec files.
+ * @param scriptExt - Script file extension.
+ * @param projectDir - Project root directory.
+ * @param log - Logger reference.
+ */
+export const copyKarmaMochaTestSpec = (scriptExt: string, projectDir: string, log: Logger): TaskFunction =>  {
+  const testGlob = path.join(__dirname, '../resources/dynamic/example/test/karma/mocha', scriptExt, 'test/**/*');
+  log.trace('mocha test spec path glob: %s', testGlob);
+
+  return () => {
+    return gulp.src([
+      testGlob
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulp.dest(path.join(projectDir, 'test')));
+  };
+};
+
+/**
  * Copy jest configuration file.
  * @param packerOptions - Packer options object.
  * @param projectDir - Project root directory.
@@ -159,7 +203,13 @@ export const copyMochaTestSpec = (scriptExt: string, projectDir: string, log: Lo
 export const copyJestConfig = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction =>  {
   const jest = path.join(__dirname, '../resources/dynamic/jest.config.js.hbs');
   log.trace('jest.config.js path: %s', jest);
-  const testEnvironment = packerOptions.testEnvironment || packerOptions.browserCompliant ? 'jsdom' : 'node';
+
+  let testEnvironment = '';
+  if (packerOptions.reactLib) {
+    testEnvironment = 'enzyme';
+  } else {
+    testEnvironment = packerOptions.testEnvironment || packerOptions.browserCompliant ? 'jsdom' : 'node';
+  }
 
   return () => {
     return gulp.src([
@@ -171,7 +221,8 @@ export const copyJestConfig = (packerOptions: PackerOptions, projectDir: string,
       })
       .pipe(gulpHbsRuntime({
         isTypescript: packerOptions.scriptPreprocessor === 'typescript',
-        testEnvironment: testEnvironment
+        testEnvironment,
+        isReactLib: packerOptions.reactLib
       }, {
         replaceExt: ''
       }))
@@ -224,11 +275,13 @@ export const copyJestTests = (scriptExt: string, projectDir: string, log: Logger
 
 /**
  * Copy karma helper script files. Used in spec files.
+ * @param packerOptions - Packer options object.
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
  */
-export const copyKarmaHelpers = (projectDir: string, log: Logger): TaskFunction =>  {
-  const helpersGlob = path.join(__dirname, '../resources/dynamic/example/test/karma/helpers/**/*');
+export const copyKarmaHelpers = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction =>  {
+  const helpersGlob = path.join(__dirname, '../resources/dynamic/example/test/karma', packerOptions.testFramework,
+    'helpers/**/*');
   log.trace('karma helpers path glob: %s', helpersGlob);
 
   return () => {
@@ -297,42 +350,46 @@ export const getTestSpecGeneratorTasks = (packerOptions: PackerOptions, scriptEx
                                           log: Logger): TaskFunction[] => {
   const tasks: TaskFunction[] = [];
 
-  if (packerOptions.testEnvironment === 'browser') {
-    if (packerOptions.testFramework === 'jasmine' || packerOptions.testFramework === 'mocha') {
-      tasks.push(copyKarmaConfig(projectDir, log));
-
-      if (packerOptions.reactLib) {
-        tasks.push(copyKarmaHelpers(projectDir, log));
-      }
-    }
-  } else {
-    if (packerOptions.testFramework === 'jasmine' || packerOptions.testFramework === 'mocha') {
-      tasks.push(copyTestTypescriptConfig(projectDir, log));
-    }
-
-    if (packerOptions.testFramework === 'jasmine') {
-      tasks.push(copyJasmineConfig(packerOptions, projectDir, log));
-      tasks.push(copyJasmineHelpers(projectDir, log));
-    }
-
-    if (packerOptions.testFramework === 'mocha') {
-      tasks.push(copyMochaConfig(packerOptions, projectDir, log));
-      tasks.push(copyMochaHelpers(projectDir, log));
-    }
-  }
-
-  if (packerOptions.testFramework === 'jasmine') {
-    tasks.push(copyJasmineSpec(scriptExt, projectDir, log));
-  }
-
-  if (packerOptions.testFramework === 'mocha') {
-    tasks.push(copyMochaTestSpec(scriptExt, projectDir, log));
-  }
-
   if (packerOptions.testFramework === 'jest') {
     tasks.push(copyJestConfig(packerOptions, projectDir, log));
     tasks.push(copyJestMockScripts(projectDir, log));
     tasks.push(copyJestTests(scriptExt, projectDir, log));
+
+    if (packerOptions.scriptPreprocessor === 'typescript') {
+      tasks.push(copyTestTypescriptConfig(projectDir, log));
+    }
+  } else {
+    if (packerOptions.testEnvironment === 'browser') {
+      tasks.push(copyKarmaConfig(projectDir, log));
+
+      if (packerOptions.reactLib) {
+        tasks.push(copyKarmaHelpers(packerOptions, projectDir, log));
+      }
+
+      if (packerOptions.testFramework === 'jasmine') {
+        tasks.push(copyKarmaJasmineSpec(scriptExt, projectDir, log));
+      }
+
+      if (packerOptions.testFramework === 'mocha') {
+        tasks.push(copyKarmaMochaTestSpec(scriptExt, projectDir, log));
+      }
+    } else {
+      if (packerOptions.scriptPreprocessor === 'typescript') {
+        tasks.push(copyTestTypescriptConfig(projectDir, log));
+      }
+
+      if (packerOptions.testFramework === 'jasmine') {
+        tasks.push(copyJasmineConfig(packerOptions, projectDir, log));
+        tasks.push(copyJasmineHelpers(projectDir, log));
+        tasks.push(copyJasmineSpec(scriptExt, projectDir, log));
+      }
+
+      if (packerOptions.testFramework === 'mocha') {
+        tasks.push(copyMochaConfig(packerOptions, projectDir, log));
+        tasks.push(copyMochaHelpers(projectDir, log));
+        tasks.push(copyMochaTestSpec(scriptExt, projectDir, log));
+      }
+    }
   }
 
   return tasks;

@@ -11,7 +11,7 @@ export let conf = {
     buildStatus: {
       imageUrl: 'https://travis-ci.org/yohangz/packer-cli.svg?branch=master',
       title: 'Build Status',
-      redirectUrl: 'https://travis-ci.org/yohangz/packer-cli',
+      redirectUrl: 'https://travis-ci.org/yohangz/packer-cli'
     },
     license: {
       imageUrl: 'https://img.shields.io/badge/license-MIT-blue.svg?style=flat',
