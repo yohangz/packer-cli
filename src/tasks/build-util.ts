@@ -179,6 +179,7 @@ export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
       module: true,
       jsnext: true,
       main: true,
+      extensions: [ '.mjs', '.js', '.jsx', '.json', '.node' ],
       browser: packerConfig.compiler.buildMode === 'browser',
       preferBuiltins: true
     }, packerConfig.compiler.advanced.rollup.pluginOptions.nodeResolve)),

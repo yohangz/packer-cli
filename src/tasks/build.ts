@@ -202,7 +202,6 @@ export default function init() {
     const log = logger.create('[build:bundle]');
     try {
       log.trace(' start');
-      const typescript = requireDependency('typescript', log);
       const packerConfig = meta.readPackerConfig(log);
       const packageConfig = meta.readPackageData();
       const babelConfig = meta.readBabelConfig();
@@ -212,6 +211,11 @@ export default function init() {
       const buildTasks: Array<Promise<void>> = [];
       const bundleFileName = `${packageConfig.name}.${packerConfig.bundle.format}.js`;
       const trackBuildPerformance = args.includes('--perf') || args.includes('-p');
+
+      let typescript = null;
+      if (packerConfig.compiler.script.preprocessor === 'typescript') {
+        typescript = requireDependency('typescript', log);
+      }
 
       // flat bundle.
       const flatConfig: RollupFileOptions = merge({}, baseConfig, {
