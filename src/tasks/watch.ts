@@ -46,6 +46,7 @@ export default function init() {
       if (packerConfig.watch && packerConfig.bundle.format !== 'cjs') {
         log.trace('build bundle with serve support');
         const additionalServeDir = packerConfig.watch.serveDir.map((dir: string) => path.join(process.cwd(), dir));
+
         rollupServePlugins = [
           rollupServe(mergeDeep({
             contentBase: [
