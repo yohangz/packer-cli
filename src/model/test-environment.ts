@@ -1,1 +1,1 @@
-export type TestEnvironment = 'browser' | 'jsdom' | 'node';
+export type TestEnvironment = 'browser' | 'jsdom' | 'node' | 'enzyme';

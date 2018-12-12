@@ -457,7 +457,7 @@ export const packerSchema = {
           type: 'string',
           optional: false,
           def: 'jsdom',
-          pattern: /^(browser|jsdom|node)$/
+          pattern: /^(browser|jsdom|node|enzyme)$/
         },
         advanced: {
           type: 'object',

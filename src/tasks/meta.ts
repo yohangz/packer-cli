@@ -9,11 +9,9 @@ import { BabelConfig } from '../model/babel-config';
 
 import { Logger } from '../common/logger';
 import { packerSchema } from './validation-util';
-import { args, makeRelativeDirPath, mergeDeep, readConfigFile, readFile } from './util';
+import { args, mergeDeep, readConfigFile, readFile } from './util';
 import { parseScriptPreprocessorExtensionGlob } from './parser';
 import { ScriptPreprocessor } from '../model/script-preprocessor';
-import { PackageModuleType } from '../model/package-module-type';
-import { RollupCache } from 'rollup';
 
 /**
  * Metadata reader class.

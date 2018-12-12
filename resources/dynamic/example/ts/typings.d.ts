@@ -1,7 +1,3 @@
-{{#if reactLib}}
-import 'jest-enzyme';
-{{/if}}
-
 declare module '*.hbs' {
   export default function(context?: any): string;
 }

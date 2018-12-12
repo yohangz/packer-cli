@@ -30,4 +30,5 @@ export interface PackerOptions {
   license: string;
   isYarn: boolean;
   reactLib: boolean;
+  useEnzyme: boolean;
 }

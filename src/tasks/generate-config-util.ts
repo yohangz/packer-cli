@@ -13,6 +13,7 @@ import { PackageConfig } from '../model/package-config';
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 import { Logger } from '../common/logger';
 import { parseLicenseType } from './parser';
+import { TestEnvironment } from '../model/test-environment';
 
 /**
  * Parse package dependency map mode.
@@ -41,12 +42,13 @@ export const parseBundleFormat = (packerOptions: PackerOptions): NodeBundleForma
 /**
  * Generate and copy packer configuration file.
  * @param packerOptions - Packer options object.
- * @param buildMode - Package build mode.
- * @param projectDir - Project root directory.
  * @param scriptExt - Script file extension.
+ * @param buildMode - Package build mode.
+ * @param testEnvironment - Test environment type.
+ * @param projectDir - Project root directory.
  */
 export const copyPackerConfig = (packerOptions: PackerOptions, scriptExt: string, buildMode: BuildMode,
-                                 projectDir: string): TaskFunction => {
+                                 testEnvironment: TestEnvironment, projectDir: string): TaskFunction => {
   const entryFile = `index.${scriptExt}`;
   const mapMode = parseDependencyMapMode(packerOptions);
   const bundleFormat = parseBundleFormat(packerOptions);
@@ -69,7 +71,7 @@ export const copyPackerConfig = (packerOptions: PackerOptions, scriptExt: string
         namespace: packerOptions.namespace,
         amdId: packerOptions.amdId,
         testFramework: packerOptions.testFramework,
-        testEnvironment: packerOptions.testEnvironment || 'node',
+        testEnvironment,
         serveSupport: packerOptions.browserCompliant,
         dependencyMapMode: mapMode
       }, {
@@ -146,11 +148,12 @@ export const copyReadme = (packageConfig: PackageConfig, projectDir: string, log
  * Copy babel configuration.
  * @param packerOptions - Packer options object.
  * @param buildMode - Project build mode.
+ * @param testEnvironment - Test environment type.
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
  */
-export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMode, projectDir: string,
-                                log: Logger): TaskFunction => {
+export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMode, testEnvironment: TestEnvironment,
+                                projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy babel config');
   const babelrc = path.join(__dirname, '../resources/dynamic/.babelrc.hbs');
   log.trace('babel config glob: %s', babelrc);
@@ -158,7 +161,7 @@ export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMo
   const templateData = {
     browserCompliant: buildMode === 'browser',
     reactLib: packerOptions.reactLib,
-    isBrowserEnvironment: packerOptions.testEnvironment === 'browser',
+    isBrowserEnvironment: testEnvironment === 'browser',
     cjsTestModule: packerOptions.testFramework === 'jasmine' || packerOptions.testFramework === 'mocha'
   };
   log.trace('template data: %o', templateData);
@@ -347,12 +350,13 @@ export const copyCommonConfig = (packageConfig: PackageConfig, projectDir: strin
  * @param packageConfig - Package configuration object.
  * @param buildMode - Project build mode.
  * @param scriptExt - Script file extension.
+ * @param testEnvironment - Test environment type.
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
  */
 export const getConfigFileGenerateTasks = (packerOptions: PackerOptions, packageConfig: PackageConfig,
-                                           buildMode: BuildMode, scriptExt: string, projectDir: string,
-                                           log: Logger): TaskFunction[] => {
+                                           buildMode: BuildMode, scriptExt: string, testEnvironment: TestEnvironment,
+                                           projectDir: string, log: Logger): TaskFunction[] => {
   const tasks: TaskFunction[] = [];
 
   if (packerOptions.scriptPreprocessor === 'typescript') {
@@ -368,11 +372,11 @@ export const getConfigFileGenerateTasks = (packerOptions: PackerOptions, package
 
   tasks.push(licenseCopy(packerOptions, projectDir, log));
   tasks.push(copyReadme(packageConfig, projectDir, log));
-  tasks.push(copyBabelConfig(packerOptions, buildMode, projectDir, log));
+  tasks.push(copyBabelConfig(packerOptions, buildMode, testEnvironment, projectDir, log));
   tasks.push(copyGitIgnore(projectDir, log));
   tasks.push(copyPackerAssets(projectDir, log));
   tasks.push(copyCommonConfig(packageConfig, projectDir, log));
-  tasks.push(copyPackerConfig(packerOptions, scriptExt, buildMode, projectDir));
+  tasks.push(copyPackerConfig(packerOptions, scriptExt, buildMode, testEnvironment, projectDir));
 
   return tasks;
 };

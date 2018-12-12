@@ -3,6 +3,7 @@ import { StylePreprocessor } from '../model/style-preprocessor';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
 import { BuildMode } from '../model/build-mode';
+import { TestEnvironment } from '../model/test-environment';
 
 /**
  * Parse style extension by preprocessor type.
@@ -98,4 +99,19 @@ export const parseBuildMode = (packerOptions: PackerOptions): BuildMode => {
   }
 
   return 'node';
+};
+
+/**
+ * Parse test environment type.
+ * @param packerOptions - Packer options object.
+ */
+export const parseTestEnvironment = (packerOptions: PackerOptions): TestEnvironment => {
+  let testEnvironment: TestEnvironment = 'node';
+  if (packerOptions.testFramework === 'jest' && packerOptions.reactLib && packerOptions.useEnzyme) {
+    testEnvironment = 'enzyme';
+  } else {
+    testEnvironment = packerOptions.testEnvironment || packerOptions.browserCompliant ? 'jsdom' : 'node';
+  }
+
+  return testEnvironment;
 };

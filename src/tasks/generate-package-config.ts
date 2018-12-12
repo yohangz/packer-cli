@@ -10,6 +10,7 @@ import {
   devDependencies as sourceDevDependencies,
   dependencies as sourceDependencies,
 } from '../../package.json';
+import { TestEnvironment } from '../model/test-environment';
 
 const IstanbulConfig = {
   'extension': [
@@ -40,9 +41,11 @@ const mapDependencies = (dependencies: string[]): PackageKeyValueLiteral => {
 /**
  * Build package.json configuration for generated project.
  * @param packerOptions - Packer options object.
+ * @param testEnvironment - Test environment type.
  * @param packageName - Package name.
  */
-export const buildPackageConfig = (packerOptions: PackerOptions, packageName: string): PackageConfig => {
+export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment,
+                                   packageName: string): PackageConfig => {
   let projectAuthor = '';
   if (packerOptions.author) {
     projectAuthor = packerOptions.author;
@@ -129,7 +132,7 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
       devDependencies.push('babel-jest', 'babel-core');
     }
 
-    if (packerOptions.reactLib) {
+    if (packerOptions.useEnzyme) {
       devDependencies.push('enzyme', 'jest-enzyme', 'jest-environment-enzyme', 'enzyme-adapter-react-16');
 
       if (packerOptions.scriptPreprocessor === 'typescript') {
@@ -142,12 +145,12 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
     if (packerOptions.scriptPreprocessor === 'typescript') {
       devDependencies.push('@types/jasmine');
 
-      if (packerOptions.testEnvironment !== 'browser') {
+      if (testEnvironment !== 'browser') {
         devDependencies.push('ts-node');
       }
     }
 
-    if (packerOptions.testEnvironment === 'browser') {
+    if (testEnvironment === 'browser') {
       devDependencies.push('puppeteer', 'karma', 'karma-chrome-launcher', 'karma-coverage', 'jasmine-core',
         'karma-jasmine', 'karma-jasmine-html-reporter');
     } else {
@@ -155,12 +158,12 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
 
       devDependencies.push('jasmine', 'nyc', 'ignore-styles');
 
-      if (packerOptions.testEnvironment === 'jsdom') {
+      if (testEnvironment === 'jsdom') {
         devDependencies.push('jsdom');
       }
     }
 
-    if (packerOptions.reactLib) {
+    if (packerOptions.useEnzyme) {
       devDependencies.push('enzyme', 'jasmine-enzyme', 'enzyme-adapter-react-16');
 
       if (packerOptions.scriptPreprocessor === 'typescript') {
@@ -173,12 +176,12 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
     if (packerOptions.scriptPreprocessor === 'typescript') {
       devDependencies.push('@types/chai', '@types/mocha');
 
-      if (packerOptions.testEnvironment !== 'browser') {
+      if (testEnvironment !== 'browser') {
         devDependencies.push('ts-node');
       }
     }
 
-    if (packerOptions.testEnvironment === 'browser') {
+    if (testEnvironment === 'browser') {
       devDependencies.push('puppeteer', 'karma', 'karma-chrome-launcher', 'karma-coverage', 'karma-mocha', 'mocha',
         'chai');
     } else {
@@ -186,12 +189,12 @@ export const buildPackageConfig = (packerOptions: PackerOptions, packageName: st
 
       devDependencies.push('mocha', 'chai', 'nyc', 'ignore-styles');
 
-      if (packerOptions.testEnvironment === 'jsdom') {
+      if (testEnvironment === 'jsdom') {
         devDependencies.push('jsdom');
       }
     }
 
-    if (packerOptions.reactLib) {
+    if (packerOptions.useEnzyme) {
       devDependencies.push('enzyme', 'chai-enzyme', 'cheerio', 'enzyme-adapter-react-16');
 
       if (packerOptions.scriptPreprocessor === 'typescript') {

@@ -12,7 +12,12 @@ import logger from '../common/logger';
 import { LicenseType } from '../model/license-type';
 import { PackerOptions } from '../model/packer-options';
 
-import { parseBuildMode, parseScriptPreprocessorExtension, parseStylePreprocessorExtension } from './parser';
+import {
+  parseBuildMode,
+  parseScriptPreprocessorExtension,
+  parseStylePreprocessorExtension,
+  parseTestEnvironment
+} from './parser';
 import { getConfigFileGenerateTasks, } from './generate-config-util';
 import { getTestSpecGeneratorTasks } from './generate-test-util';
 import { getExampleSourceGenerationsTasks } from './generate-source-util';
@@ -187,19 +192,44 @@ export default function init() {
         },
         {
           choices: [
-            'jasmine',
+            'jest',
             'mocha',
+            'jasmine'
+          ],
+          default: 0,
+          message: 'Which unit test framework do you want to use?',
+          name: 'testFramework',
+          type: 'list',
+          when: (answers) => {
+            return answers.reactLib;
+          }
+        },
+        {
+          choices: [
+            'mocha',
+            'jasmine',
             'jest'
           ],
           default: 0,
           message: 'Which unit test framework do you want to use?',
           name: 'testFramework',
-          type: 'list'
+          type: 'list',
+          when: (answers) => {
+            return !answers.reactLib;
+          }
+        },
+        {
+          default: true,
+          message: 'Do you want to use enzyme to test react components?',
+          name: 'useEnzyme',
+          type: 'confirm',
+          when: (answers) => {
+            return answers.reactLib;
+          }
         },
         {
           choices: [
             'jsdom',
-            'node',
             'browser'
           ],
           default: 0,
@@ -261,7 +291,8 @@ export default function init() {
       }
 
       const options: PackerOptions = await inquirer.prompt<PackerOptions>(questions);
-      const packageConfig = buildPackageConfig(options, packageName);
+      const testEnvironment = parseTestEnvironment(options);
+      const packageConfig = buildPackageConfig(options, testEnvironment, packageName);
       const scriptExt = parseScriptPreprocessorExtension(options.scriptPreprocessor);
       const projectDir = path.join(process.cwd(), packageName);
       const styleExt = parseStylePreprocessorExtension(options.stylePreprocessor);
@@ -269,9 +300,9 @@ export default function init() {
 
       const tasks: TaskFunction[] = [
         ...getExampleSourceGenerationsTasks(options, styleExt, scriptExt, buildMode, projectDir, log),
-        ...getTestSpecGeneratorTasks(options, scriptExt, projectDir, log),
+        ...getTestSpecGeneratorTasks(options, scriptExt, testEnvironment, projectDir, log),
         ...getDemoSourceGenerationTasks(options, buildMode, packageName, projectDir, log),
-        ...getConfigFileGenerateTasks(options, packageConfig, buildMode, scriptExt, projectDir, log)
+        ...getConfigFileGenerateTasks(options, packageConfig, buildMode, scriptExt, testEnvironment, projectDir, log)
       ];
 
       await gulp.series([gulp.parallel(tasks), async () => {
