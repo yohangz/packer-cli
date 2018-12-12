@@ -110,7 +110,7 @@ export const parseTestEnvironment = (packerOptions: PackerOptions): TestEnvironm
   if (packerOptions.testFramework === 'jest' && packerOptions.reactLib && packerOptions.useEnzyme) {
     testEnvironment = 'enzyme';
   } else {
-    testEnvironment = packerOptions.testEnvironment || packerOptions.browserCompliant ? 'jsdom' : 'node';
+    testEnvironment = packerOptions.testEnvironment || (packerOptions.browserCompliant ? 'jsdom' : 'node');
   }
 
   return testEnvironment;
