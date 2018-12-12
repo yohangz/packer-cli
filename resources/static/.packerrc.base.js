@@ -652,28 +652,28 @@ module.exports = {
          * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
          * @type {string}
          */
-        default: 'mocha --opts mocha.opts "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"',
+        default: 'mocha --opts mocha.opts ./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>',
 
         /**
          * Execute test spec on watch mode command.
          * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
          * @type {string}
          */
-        watch: 'mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"',
+        watch: 'mocha --opts mocha.opts --watch ./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>',
 
         /**
          * Execute test spec on single run mode with coverage support command.
          * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
          * @type {string}
          */
-        coverageDefault: 'nyc mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"',
+        coverageDefault: 'nyc mocha --opts mocha.opts --watch ./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>',
 
         /**
          * Execute test spec on watch mode with coverage support command.
          * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
          * @type {string}
          */
-        coverageWatch: 'nyc mocha --opts mocha.opts --watch "./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>"',
+        coverageWatch: 'nyc mocha --opts mocha.opts --watch ./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>',
       },
 
       /**

@@ -167,7 +167,7 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
       devDependencies.push('enzyme', 'jasmine-enzyme', 'enzyme-adapter-react-16');
 
       if (packerOptions.scriptPreprocessor === 'typescript') {
-        devDependencies.push('@types/enzyme');
+        devDependencies.push('@types/enzyme', '@types/jasmine-enzyme');
       }
     }
   }
@@ -198,7 +198,7 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
       devDependencies.push('enzyme', 'chai-enzyme', 'cheerio', 'enzyme-adapter-react-16');
 
       if (packerOptions.scriptPreprocessor === 'typescript') {
-        devDependencies.push('@types/enzyme');
+        devDependencies.push('@types/enzyme', '@types/chai-enzyme');
       }
     }
   }
