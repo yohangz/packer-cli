@@ -92,7 +92,8 @@ export const copyExampleSource = (packerOptions: PackerOptions, buildMode: Build
     styleExt,
     styleSupport: packerOptions.styleSupport,
     cliProject: buildMode === 'node-cli',
-    reactLib: packerOptions.reactLib
+    reactLib: packerOptions.reactLib,
+    jasmineEnzyme: packerOptions.useEnzyme && packerOptions.testFramework === 'jasmine'
   };
   log.trace('template data: %o', templateData);
 
