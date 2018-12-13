@@ -590,8 +590,10 @@ module.exports = {
 
     /**
      * Unit test environment.
-     * - 'node' - node unit test environment with jsdom.
+     * - 'node' - nodejs only unit test environment to test none browser compliant libraries.
      * - 'browser' - browser based unit test environment with karma.
+     * - 'jsdom' - browser like unit test environment in nodejs with jsdom.
+     * - 'enzyme' - only supported when building react library with jest test framework.
      * @type {string}
      * @default 'node'
      */
