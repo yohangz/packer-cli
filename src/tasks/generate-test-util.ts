@@ -206,7 +206,7 @@ export const copyMochaTestSpec = (scriptGlob: string, scriptExt: string, project
  * @param log - Logger reference.
  */
 export const copyKarmaMochaTestSpec = (scriptExt: string, projectDir: string, log: Logger): TaskFunction =>  {
-  const testGlob = path.join(__dirname, '../resources/dynamic/example/test/karma/mocha', scriptExt, 'test/**/*');
+  const testGlob = path.join(__dirname, '../resources/dynamic/example/test/karma/mocha', scriptExt, 'spec/**/*');
   log.trace('mocha test spec path glob: %s', testGlob);
 
   return () => {
@@ -299,29 +299,6 @@ export const copyJestTests = (scriptGlob: string, scriptExt: string, projectDir:
 };
 
 /**
- * Copy karma helper script files. Used in spec files.
- * @param packerOptions - Packer options object.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
- */
-export const copyKarmaHelpers = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction =>  {
-  const helpersGlob = path.join(__dirname, '../resources/dynamic/example/test/karma', packerOptions.testFramework,
-    'helpers/**/*');
-  log.trace('karma helpers path glob: %s', helpersGlob);
-
-  return () => {
-    return gulp.src([
-      helpersGlob
-    ])
-      .on('error', (e) => {
-        log.error('missing config file: %s\n', e.stack || e.message);
-        process.exit(1);
-      })
-      .pipe(gulp.dest(path.join(projectDir, 'helpers')));
-  };
-};
-
-/**
  * Copy test typescript configuration (tsconfig.test.json) file.
  * @param projectDir - Project root directory.
  * @param log - Logger reference.
@@ -388,10 +365,6 @@ export const getTestSpecGeneratorTasks = (packerOptions: PackerOptions, scriptEx
   } else {
     if (testEnvironment === 'browser') {
       tasks.push(copyKarmaConfig(projectDir, log));
-
-      if (packerOptions.reactLib) {
-        tasks.push(copyKarmaHelpers(packerOptions, projectDir, log));
-      }
 
       if (packerOptions.testFramework === 'jasmine') {
         tasks.push(copyKarmaJasmineSpec(scriptGlob, scriptExt, projectDir, log));

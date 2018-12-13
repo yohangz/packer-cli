@@ -10,7 +10,7 @@ import {
   customRollupPlugins
 } from '../tasks/build-util';
 import { args, requireDependency } from '../tasks/util';
-import { parseScriptPreprocessorExtension } from '../tasks/parser';
+import { parseKarmaScriptPreprocessorExtensionGlob } from '../tasks/parser';
 import { Logger } from '../common/logger';
 
 import { meta } from '../tasks/meta';
@@ -24,8 +24,9 @@ export const karmaPackerPlugin = (log: Logger) => {
     const packerConfig = meta.readPackerConfig(log);
     const packageConfig = meta.readPackageData();
     const babelConfig = meta.readBabelConfig();
+    const scriptExt = parseKarmaScriptPreprocessorExtensionGlob(packerConfig.compiler.script.preprocessor);
 
-    const testGlob = `spec/**/*.spec.${parseScriptPreprocessorExtension(packerConfig.compiler.script.preprocessor)}`;
+    const testGlob = `spec/**/*.spec.${scriptExt}`;
     log.trace('test glob: %s', testGlob);
 
     const preprocessors = {};

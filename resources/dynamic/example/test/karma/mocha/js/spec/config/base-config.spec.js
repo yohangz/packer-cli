@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { conf } from '../../src/config/replace-config';
+import { expect } from 'chai/chai';
+import { conf } from '../../src/config/base-config';
 
 describe('replace configuration test suite', () => {
   it('title is required', () => {
@@ -7,6 +7,6 @@ describe('replace configuration test suite', () => {
   });
 
   it('config type should be replace', () => {
-    expect(conf.configType).to.equal('REPLACE');
+    expect(conf.configType).to.equal('BASE');
   });
 });

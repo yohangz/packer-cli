@@ -237,8 +237,8 @@ export default function init() {
           name: 'testEnvironment',
           type: 'list',
           when: (answers) => {
-            return answers.browserCompliant
-              && (answers.testFramework === 'mocha' || answers.testFramework === 'jasmine');
+            return answers.browserCompliant && !answers.reactLib
+              && (answers.testFramework === 'jasmine' || answers.testFramework === 'mocha');
           }
         },
         {

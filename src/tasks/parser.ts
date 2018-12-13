@@ -88,6 +88,15 @@ export const parseScriptPreprocessorExtensionGlob = (preprocessor: ScriptPreproc
 };
 
 /**
+ * Parse karma script transpiler by preprocessor type and extract extension glob.
+ * @param preprocessor - Script preprocessor type.
+ */
+export const parseKarmaScriptPreprocessorExtensionGlob = (preprocessor: ScriptPreprocessor): string => {
+  const scriptExt = parseScriptPreprocessorExtension(preprocessor);
+  return `+(${scriptExt}|${scriptExt}x)`;
+};
+
+/**
  * Parse package build mode.
  * @param packerOptions - Packer options object.
  */

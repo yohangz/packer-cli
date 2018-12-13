@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from 'chai/chai';
 import { conf } from '../../src/config/replace-config';
 
 describe('replace configuration test suite', () => {
