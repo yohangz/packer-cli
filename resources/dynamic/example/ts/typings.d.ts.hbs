@@ -3,8 +3,8 @@ declare module '*.hbs' {
 }
 
 declare module '*.png';
-
 {{#if jasmineEnzyme}}
+
 // include proper expect typings when @types/jasmine-enzyme is up-to-date with library source.
 declare const expect: any;
 {{/if}}
