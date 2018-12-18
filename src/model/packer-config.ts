@@ -136,7 +136,7 @@ export interface PackerConfig {
       jest: UnitTestCommand;
     }
   };
-  watch: false | PackerWatchConfig;
+  serve: false | PackerWatchConfig;
   license: {
     banner: boolean;
   };

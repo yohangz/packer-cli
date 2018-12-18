@@ -43,25 +43,25 @@ export default function init() {
       makeRelativeDirPath(packerConfig.tmp, 'watch');
 
       let rollupServePlugins = [];
-      if (packerConfig.watch && packerConfig.bundle.format !== 'cjs') {
+      if (packerConfig.serve && packerConfig.bundle.format !== 'cjs') {
         log.trace('build bundle with serve support');
-        const additionalServeDir = packerConfig.watch.serveDir.map((dir: string) => path.join(process.cwd(), dir));
+        const additionalServeDir = packerConfig.serve.serveDir.map((dir: string) => path.join(process.cwd(), dir));
 
         rollupServePlugins = [
           rollupServe(mergeDeep({
             contentBase: [
               path.join(process.cwd(), packerConfig.tmp, 'watch'),
-              path.join(process.cwd(), packerConfig.watch.demoDir),
-              path.join(process.cwd(), packerConfig.watch.helperDir),
+              path.join(process.cwd(), packerConfig.serve.demoDir),
+              path.join(process.cwd(), packerConfig.serve.helperDir),
               ...additionalServeDir
             ],
-            open: packerConfig.watch.open,
-            port: packerConfig.watch.port
+            open: packerConfig.serve.open,
+            port: packerConfig.serve.port
           }, packerConfig.compiler.advanced.rollup.pluginOptions.serve)),
           rollupLivereload(mergeDeep({
             watch: [
               path.join(process.cwd(), packerConfig.tmp, 'watch'),
-              path.join(process.cwd(), packerConfig.watch.demoDir)
+              path.join(process.cwd(), packerConfig.serve.demoDir)
             ]
           }, packerConfig.compiler.advanced.rollup.pluginOptions.liveReload))
         ];

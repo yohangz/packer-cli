@@ -717,12 +717,12 @@ module.exports = {
   },
 
   /**
-   * Watch mode configuration
+   * Watch mode serve configuration.
    * Set false if not required to serve on watch build.
    * @type {({}|false)}
    * @default {}
    */
-  watch: {
+  serve: {
 
     /**
      * Demo watch source directory which contains index.html to serve.

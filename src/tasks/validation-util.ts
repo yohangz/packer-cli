@@ -1,5 +1,9 @@
 import inspector from 'schema-inspector';
 import forOwn from 'lodash/forOwn';
+import path from 'path';
+
+import { Logger } from '../common/logger';
+import { PackerConfig } from '../model/packer-config';
 
 /**
  * Schema inspector packer config validation schema.
@@ -534,7 +538,7 @@ export const packerSchema = {
         }
       }
     },
-    watch: {
+    serve: {
       type: ['object', 'boolean'],
       optional: false,
       $acceptOnly: 'false',
@@ -671,3 +675,50 @@ inspector.Validation.extend({
     }
   }
 });
+
+export const crossValidateConfig = (packerConfig: PackerConfig, log: Logger): void => {
+  const commonMsg = 'malformed packer config (.packerrc.js):\n';
+  const entryExt = path.extname(packerConfig.entry);
+  if (packerConfig.compiler.script.preprocessor === 'typescript'
+    && !['.ts', '.tsx'].includes(entryExt)) {
+    log.error(commonMsg + 'Entry extension must be \'.ts\' when script preprocessor is \'typescript\'');
+    process.exit(1);
+  }
+
+  if (packerConfig.compiler.script.preprocessor === 'none'
+    && !['.js', '.jsx', '.es6', '.es', '.mjs'].includes(entryExt)) {
+    log.error(commonMsg + 'Entry extension must be \'.js\', \'.jsx\', \'.es6\', \'.es\' or \'.mjs\' ' +
+      'when script preprocessor is \'none\'');
+    process.exit(1);
+  }
+
+  if (['node', 'node-cli'].includes(packerConfig.compiler.buildMode)) {
+    if (!['cjs', 'esm'].includes(packerConfig.bundle.format)) {
+      log.error(commonMsg + 'Bundle format must be \'cjs\' or \'esm\' when bundle mode is \'node\' or \'node-cli\'');
+      process.exit(1);
+    }
+
+    if (packerConfig.serve !== false) {
+      log.error(commonMsg + 'Serve on watch mode is not supported when bundle format is \'cjs\' or \'esm\'');
+      process.exit(1);
+    }
+  }
+
+  if (packerConfig.compiler.buildMode === 'browser'
+    && !['umd', 'amd', 'iife', 'system'].includes(packerConfig.bundle.format)) {
+    log.error(commonMsg +
+      'Bundle format must be \'umd\', \'amd\', \'iife\' or \'system\' when bundle mode is \'browser\'');
+    process.exit(1);
+  }
+
+  if (packerConfig.test.framework === 'jest' && packerConfig.test.environment === 'browser') {
+    log.error(commonMsg + 'Test environment \'browser\' is not supported when test framework is \'jest\'');
+    process.exit(1);
+  }
+
+  if (['jasmine', 'mocha'].includes(packerConfig.test.framework) && packerConfig.test.environment === 'enzyme') {
+    log.error(commonMsg +
+      'Test environment \'enzyme\' is only supported when test framework is \'jasmine\' or \'mocha\'');
+    process.exit(1);
+  }
+};

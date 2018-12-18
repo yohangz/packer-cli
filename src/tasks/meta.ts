@@ -8,7 +8,7 @@ import { PackageConfig } from '../model/package-config';
 import { BabelConfig } from '../model/babel-config';
 
 import { Logger } from '../common/logger';
-import { packerSchema } from './validation-util';
+import { crossValidateConfig, packerSchema } from './validation-util';
 import { args, mergeDeep, readConfigFile, readFile } from './util';
 import { parseScriptPreprocessorExtensionGlob } from './parser';
 import { ScriptPreprocessor } from '../model/script-preprocessor';
@@ -73,6 +73,7 @@ class MetaData {
 
     const sanitizedData = inspector.sanitize(packerSchema, packerConfig).data as PackerConfig;
 
+    crossValidateConfig(sanitizedData, log);
     // Replace glob extension pattern with dynamic extensions.
     const mochaConf = sanitizedData.test.advanced.mocha;
     mochaConf.coverageWatch =

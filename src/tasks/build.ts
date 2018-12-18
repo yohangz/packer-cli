@@ -210,7 +210,7 @@ export default function init() {
       const externals = extractBundleExternals(packerConfig);
       const buildTasks: Array<Promise<void>> = [];
       const bundleFileName = `${packageConfig.name}.${packerConfig.bundle.format}.js`;
-      const trackBuildPerformance = args.includes('--perf') || args.includes('-p');
+      const trackBuildPerformance = args.includes('--perf') || args.includes('-P');
 
       let typescript = null;
       if (packerConfig.compiler.script.preprocessor === 'typescript') {
