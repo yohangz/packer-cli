@@ -695,9 +695,9 @@ module.exports = {
         /**
          * Execute test spec on watch mode command.
          * @type {string}
-         * @default 'jest --config=jest.config.js --watch'
+         * @default 'jest --config=jest.config.js --watchAll'
          */
-        watch: 'jest --config=jest.config.js --watch',
+        watch: 'jest --config=jest.config.js --watchAll',
 
         /**
          * Execute test spec on single run mode with coverage support command.
@@ -709,9 +709,9 @@ module.exports = {
         /**
          * Execute test spec on watch mode with coverage support command.
          * @type {string}
-         * @default 'jest --config=jest.config.js --coverage --watch'
+         * @default 'jest --config=jest.config.js --coverage --watchAll'
          */
-        coverageWatch: 'jest --config=jest.config.js --coverage --watch',
+        coverageWatch: 'jest --config=jest.config.js --coverage --watchAll',
       }
     }
   },
