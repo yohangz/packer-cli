@@ -221,10 +221,9 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
     }
   }
 
-  devDependencies[sourcePackageName] = `^${sourcePackageVersion}`;
-
   packageConfig.dependencies = mapDependencies(dependencies);
   packageConfig.devDependencies = mapDependencies(devDependencies);
+  packageConfig.devDependencies[sourcePackageName] = `^${sourcePackageVersion}`;
   if (packerOptions.cliProject) {
     packageConfig.bin = {
       [packageName]: path.join('bin', `${packageConfig.name}.js`)
