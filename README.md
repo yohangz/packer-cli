@@ -86,7 +86,6 @@
   :ballot_box_with_check: Node CLI project support  
   :ballot_box_with_check: JSX and TSX support  
   :ballot_box_with_check: Custom rollup plugin integration support
-  :ballot_box_with_check: Build caching support to improve performance
   
 ## :sparkles: Usage
 
@@ -174,6 +173,7 @@ Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
 
   These are packer commands can be used on generated project
     build | b                trigger build
+      [--perf | -P]          execute build task with rollup performance monitoring
     watch | w                trigger serve on watch mode
     test | t                 execute project test suite
       [--watch | -W]         execute test on watch mode

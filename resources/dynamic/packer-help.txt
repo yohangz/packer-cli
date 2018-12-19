@@ -16,7 +16,7 @@ Generate a new library project via packer
 
 These are packer commands can be used on generated project
   [34mbuild | b[39m              [90mtrigger build[39m
-    [33m[--perf | -P][39m        [90mexecute build task with rollup performance monitering[39m
+    [33m[--perf | -P][39m        [90mexecute build task with rollup performance monitoring[39m
   [34mwatch | w[39m              [90mtrigger serve on watch mode[39m
   [34mtest | t[39m               [90mexecute project test suite[39m
     [33m[--watch | -W][39m       [90mexecute test on watch mode[39m
