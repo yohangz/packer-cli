@@ -66,7 +66,7 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
     name: packageName,
     version: '1.0.0',
     description: packerOptions.description || '',
-    keywords: packerOptions.keywords ? [] : packerOptions.keywords.split(','),
+    keywords: packerOptions.keywords ? packerOptions.keywords.split(',') : [],
     scripts: {
       'build': 'packer build',
       'watch': 'packer watch',
