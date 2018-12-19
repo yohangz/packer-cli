@@ -89,14 +89,14 @@
   
 ## :sparkles: Usage
 
-Before the Packer-CLI installation there are few pre-requisites to be complete. If your device meet the below requisites then you can proceed to the next section. 
+Proceed with next steps if your platform meet following prerequisites. 
 
 - Install [Node.js](https://nodejs.org/en/) on your device. 
-- Run `npm install -g npx` to install [npx](https://www.npmjs.com/package/npx) globally. (optional)
+- Optional: Run `npm install -g npx` to install [npx](https://www.npmjs.com/package/npx) globally.
 
 ## :mag_right: Basic Usage
 
-You can simply run the following command in a preferred directory to generate a new project using Packer CLI,
+You can simply run the following command in a preferred directory to generate a new library project using Packer CLI,
 
 ```sh
 npx packer-cli generate my-library
@@ -108,7 +108,7 @@ or
 npm install packer-cli -g && packer generate my-library
 ```
 
-Once project is generated and dependencies are installed, you can use the following CLI commands:
+Once project is generated and dependencies are installed, you can use the following NPM scripts:
 
 ```sh
 # Run project on watch mode
@@ -186,7 +186,7 @@ Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
 
 ## :hammer_and_pick: Build Configuration
 
-Build configuration can be updated after project generation via ``.packerrc.js``. Refer [packer configuratin options](docs/BUILD_CONFIGURATION.md) for more details.
+Build configuration can be updated after project generation via ``.packerrc.js``. Refer [packer configuratin options](docs/BUILD_CONFIGURATION.md) for detailed configuration options list.
                                                                                                                                                                  
 ## :seedling: Contributions
 
@@ -194,4 +194,4 @@ Feel free to open an issue or create a PR.
 
 ## :copyright: License
 
-Packer-CLI was license under MIT. Please refer [LICENSE](https://github.com/yohangz/packer-cli/blob/master/LICENSE) for more information.
+Packer-CLI is MIT licensed. Please refer [LICENSE](https://github.com/yohangz/packer-cli/blob/master/LICENSE) for more information.
