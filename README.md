@@ -57,36 +57,6 @@
 [![YARN](https://image.ibb.co/g1aVm9/yarn.png)](https://yarnpkg.com/)
 [![Travis CI](https://image.ibb.co/fGqKeU/travis-ci.png)](https://travis-ci.org/)
 
-  :ballot_box_with_check: Managed build configuration  
-  :ballot_box_with_check: Encapsulated build process  
-  :ballot_box_with_check: Both NPM and Yarn support  
-  :ballot_box_with_check: Travis CI support  
-  :ballot_box_with_check: Typescript and Babel based code transpilation  
-  :ballot_box_with_check: TS Lint based Typescript code analysis  
-  :ballot_box_with_check: ES Lint based Javascript code analysis  
-  :ballot_box_with_check: Style lint based style sheet code analysis  
-  :ballot_box_with_check: Precompiled handlebars templating  
-  :ballot_box_with_check: Support SCSS, SASS, LESS and Stylus and vanilla CSS  
-  :ballot_box_with_check: Post CSS based image inline and auto prefixing  
-  :ballot_box_with_check: Karma unit test runner  
-  :ballot_box_with_check: Jasmine, Mocha and Jest unit test frameworks  
-  :ballot_box_with_check: Rollup and Gulp based build process  
-  :ballot_box_with_check: ES5, ESNext, UMD, AMD, SYSTEM, IIFE and CommonJS bundle build output  
-  :ballot_box_with_check: Emmit type definitions for typescript projects  
-  :ballot_box_with_check: Ready to publish as Node module  
-  :ballot_box_with_check: Inline and bundle styles  
-  :ballot_box_with_check: Theme packaging  
-  :ballot_box_with_check: Source import path replace  
-  :ballot_box_with_check: Exclude external peer dependencies in bundle  
-  :ballot_box_with_check: Bundle peer dependencies  
-  :ballot_box_with_check: Ignore imports  
-  :ballot_box_with_check: Copy static assets to build dir  
-  :ballot_box_with_check: Library summary banner generation  
-  :ballot_box_with_check: Library dependency license extraction  
-  :ballot_box_with_check: Node CLI project support  
-  :ballot_box_with_check: JSX and TSX support  
-  :ballot_box_with_check: Custom rollup plugin integration support
-  
 ## :sparkles: Usage
 
 Proceed with next steps if your platform meet following prerequisites. 
