@@ -30,7 +30,7 @@
   
   <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## :bulb: Features
+## :bulb: Tech Stack
 
 [![Rollup](https://image.ibb.co/djqwR9/rollup.png)](https://rollupjs.org/)
 [![Gulp](https://image.ibb.co/j8A7Yp/gulp.png)](https://gulpjs.com/)
