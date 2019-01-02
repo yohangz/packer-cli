@@ -12,9 +12,9 @@
   </a>
 </p>
 
-> Packer CLI helps you to kickstart new node module projects compliant with NodeJS and Browser, prescribing best practices & encapsulating all the file-watching, live-reloading, transpiling, bundling and unit test framework integration, so you don't have to. You get to enjoy the latest latest JavaScript awesomeness with flexibility to custom fit your project needs.
+> Packer CLI helps you to kickstart new node module projects compliant with NodeJS and Browser, prescribing best practices. Packer encapsulating file-watching, live-reloading, transpiling, bundling and unit test framework integration with coverage and much more, so you don't have to. You will get to enjoy the latest latest JavaScript awesomeness with flexibility to custom fit your project needs.
   To do so, we provide a generator ecosystem via command line to scaffold complete projects with full control over all exposed workflows.
-
+  
 ## :book: Table of Contents
   <!-- START doctoc generated TOC please keep comment here to allow auto update -->
   <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
