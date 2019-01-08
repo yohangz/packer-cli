@@ -12,7 +12,7 @@
   </a>
 </p>
 
-> Packer CLI helps you to kickstart new node module projects compliant with NodeJS and Browser, prescribing best practices. Packer encapsulating file-watching, live-reloading, transpiling, bundling and unit test framework integration with coverage and much more, so you don't have to. You will get to enjoy the latest latest JavaScript awesomeness with flexibility to custom fit your project needs.
+> Packer CLI helps you to kick start new node module projects compliant with NodeJS and Browser, prescribing best practices. Packer encapsulating file-watching, live-reloading, transpiling, bundling and unit test framework integration with coverage and much more, so you don't have to. You will get to enjoy the latest latest JavaScript awesomeness with flexibility to custom fit your project needs.
   To do so, we provide a generator ecosystem via command line to scaffold complete projects with full control over all exposed workflows.
   
   Explained in detail: [Build Node Modules Like a Pro with Packer CLI](http://bit.ly/packer-cli)
@@ -21,7 +21,7 @@
   <!-- START doctoc generated TOC please keep comment here to allow auto update -->
   <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
   
-  - [Features](#bulb-features)
+  - [Tech Stack](#bulb-tech-stack)
   - [Usage](#sparkles-usage)
     - [Basic Usage](#mag_right-basic-usage)
     - [Standalone Usage](#gear-standalone-usage)
@@ -161,7 +161,7 @@ Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
 
 ## :hammer_and_pick: Build Configuration
 
-Build configuration can be updated after project generation via ``.packerrc.js``. Refer [packer configuratin options](docs/BUILD_CONFIGURATION.md) for detailed configuration options list.
+Build configuration can be updated after project generation via ``.packerrc.js``. Refer [packer configuration options](docs/BUILD_CONFIGURATION.md) for detailed configuration options list.
                                                                                                                                                                  
 ## :seedling: Contributions
 
