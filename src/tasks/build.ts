@@ -3,7 +3,7 @@ import gulp from 'gulp';
 import gulpAdd from 'gulp-add';
 import chmod from 'gulp-chmod';
 import merge from 'lodash/merge';
-import { ModuleFormat, RollupFileOptions } from 'rollup';
+import { ModuleFormat, RollupOptions } from 'rollup';
 
 import gulpHbsRuntime from '../plugins/gulp-hbs-runtime';
 
@@ -218,7 +218,7 @@ export default function init() {
       }
 
       // flat bundle.
-      const flatConfig: RollupFileOptions = merge({}, baseConfig, {
+      const flatConfig: RollupOptions = merge({}, baseConfig, {
         external: externals,
         output: {
           amd: packerConfig.bundle.amd,
@@ -245,7 +245,7 @@ export default function init() {
 
       if (packerConfig.compiler.build.es5) {
         // FESM+ES5 flat module bundle.
-        const es5config: RollupFileOptions = merge({}, baseConfig, {
+        const es5config: RollupOptions = merge({}, baseConfig, {
           external: getExternalFilter(packerConfig),
           output: {
             file: path.join(process.cwd(), packerConfig.dist, 'fesm5', `${packageConfig.name}.esm.js`),
@@ -270,7 +270,7 @@ export default function init() {
 
       if (packerConfig.compiler.build.esnext) {
         // FESM+ESNEXT flat module bundle.
-        const esnextConfig: RollupFileOptions = merge({}, baseConfig, {
+        const esnextConfig: RollupOptions = merge({}, baseConfig, {
           external: getExternalFilter(packerConfig),
           output: {
             file: path.join(process.cwd(), packerConfig.dist, 'fesmnext', `${packageConfig.name}.esm.js`),

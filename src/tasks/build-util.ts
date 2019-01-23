@@ -7,7 +7,7 @@ import get from 'lodash/get';
 
 import codeFrameColumns from '@babel/code-frame';
 
-import { rollup, RollupFileOptions } from 'rollup';
+import { OutputChunk, rollup, RollupOptions } from 'rollup';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupPostCss from 'rollup-plugin-postcss';
 import rollupReplace from 'rollup-plugin-re';
@@ -218,7 +218,8 @@ export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateD
       check,
       tsconfig: `tsconfig.json`,
       typescript,
-      cacheRoot: path.join(process.cwd(), packerConfig.tmp, 'build', packageModule, '.rts2_cache')
+      cacheRoot: path.join(process.cwd(), packerConfig.tmp, 'build', packageModule, '.rts2_cache'),
+      clean: true
     };
 
     if (generateDefinition) {
@@ -340,12 +341,15 @@ export const customRollupPlugins = (packerConfig: PackerConfig, type: PackageMod
  * @param log - Logger reference.
  */
 export const generateBundle = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
-                                     bundleConfig: RollupFileOptions, type: PackageModuleType, minify: boolean,
+                                     bundleConfig: RollupOptions, type: PackageModuleType, minify: boolean,
                                      trackBuildPerformance: boolean, log: Logger): Promise<void> => {
   log.trace('%s bundle build start', type);
   const bundle = await rollup(mergeDeep(bundleConfig, packerConfig.compiler.advanced.rollup.inputOptions));
   const outputOptions = mergeDeep(bundleConfig.output, packerConfig.compiler.advanced.rollup.outputOptions);
-  const { code, map } = await bundle.write(outputOptions);
+  const { output } = await bundle.write(outputOptions);
+  const chunks: OutputChunk[] = output.filter((chunk: any) => !chunk.isAsset) as OutputChunk[];
+  const { map, code }  = chunks[0];
+
   log.trace('%s bundle build end', type);
 
   if (trackBuildPerformance) {
@@ -397,7 +401,7 @@ export const generateBundle = async (packerConfig: PackerConfig, packageConfig: 
       if (logger.level <= LogLevel.INFO) {
         const task = log.taskName.replace(' ', '');
         const sizeDetail = getBundleSizeLoggerPlugin(packerConfig, task, `${type} minified`);
-        sizeDetail.ongenerate(null, { code: minData.code });
+        sizeDetail.generateBundle(null, output);
       }
     }
 
