@@ -379,18 +379,12 @@ module.exports = {
           filesize: {},
 
           /**
-           * Override serve plugin options.
-           * refer: https://github.com/thgh/rollup-plugin-serve
+           * Override browserSync plugin options.
+           * refer: https://github.com/4lejandrito/rollup-plugin-browsersync
+           * All browser sync options are applicable: https://browsersync.io/docs/options
            * @type {{}}
            */
-          serve: {},
-
-          /**
-           * Override live reload plugin options.
-           * refer: https://github.com/thgh/rollup-plugin-livereload
-           * @type {{}}
-           */
-          liveReload: {}
+          browserSync: {}
         }
       },
 

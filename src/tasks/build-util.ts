@@ -401,7 +401,7 @@ export const generateBundle = async (packerConfig: PackerConfig, packageConfig: 
       if (logger.level <= LogLevel.INFO) {
         const task = log.taskName.replace(' ', '');
         const sizeDetail = getBundleSizeLoggerPlugin(packerConfig, task, `${type} minified`);
-        sizeDetail.generateBundle(null, output);
+        sizeDetail.generateBundle.call(sizeDetail, null, output, false);
       }
     }
 

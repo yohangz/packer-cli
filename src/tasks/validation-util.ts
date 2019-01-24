@@ -284,16 +284,11 @@ export const packerSchema = {
                       optional: false,
                       def: {}
                     },
-                    serve: {
+                    browserSync: {
                       type: 'object',
                       optional: false,
                       def: {}
-                    },
-                    liveReload: {
-                      type: 'object',
-                      optional: false,
-                      def: {}
-                    },
+                    }
                   }
                 }
               }

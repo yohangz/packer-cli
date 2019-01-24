@@ -3,8 +3,7 @@ import merge from 'lodash/merge';
 import path from 'path';
 
 import { RollupWatchOptions, watch } from 'rollup';
-import rollupServe from 'rollup-plugin-serve';
-import rollupLivereload from 'rollup-plugin-livereload';
+import rollupBrowserSync from 'rollup-plugin-browsersync';
 
 import {
   getScriptBuildPlugin,
@@ -48,22 +47,22 @@ export default function init() {
         const additionalServeDir = packerConfig.serve.serveDir.map((dir: string) => path.join(process.cwd(), dir));
 
         rollupServePlugins = [
-          rollupServe(mergeDeep({
-            contentBase: [
+          rollupBrowserSync(mergeDeep({
+            server: [
               path.join(process.cwd(), packerConfig.tmp, 'watch'),
               path.join(process.cwd(), packerConfig.serve.demoDir),
               path.join(process.cwd(), packerConfig.serve.helperDir),
               ...additionalServeDir
             ],
             open: packerConfig.serve.open,
-            port: packerConfig.serve.port
-          }, packerConfig.compiler.advanced.rollup.pluginOptions.serve)),
-          rollupLivereload(mergeDeep({
-            watch: [
-              path.join(process.cwd(), packerConfig.tmp, 'watch'),
-              path.join(process.cwd(), packerConfig.serve.demoDir)
+            ui: {
+              port: packerConfig.serve.port
+            },
+            files: [
+              path.join(process.cwd(), packerConfig.tmp, 'watch/**/*'),
+              path.join(process.cwd(), packerConfig.serve.demoDir, '**/*')
             ]
-          }, packerConfig.compiler.advanced.rollup.pluginOptions.liveReload))
+          }, packerConfig.compiler.advanced.rollup.pluginOptions.browserSync))
         ];
       } else {
         log.trace('build serve disabled or not supported for bundle type');

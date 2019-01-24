@@ -59,7 +59,8 @@ declare interface RollupPluginIstanbulOptions extends RollupFilterOptions  {
 }
 
 declare module 'rollup-plugin-istanbul' {
-  export default function(options?: RollupPluginIstanbulOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginIstanbulOptions): Plugin;
 }
 
 declare module 'karma-rollup-preprocessor';
@@ -69,7 +70,8 @@ declare interface RollupPluginIgnoreImportOptions extends RollupFilterOptions {
 }
 
 declare module 'rollup-plugin-ignore-import' {
-  export default function(options: RollupPluginIgnoreImportOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options: RollupPluginIgnoreImportOptions): Plugin;
 }
 
 declare type NamedExportExtractor = (name: string) => boolean;
@@ -102,7 +104,8 @@ declare interface RollupPluginPostCssOptions extends RollupFilterOptions {
 }
 
 declare module 'rollup-plugin-postcss' {
-  export default function(options?: RollupPluginPostCssOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginPostCssOptions): Plugin;
 }
 
 declare interface PostCssImageInnerOptions {
@@ -113,7 +116,8 @@ declare interface PostCssImageInnerOptions {
 }
 
 declare module 'postcss-image-inliner' {
-  export default function(options?: PostCssImageInnerOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: PostCssImageInnerOptions): Plugin;
 }
 
 declare type RenameTransform = (code: string, id: string) => string;
@@ -139,11 +143,13 @@ declare interface RollupPluginRenameOptions extends RollupFilterOptions  {
 }
 
 declare module 'rollup-plugin-re' {
-  export default function(options?: RollupPluginRenameOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginRenameOptions): Plugin;
 }
 
 declare module 'rollup-plugin-ignore' {
-  export default function(modules: string[]): any;
+  import { Plugin } from 'rollup';
+  export default function(modules: string[]): Plugin;
 }
 
 declare interface RollupPluginNodeResolveOptions {
@@ -162,7 +168,8 @@ declare interface RollupPluginNodeResolveOptions {
 }
 
 declare module 'rollup-plugin-node-resolve' {
-  export default function(options?: RollupPluginNodeResolveOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginNodeResolveOptions): Plugin;
 }
 
 declare interface RollupPluginCommonjsOptions extends RollupFilterOptions  {
@@ -176,7 +183,8 @@ declare interface RollupPluginCommonjsOptions extends RollupFilterOptions  {
 }
 
 declare module 'rollup-plugin-commonjs' {
-  export default function(options?: RollupPluginCommonjsOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginCommonjsOptions): Plugin;
 }
 
 declare enum RollupPluginTypescriptVerbosity {
@@ -203,7 +211,8 @@ declare interface RollupPluginTypescriptOptions extends RollupFilterOptions {
 }
 
 declare module 'rollup-plugin-typescript2' {
-  export default function(options?: RollupPluginTypescriptOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginTypescriptOptions): Plugin;
 }
 
 declare interface RollupPluginBabelOptions extends RollupFilterOptions {
@@ -217,7 +226,8 @@ declare interface RollupPluginBabelOptions extends RollupFilterOptions {
 }
 
 declare module 'rollup-plugin-babel' {
-  export default function(options?: RollupPluginBabelOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginBabelOptions): Plugin;
 }
 
 declare interface RollupPluginHbsOptions extends RollupFilterOptions  {
@@ -233,7 +243,8 @@ declare interface RollupPluginHbsOptions extends RollupFilterOptions  {
 }
 
 declare module 'rollup-plugin-hbs' {
-  export default function(options?: RollupPluginHbsOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginHbsOptions): Plugin;
 }
 
 declare interface RollupPluginImageOptions extends RollupFilterOptions  {
@@ -243,7 +254,8 @@ declare interface RollupPluginImageOptions extends RollupFilterOptions  {
 }
 
 declare module 'rollup-plugin-img' {
-  export default function(options?: RollupPluginImageOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginImageOptions): Plugin;
 }
 
 declare interface RollupPluginFileSizeData {
@@ -263,7 +275,8 @@ declare interface RollupPluginFileSizeOptions {
 }
 
 declare module 'rollup-plugin-filesize' {
-  export default function(options?: RollupPluginFileSizeOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginFileSizeOptions): Plugin;
 }
 
 declare interface RollupPluginNodeGlobalOptions {
@@ -276,7 +289,8 @@ declare interface RollupPluginNodeGlobalOptions {
 }
 
 declare module 'rollup-plugin-node-globals' {
-  export default function(options?: RollupPluginNodeGlobalOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginNodeGlobalOptions): Plugin;
 }
 
 declare interface RollupPluginJsonOptions extends RollupFilterOptions {
@@ -287,37 +301,14 @@ declare interface RollupPluginJsonOptions extends RollupFilterOptions {
 }
 
 declare module 'rollup-plugin-json' {
-  export default function(options?: RollupPluginJsonOptions): any;
+  import { Plugin } from 'rollup';
+  export default function(options?: RollupPluginJsonOptions): Plugin;
 }
 
-declare interface RollupPluginServeOptions {
-  open?: boolean;
-  openPage?: string;
-  verbose?: boolean;
-  contentBase?: string | string[];
-  historyApiFallback?: boolean | string;
-  host?: string;
-  port?: number;
-  https?: {
-    [key: string]: string | Buffer;
-  };
-  headers?: {
-    [key: string]: string;
-  };
-}
-
-declare module 'rollup-plugin-serve' {
-  export default function(options?: RollupPluginServeOptions): any;
-}
-
-declare interface RollupPluginLiveReloadOptions {
-  watch?: string | string[];
-  verbose?: boolean;
-  https?: boolean;
-}
-
-declare module 'rollup-plugin-livereload' {
-  export default function(options?: string | RollupPluginLiveReloadOptions): any;
+declare module 'rollup-plugin-browsersync' {
+  import { Options } from 'browser-sync';
+  import { Plugin } from 'rollup';
+  export default function(options?: Options): Plugin;
 }
 
 declare interface CodeFrameLocation {

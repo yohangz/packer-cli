@@ -100,8 +100,7 @@ export interface PackerConfig {
           image: ObjectLiteral;
           handlebars: ObjectLiteral;
           filesize: ObjectLiteral;
-          serve: ObjectLiteral;
-          liveReload: ObjectLiteral;
+          browserSync: ObjectLiteral;
         };
       };
       other: {
