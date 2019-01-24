@@ -139,6 +139,11 @@ export const watchSource = async (watchPath: string | string[], callback: () => 
   });
 };
 
+/**
+ * Import peer dependencies dynamically on runtime.
+ * @param module - Module name.
+ * @param log - Logger reference.
+ */
 export const requireDependency = (module: string, log: Logger): any => {
   const requirePath = require.resolve(module, {
     paths: [ path.join(process.cwd(), 'node_modules') ]
