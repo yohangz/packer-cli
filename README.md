@@ -53,7 +53,7 @@
 [![React](https://i.ibb.co/zHccJ3r/react.png)](https://reactjs.org/)
 [![JSdom](https://i.ibb.co/FKDXFxM/jsdom.png)](https://github.com/jsdom/jsdom)
 [![Handlebars](https://image.ibb.co/g2Di69/handlebars.png)](https://handlebarsjs.com/)
-[![Prettier](https://image.ibb.co/m6bZqBR)](https://prettier.io/)
+[![Prettier](https://i.ibb.co/WgG8y3H/prettier.png)](https://prettier.io/)
 [![SPDX](https://image.ibb.co/jSgEDp/spdx.png)](https://spdx.org/)
 [![NPM](https://image.ibb.co/m2HMtp/npm.png)](https://www.npmjs.com/)
 [![YARN](https://image.ibb.co/g1aVm9/yarn.png)](https://yarnpkg.com/)
