@@ -776,6 +776,36 @@ module.exports = {
      * @default true
      */
     banner: true
+  },
+
+  /**
+   * Code auto format configuration.
+   * Auto format with https://prettier.io
+   * @type {{}}
+   * @default {}
+   */
+  format: {
+    /**
+     * File extensions to auto format.
+     * @type {string[]}
+     * @default [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ]
+     */
+    extensions: [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ],
+
+    /**
+     * Code format advanced configuration.
+     * @type {{}}
+     * @default {}
+     */
+    advanced: {
+
+      /**
+       * Prettier format command.
+       * @type {string}
+       * @default 'prettier --write <root-dir>/{,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
+       */
+      command: 'prettier --write <root-dir>/{,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
+    }
   }
 };
 ```

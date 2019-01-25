@@ -101,6 +101,9 @@ npm run lint:style
 # Run script lint task
 npm run lint:script
 
+# Run auto format source task
+npm run format
+
 # Run unit test suite on development envrionemnt watch mode
 npm run test
 
@@ -157,6 +160,7 @@ Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
     lint | l                 execute lint for project source
       [--style | -sc]        execute only style lint
       [--script | -sr]       execute only script lint
+    format | f               auto format project source
 ```
 
 ## :hammer_and_pick: Build Configuration

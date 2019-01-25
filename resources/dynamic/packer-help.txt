@@ -25,3 +25,4 @@ These are packer commands can be used on generated project
   [34mlint | l[39m               [90mexecute lint for project source[39m
     [33m[--style | -sc][39m      [90mexecute only style lint[39m
     [33m[--script | -sr][39m     [90mexecute only script lint[39m
+  [34mformat | f[39m             [90mauto format project source[39m

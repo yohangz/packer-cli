@@ -58,8 +58,8 @@ export class Logger {
 
   /**
    * Log error message.
-   * @param message - log message with console format expressions.
-   * @param optionalParams - Optional arguments to message.
+   * @param message log message with console format expressions.
+   * @param optionalParams Optional arguments to message.
    */
   public error(message: string, ...optionalParams: any[]): void {
     if (Logger.level <= LogLevel.ERROR) {
@@ -69,8 +69,8 @@ export class Logger {
 
   /**
    * Log warning message.
-   * @param message - log message with console format expressions.
-   * @param optionalParams - Optional arguments to message.
+   * @param message log message with console format expressions.
+   * @param optionalParams Optional arguments to message.
    */
   public warn(message: string, ...optionalParams: any[]): void {
     if (Logger.level <= LogLevel.WARN) {
@@ -80,8 +80,8 @@ export class Logger {
 
   /**
    * Log info message.
-   * @param message - log message with console format expressions.
-   * @param optionalParams - Optional arguments to message.
+   * @param message log message with console format expressions.
+   * @param optionalParams Optional arguments to message.
    */
   public info(message: string, ...optionalParams: any[]): void {
     if (Logger.level <= LogLevel.INFO) {
@@ -91,8 +91,8 @@ export class Logger {
 
   /**
    * Log trace message.
-   * @param message - log message with console format expressions.
-   * @param optionalParams - Optional arguments to message.
+   * @param message log message with console format expressions.
+   * @param optionalParams Optional arguments to message.
    */
   public trace(message: string, ...optionalParams: any[]): void {
     if (Logger.level <= LogLevel.TRACE) {

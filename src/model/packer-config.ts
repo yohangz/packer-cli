@@ -37,8 +37,8 @@ export interface PackerWatchConfig {
 /**
  * Custom rollup plugin extractor callback.
  * @callback customRollupPluginExtractorCallback
- * @param {string} buildType - 'bundle'|'es5'|'esnext'
- * @param {string} packerConfig - Packer configuration object.
+ * @param {string} buildType 'bundle'|'es5'|'esnext'
+ * @param {string} packerConfig Packer configuration object.
  * @return {Array<{}>} Custom rollup plugin collection
  */
 export type CustomRollupPluginExtractorCallback = (buildType: PackageModuleType, packerConfig: PackerConfig) => any[];
@@ -138,5 +138,11 @@ export interface PackerConfig {
   serve: false | PackerWatchConfig;
   license: {
     banner: boolean;
+  };
+  format: {
+    extensions: string[];
+    advanced: {
+      command: string
+    };
   };
 }

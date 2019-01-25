@@ -36,6 +36,9 @@ npm run lint:style
 # Run script lint task
 npm run lint:script
 
+# Run auto format source task
+npm run format
+
 # Run unit test suite on development envrionemnt watch mode
 npm run test
 
@@ -90,6 +93,7 @@ Usage: packer [--version | -v] | [--help | -h] | <command>[<args>]
     lint | l                 execute lint for project source
       [--style | -sc]        execute only style lint
       [--script | -sr]       execute only script lint
+    format | f               auto format project source
 ```
 
 
@@ -924,6 +928,36 @@ module.exports = {
      * @default true
      */
     banner: true
+  }
+
+  /**
+   * Code auto format configuration.
+   * Auto format with https://prettier.io
+   * @type \{{}}
+   * @default {}
+   */
+  format: {
+    /**
+     * File extensions to auto format.
+     * @type {string[]}
+     * @default [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ]
+     */
+    extensions: [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ],
+
+    /**
+     * Code format advanced configuration.
+     * @type \{{}}
+     * @default {}
+     */
+    advanced: {
+
+      /**
+       * Prettier format command.
+       * @type {string}
+       * @default 'prettier --write <root-dir>/{,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
+       */
+      command: 'prettier --write <root-dir>/{,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
+    }
   }
 };
 ```

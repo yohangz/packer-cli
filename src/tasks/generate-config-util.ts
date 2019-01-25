@@ -1,4 +1,3 @@
-import { meta } from './meta';
 import path from 'path';
 import gulp, { TaskFunction } from 'gulp';
 import gulpAdd from 'gulp-add';
@@ -17,7 +16,7 @@ import { TestEnvironment } from '../model/test-environment';
 
 /**
  * Parse package dependency map mode.
- * @param packerOptions - Packer options object.
+ * @param packerOptions Packer options object.
  */
 export const parseDependencyMapMode = (packerOptions: PackerOptions): DependencyMap => {
   if (packerOptions.cliProject) {
@@ -29,7 +28,7 @@ export const parseDependencyMapMode = (packerOptions: PackerOptions): Dependency
 
 /**
  * Parse package bundle format.
- * @param packerOptions - Packer options object.
+ * @param packerOptions Packer options object.
  */
 export const parseBundleFormat = (packerOptions: PackerOptions): NodeBundleFormat | BrowserBundleFormat => {
   if (packerOptions.browserCompliant) {
@@ -41,11 +40,11 @@ export const parseBundleFormat = (packerOptions: PackerOptions): NodeBundleForma
 
 /**
  * Generate and copy packer configuration file.
- * @param packerOptions - Packer options object.
- * @param scriptExt - Script file extension.
- * @param buildMode - Package build mode.
- * @param testEnvironment - Test environment type.
- * @param projectDir - Project root directory.
+ * @param packerOptions Packer options object.
+ * @param scriptExt Script file extension.
+ * @param buildMode Package build mode.
+ * @param testEnvironment Test environment type.
+ * @param projectDir Project root directory.
  */
 export const copyPackerConfig = (packerOptions: PackerOptions, scriptExt: string, buildMode: BuildMode,
                                  testEnvironment: TestEnvironment, projectDir: string): TaskFunction => {
@@ -83,9 +82,9 @@ export const copyPackerConfig = (packerOptions: PackerOptions, scriptExt: string
 
 /**
  * Copy license file.
- * @param packerOptions - Packer options object.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const licenseCopy = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy license file');
@@ -116,9 +115,9 @@ export const licenseCopy = (packerOptions: PackerOptions, projectDir: string, lo
 
 /**
  * Copy readme.md file.
- * @param packageConfig - Package configuration object.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packageConfig Package configuration object.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyReadme = (packageConfig: PackageConfig, projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy base dynamic and static config');
@@ -146,11 +145,11 @@ export const copyReadme = (packageConfig: PackageConfig, projectDir: string, log
 
 /**
  * Copy babel configuration.
- * @param packerOptions - Packer options object.
- * @param buildMode - Project build mode.
- * @param testEnvironment - Test environment type.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param buildMode Project build mode.
+ * @param testEnvironment Test environment type.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMode, testEnvironment: TestEnvironment,
                                 projectDir: string, log: Logger): TaskFunction => {
@@ -179,8 +178,8 @@ export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMo
 
 /**
  * Copy gitignore file.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyGitIgnore = (projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy gitignore');
@@ -204,8 +203,8 @@ export const copyGitIgnore = (projectDir: string, log: Logger): TaskFunction => 
 
 /**
  * Copy packer asset (banner.hbs and bin.hbs) files.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyPackerAssets = (projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy packer assets');
@@ -230,8 +229,8 @@ export const copyPackerAssets = (projectDir: string, log: Logger): TaskFunction 
 
 /**
  * Copy typescript configuration tsconfig.json and tslint.json files.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyTypescriptConfig = (projectDir: string, log: Logger): TaskFunction =>  {
   const tsconfig = path.join(__dirname, '../resources/static/tsconfig.json');
@@ -255,8 +254,8 @@ export const copyTypescriptConfig = (projectDir: string, log: Logger): TaskFunct
 
 /**
  * Copy postcss configuration file.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyPostCssConfig = (projectDir: string, log: Logger): TaskFunction =>  {
   const postCss = path.join(__dirname, '../resources/static/postcss.config.js');
@@ -276,8 +275,8 @@ export const copyPostCssConfig = (projectDir: string, log: Logger): TaskFunction
 
 /**
  * Copy ESLint configuration file.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyEsLintConfig = (projectDir: string, log: Logger): TaskFunction =>  {
   const eslintrc = path.join(__dirname, '../resources/static/.eslintrc.yml');
@@ -297,8 +296,8 @@ export const copyEsLintConfig = (projectDir: string, log: Logger): TaskFunction 
 
 /**
  * Copy style lint configuration file.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyStyleLintConfig = (projectDir: string, log: Logger): TaskFunction =>  {
   const styleLintrc = path.join(__dirname, '../resources/static/.stylelintrc.json');
@@ -318,9 +317,9 @@ export const copyStyleLintConfig = (projectDir: string, log: Logger): TaskFuncti
 
 /**
  * Copy common configuration (package.json, .editorconfig and travis.yml) files
- * @param packageConfig - Package configuration object.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packageConfig Package configuration object.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyCommonConfig = (packageConfig: PackageConfig, projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy base dynamic and static config');
@@ -345,14 +344,35 @@ export const copyCommonConfig = (packageConfig: PackageConfig, projectDir: strin
 };
 
 /**
+ * Copy prettier configuration file.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
+ */
+export const copyPrettierConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+  const prettierrc = path.join(__dirname, '../resources/static/.prettierrc');
+  log.trace('.prettierrc path: %s', prettierrc);
+
+  return () => {
+    return gulp.src([
+      prettierrc
+    ])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
+      .pipe(gulp.dest(projectDir));
+  };
+};
+
+/**
  * Get project configuration file generation gulp tasks.
- * @param packerOptions - Packer configuration object.
- * @param packageConfig - Package configuration object.
- * @param buildMode - Project build mode.
- * @param scriptExt - Script file extension.
- * @param testEnvironment - Test environment type.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer configuration object.
+ * @param packageConfig Package configuration object.
+ * @param buildMode Project build mode.
+ * @param scriptExt Script file extension.
+ * @param testEnvironment Test environment type.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const getConfigFileGenerateTasks = (packerOptions: PackerOptions, packageConfig: PackageConfig,
                                            buildMode: BuildMode, scriptExt: string, testEnvironment: TestEnvironment,
@@ -377,6 +397,7 @@ export const getConfigFileGenerateTasks = (packerOptions: PackerOptions, package
   tasks.push(copyPackerAssets(projectDir, log));
   tasks.push(copyCommonConfig(packageConfig, projectDir, log));
   tasks.push(copyPackerConfig(packerOptions, scriptExt, buildMode, testEnvironment, projectDir));
+  tasks.push(copyPrettierConfig(projectDir, log));
 
   return tasks;
 };

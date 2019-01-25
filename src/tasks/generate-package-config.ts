@@ -40,9 +40,9 @@ const mapDependencies = (dependencies: string[]): PackageKeyValueLiteral => {
 
 /**
  * Build package.json configuration for generated project.
- * @param packerOptions - Packer options object.
- * @param testEnvironment - Test environment type.
- * @param packageName - Package name.
+ * @param packerOptions Packer options object.
+ * @param testEnvironment Test environment type.
+ * @param packageName Package name.
  */
 export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment,
                                    packageName: string): PackageConfig => {
@@ -81,7 +81,8 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
       'prerelease': 'npm run build',
       'release': 'npm publish dist',
       'lint': 'packer lint',
-      'lint:script': 'packer lint --script'
+      'lint:script': 'packer lint --script',
+      'format': 'packer format'
     },
     author: projectAuthor,
     repository: projectRepository,

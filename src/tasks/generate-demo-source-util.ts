@@ -9,8 +9,8 @@ import { PackerOptions } from '../model/packer-options';
 
 /**
  * Copy demo helper require.js script.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyDemoHelperRequireJs = (projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy demo helper require.min.js');
@@ -30,8 +30,8 @@ export const copyDemoHelperRequireJs = (projectDir: string, log: Logger): TaskFu
 
 /**
  * Copy demo helper system.js script.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyDemoHelperSystemJs = (projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy demo helper system.min.js');
@@ -52,11 +52,11 @@ export const copyDemoHelperSystemJs = (projectDir: string, log: Logger): TaskFun
 /**
  * Copy demo source.
  * HTML entry files if browser compliant, else javascript files.
- * @param packerOptions - Packer options object.
- * @param buildMode - Project build mode.
- * @param packageName - Target package name.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param buildMode Project build mode.
+ * @param packageName Target package name.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyDemoSource = (packerOptions: PackerOptions, buildMode: BuildMode, packageName: string,
                                projectDir: string, log: Logger): TaskFunction => {
@@ -96,11 +96,11 @@ export const copyDemoSource = (packerOptions: PackerOptions, buildMode: BuildMod
 
 /**
  * Get demo source generation gulp tasks.
- * @param packerOptions - Packer options object.
- * @param buildMode - Project build mode.
- * @param packageName - Package configuration object.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param buildMode Project build mode.
+ * @param packageName Package configuration object.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const getDemoSourceGenerationTasks = (packerOptions: PackerOptions, buildMode: BuildMode, packageName: string,
                                              projectDir: string, log: Logger): TaskFunction[] => {

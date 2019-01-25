@@ -33,8 +33,8 @@ import { BabelConfig } from '../model/babel-config';
 
 /**
  * Get distribution banner comment.
- * @param packerConfig - Packer configuration object.
- * @param packageConfig - Package configuration object.
+ * @param packerConfig Packer configuration object.
+ * @param packageConfig Package configuration object.
  */
 export const getBanner = async (packerConfig: PackerConfig, packageConfig: PackageConfig) => {
   if (packerConfig.license.banner) {
@@ -48,10 +48,10 @@ export const getBanner = async (packerConfig: PackerConfig, packageConfig: Packa
 
 /**
  * Get rollup base configuration.
- * @param packerConfig - Packer configuration object.
- * @param packageConfig - Package configuration object.
- * @param banner - Banner comment.
- * @param sourceMap - If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
+ * @param packerConfig Packer configuration object.
+ * @param packageConfig Package configuration object.
+ * @param banner Banner comment.
+ * @param sourceMap If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
  * the resulting output file as a data URI.
  */
 export const getBaseConfig = (packerConfig: PackerConfig, packageConfig: PackageConfig, banner: string,
@@ -68,12 +68,12 @@ export const getBaseConfig = (packerConfig: PackerConfig, packageConfig: Package
 
 /**
  * Get rollup style build plugins.
- * @param packerConfig - Packer configuration object.
- * @param packageConfig - Package configuration object.
- * @param watch - Copy stylesheets artifacts to watch temp directory if true, else dist directory.
- * @param main - Indicate whether it is the main build task to emit stylesheets. Otherwise, ignore style sheet building
+ * @param packerConfig Packer configuration object.
+ * @param packageConfig Package configuration object.
+ * @param watch Copy stylesheets artifacts to watch temp directory if true, else dist directory.
+ * @param main Indicate whether it is the main build task to emit stylesheets. Otherwise, ignore style sheet building
  * unless style inline mode is enabled.
- * @param log - Logger reference.
+ * @param log Logger reference.
  */
 export const getStyleBuildPlugins = (packerConfig: PackerConfig, packageConfig: PackageConfig, watch: boolean,
                                      main: boolean, log: Logger) => {
@@ -116,9 +116,9 @@ export const getStyleBuildPlugins = (packerConfig: PackerConfig, packageConfig: 
 
 /**
  * Generate minified style sheets.
- * @param packerConfig - Packer configuration object.
- * @param packageConfig - Package configuration object.
- * @param log - Logger reference.
+ * @param packerConfig Packer configuration object.
+ * @param packageConfig Package configuration object.
+ * @param log Logger reference.
  */
 export const generateMinStyleSheet = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
                                             log: Logger): Promise<void> => {
@@ -170,7 +170,7 @@ export const generateMinStyleSheet = async (packerConfig: PackerConfig, packageC
 
 /**
  * Get rollup dependency resolve plugins.
- * @param packerConfig  - Packer configuration object.
+ * @param packerConfig  Packer configuration object.
  */
 export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
   const plugins = [
@@ -201,13 +201,13 @@ export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
 
 /**
  * Get script build rollup plugins.
- * @param packageModule - Package module type.
- * @param generateDefinition - Generate type definitions if true.
- * @param check - Set to false to avoid doing any diagnostic checks on the code.
- * @param packerConfig - Packer configuration object.
- * @param babelConfig - Babel configuration object.
- * @param typescript - Typescript compiler reference.
- * @param log -  Logger reference.
+ * @param packageModule Package module type.
+ * @param generateDefinition Generate type definitions if true.
+ * @param check Set to false to avoid doing any diagnostic checks on the code.
+ * @param packerConfig Packer configuration object.
+ * @param babelConfig Babel configuration object.
+ * @param typescript Typescript compiler reference.
+ * @param log  Logger reference.
  */
 export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateDefinition: boolean, check: boolean,
                                      packerConfig: PackerConfig, babelConfig: BabelConfig, typescript: any,
@@ -260,7 +260,7 @@ export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateD
 
 /**
  * Get pre bundle rollup plugins.
- * @param packerConfig - Packer configuration object.
+ * @param packerConfig Packer configuration object.
  */
 export const getPreBundlePlugins = (packerConfig: PackerConfig) => {
   const plugins = [];
@@ -285,9 +285,9 @@ export const getPreBundlePlugins = (packerConfig: PackerConfig) => {
 
 /**
  * Get bundle size logger rollup plugin.
- * @param packerConfig - Packer configuration object.
- * @param taskName - Gulp task name.
- * @param type - Package module type message.
+ * @param packerConfig Packer configuration object.
+ * @param taskName Gulp task name.
+ * @param type Package module type message.
  */
 const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string, type: string) => {
   return rollupFilesize(mergeDeep({
@@ -303,9 +303,9 @@ const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string,
 
 /**
  * Get post bundle rollup plugins.
- * @param task - Gulp task name.
- * @param type - Package module type.
- * @param packerConfig - Packer config object.
+ * @param task Gulp task name.
+ * @param type Package module type.
+ * @param packerConfig Packer config object.
  */
 export const getPostBundlePlugins = (packerConfig: PackerConfig, task: string, type: PackageModuleType) => {
   if (logger.level <= LogLevel.INFO) {
@@ -319,8 +319,8 @@ export const getPostBundlePlugins = (packerConfig: PackerConfig, task: string, t
 
 /**
  * Get custom rollup plugins included via packer config.
- * @param packerConfig - Packer configuration object.
- * @param type - Package module type.
+ * @param packerConfig Packer configuration object.
+ * @param type Package module type.
  */
 export const customRollupPlugins = (packerConfig: PackerConfig, type: PackageModuleType): any[] => {
   if (packerConfig.compiler.customRollupPluginExtractor) {
@@ -332,13 +332,13 @@ export const customRollupPlugins = (packerConfig: PackerConfig, type: PackageMod
 
 /**
  * Generate bundled artifacts via rollup.
- * @param packerConfig - Packer configuration object.
- * @param packageConfig - Package configuration object.
- * @param bundleConfig - Rollup bundle configuration object.
- * @param type - Package module type.
- * @param minify - Generate minified bundle artifact if true.
- * @param trackBuildPerformance - Track rollup build performance.
- * @param log - Logger reference.
+ * @param packerConfig Packer configuration object.
+ * @param packageConfig Package configuration object.
+ * @param bundleConfig Rollup bundle configuration object.
+ * @param type Package module type.
+ * @param minify Generate minified bundle artifact if true.
+ * @param trackBuildPerformance Track rollup build performance.
+ * @param log Logger reference.
  */
 export const generateBundle = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
                                      bundleConfig: RollupOptions, type: PackageModuleType, minify: boolean,
@@ -411,7 +411,7 @@ export const generateBundle = async (packerConfig: PackerConfig, packageConfig: 
 
 /**
  * Get external dependency filter function.
- * @param packerConfig - Packer config object.
+ * @param packerConfig Packer config object.
  */
 export const getExternalFilter = (packerConfig: PackerConfig) => {
   const filter = packerConfig.bundle.externals.map((external) => glob(external));
@@ -422,7 +422,7 @@ export const getExternalFilter = (packerConfig: PackerConfig) => {
 
 /**
  * Extract bundle external.
- * @param packerConfig - Packer config object.
+ * @param packerConfig Packer config object.
  */
 export const extractBundleExternals = (packerConfig: PackerConfig) => {
   // Map externals from globals if mapExternals is true.

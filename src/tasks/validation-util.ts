@@ -582,13 +582,41 @@ export const packerSchema = {
           def: true
         }
       }
+    },
+    format: {
+      type: 'object',
+      optional: false,
+      $mapDef: true,
+      properties: {
+        extensions: {
+          type: 'array',
+          optional: false,
+          def: [
+            'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json'
+          ],
+          items: {
+            type: 'string'
+          }
+        },
+        advanced: {
+          optional: false,
+          $mapDef: true,
+          properties: {
+            command: {
+              type: 'string',
+              optional: false,
+              def: 'prettier --write <root-dir>/{,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
+            },
+          }
+        }
+      }
     }
   }
 };
 
 /**
  * Recursively map object defaults.
- * @param schema - Inspector schema.
+ * @param schema Inspector schema.
  */
 const mapObjectDefaults = (schema) => {
   const obj: any = {};
@@ -610,8 +638,8 @@ inspector.Sanitization.extend({
 
   /**
    * Map object defaults if invalid.
-   * @param schema - Inspector schema.
-   * @param candidate - Current sanitization candidate.
+   * @param schema Inspector schema.
+   * @param candidate Current sanitization candidate.
    */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
@@ -632,8 +660,8 @@ inspector.Sanitization.extend({
 
   /**
    * Set accept only boolean value if not valid.
-   * @param schema - Inspector schema.
-   * @param candidate - Current sanitization candidate.
+   * @param schema Inspector schema.
+   * @param candidate Current sanitization candidate.
    */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
@@ -656,8 +684,8 @@ inspector.Validation.extend({
 
   /**
    * Validate whether candidate value is accept only boolean value.
-   * @param schema - Inspector schema.
-   * @param candidate - Current validating candidate.
+   * @param schema Inspector schema.
+   * @param candidate Current validating candidate.
    */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
@@ -671,6 +699,11 @@ inspector.Validation.extend({
   }
 });
 
+/**
+ * Cross validate configuration of dependent config errors.
+ * @param packerConfig Packer configuration reference.
+ * @param log Logger reference.
+ */
 export const crossValidateConfig = (packerConfig: PackerConfig, log: Logger): void => {
   const commonMsg = 'malformed packer config (.packerrc.js):\n';
   const entryExt = path.extname(packerConfig.entry);

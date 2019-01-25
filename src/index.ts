@@ -5,6 +5,7 @@ import initClean from './tasks/clean';
 import initBuild from './tasks/build';
 import initGenerate from './tasks/generate';
 import initLint from './tasks/lint';
+import initFormat from './tasks/format';
 import initTest from './tasks/test';
 import initWatch from './tasks/watch';
 import initVersion from './tasks/version';
@@ -13,6 +14,9 @@ import { args } from './tasks/util';
 import { meta } from './tasks/meta';
 import logger from './common/logger';
 
+/**
+ * Initialize packer CLI tasks.
+ */
 export const initPacker = async () => {
   const log = logger.create('');
   try {
@@ -89,6 +93,15 @@ export const initPacker = async () => {
             // no implementation
           });
         }
+        break;
+      }
+      case 'format':
+      case 'f': {
+        initFormat();
+        meta.fetchPackerConfig(log);
+        gulp.series('format')(() => {
+          // no implementation
+        });
         break;
       }
       default:

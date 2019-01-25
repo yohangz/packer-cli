@@ -14,8 +14,8 @@ export interface GulpHandlebarsOptions {
 
 /**
  * Gulp handlebars runtime plugin.
- * @param data - Template data to complile template with.
- * @param options - Plugin options.
+ * @param data Template data to complile template with.
+ * @param options Plugin options.
  */
 export default function gulpHbsRuntime(data: any, options?: GulpHandlebarsOptions): stream.Transform {
   return through.obj((chunk: any, enc: string, callback: TransformCallback): void => {

@@ -9,8 +9,8 @@ import { TestEnvironment } from '../model/test-environment';
 
 /**
  * Parse script transpiler by preprocessor type and extract extension glob depending on enzyme support.
- * @param packerOptions - Packer options object.
- * @param scriptExt - Script file extension.
+ * @param packerOptions Packer options object.
+ * @param scriptExt Script file extension.
  */
 export const parseSpecScriptExtension = (packerOptions: PackerOptions, scriptExt: string): string => {
   if (packerOptions.useEnzyme) {
@@ -22,10 +22,10 @@ export const parseSpecScriptExtension = (packerOptions: PackerOptions, scriptExt
 
 /**
  * Copy jasmine configuration file.
- * @param packerOptions - Packer options object.
- * @param testEnvironment - Test environment type.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param testEnvironment Test environment type.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyJasmineConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment, projectDir: string,
                                   log: Logger): TaskFunction =>  {
@@ -53,8 +53,8 @@ export const copyJasmineConfig = (packerOptions: PackerOptions, testEnvironment:
 
 /**
  * Copy jasmine helper script files.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyJasmineHelpers = (projectDir: string, log: Logger): TaskFunction =>  {
   const helpersGlob = path.join(__dirname, '../resources/dynamic/example/test/jasmine/helpers/**/*');
@@ -74,10 +74,10 @@ export const copyJasmineHelpers = (projectDir: string, log: Logger): TaskFunctio
 
 /**
  * Copy jasmine test spec files.
- * @param scriptGlob - Script extension glob.
- * @param scriptExt - Script file extension.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param scriptGlob Script extension glob.
+ * @param scriptExt Script file extension.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyJasmineSpec = (scriptGlob: string, scriptExt: string, projectDir: string,
                                 log: Logger): TaskFunction =>  {
@@ -99,10 +99,10 @@ export const copyJasmineSpec = (scriptGlob: string, scriptExt: string, projectDi
 
 /**
  * Copy karma jasmine test spec files.
- * @param scriptGlob - Script extension glob.
- * @param scriptExt - Script file extension.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param scriptGlob Script extension glob.
+ * @param scriptExt Script file extension.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyKarmaJasmineSpec = (scriptGlob: string, scriptExt: string, projectDir: string,
                                      log: Logger): TaskFunction =>  {
@@ -124,10 +124,10 @@ export const copyKarmaJasmineSpec = (scriptGlob: string, scriptExt: string, proj
 
 /**
  * Copy jasmine configuration file.
- * @param packerOptions - Packer options object.
- * @param testEnvironment - Test environment type.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param testEnvironment Test environment type.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyMochaConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment, projectDir: string,
                                 log: Logger): TaskFunction =>  {
@@ -155,8 +155,8 @@ export const copyMochaConfig = (packerOptions: PackerOptions, testEnvironment: T
 
 /**
  * Copy mocha helper script files. Used as mocha require scripts.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyMochaHelpers = (projectDir: string, log: Logger): TaskFunction =>  {
   const helpersGlob = path.join(__dirname, '../resources/dynamic/example/test/mocha/helpers/**/*');
@@ -176,10 +176,10 @@ export const copyMochaHelpers = (projectDir: string, log: Logger): TaskFunction 
 
 /**
  * Copy mocha test spec files.
- * @param scriptGlob - Script extension glob.
- * @param scriptExt - Script file extension.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param scriptGlob Script extension glob.
+ * @param scriptExt Script file extension.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyMochaTestSpec = (scriptGlob: string, scriptExt: string, projectDir: string,
                                   log: Logger): TaskFunction =>  {
@@ -201,9 +201,9 @@ export const copyMochaTestSpec = (scriptGlob: string, scriptExt: string, project
 
 /**
  * Copy karma mocha test spec files.
- * @param scriptExt - Script file extension.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param scriptExt Script file extension.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyKarmaMochaTestSpec = (scriptExt: string, projectDir: string, log: Logger): TaskFunction =>  {
   const testGlob = path.join(__dirname, '../resources/dynamic/example/test/karma/mocha', scriptExt, 'spec/**/*');
@@ -223,10 +223,10 @@ export const copyKarmaMochaTestSpec = (scriptExt: string, projectDir: string, lo
 
 /**
  * Copy jest configuration file.
- * @param packerOptions - Packer options object.
- * @param testEnvironment - Test environment type.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param testEnvironment Test environment type.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyJestConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment, projectDir: string,
                                log: Logger): TaskFunction =>  {
@@ -254,8 +254,8 @@ export const copyJestConfig = (packerOptions: PackerOptions, testEnvironment: Te
 
 /**
  * Copy jest mock scripts.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyJestMockScripts = (projectDir: string, log: Logger): TaskFunction =>  {
   const mockScriptGlob = path.join(__dirname, '../resources/dynamic/example/test/jest/__mocks__/**/*');
@@ -275,10 +275,10 @@ export const copyJestMockScripts = (projectDir: string, log: Logger): TaskFuncti
 
 /**
  * Copy jest test files.
- * @param scriptGlob - Script extension glob.
- * @param scriptExt - Script file extension.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param scriptGlob Script extension glob.
+ * @param scriptExt Script file extension.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyJestTests = (scriptGlob: string, scriptExt: string, projectDir: string,
                               log: Logger): TaskFunction =>  {
@@ -300,8 +300,8 @@ export const copyJestTests = (scriptGlob: string, scriptExt: string, projectDir:
 
 /**
  * Copy test typescript configuration (tsconfig.test.json) file.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyTestTypescriptConfig = (projectDir: string, log: Logger): TaskFunction =>  {
   const tsconfig = path.join(__dirname, '../resources/static/tsconfig.test.json');
@@ -321,8 +321,8 @@ export const copyTestTypescriptConfig = (projectDir: string, log: Logger): TaskF
 
 /**
  * Copy karma configuration (karma.conf.js) file.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyKarmaConfig = (projectDir: string, log: Logger): TaskFunction =>  {
   const karma = path.join(__dirname, '../resources/static/karma.conf.js');
@@ -342,11 +342,11 @@ export const copyKarmaConfig = (projectDir: string, log: Logger): TaskFunction =
 
 /**
  * Get test specification generator gulp task functions.
- * @param packerOptions - Packer options object.
- * @param scriptExt - Script file extension.
- * @param testEnvironment - Test environment type.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param scriptExt Script file extension.
+ * @param testEnvironment Test environment type.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const getTestSpecGeneratorTasks = (packerOptions: PackerOptions, scriptExt: string,
                                           testEnvironment: TestEnvironment, projectDir: string,

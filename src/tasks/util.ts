@@ -12,9 +12,9 @@ export const args = process.argv.splice(2);
 
 /**
  * Run shell command in node environment.
- * @param command - Shell command with arguments.
- * @param dir - Execution dir.
- * @param log - Logger reference.
+ * @param command Shell command with arguments.
+ * @param dir Execution dir.
+ * @param log Logger reference.
  */
 export const runShellCommand = (command: string, dir: string, log: Logger) => {
   const commandSegments = command.split(' ');
@@ -40,7 +40,7 @@ export const runShellCommand = (command: string, dir: string, log: Logger) => {
 /**
  * Make relative directory path by fragments.
  * Create none existing fragments and ignore existing.
- * @param fragments - Directory path fragments.
+ * @param fragments Directory path fragments.
  */
 export const makeRelativeDirPath = (...fragments: string[]): void => {
   let currentPath = process.cwd();
@@ -54,8 +54,8 @@ export const makeRelativeDirPath = (...fragments: string[]): void => {
 
 /**
  * Write file async.
- * @param filePath - Path to write the file.
- * @param data - Data to include in the file being written.
+ * @param filePath Path to write the file.
+ * @param data Data to include in the file being written.
  */
 export const writeFile = (filePath: string, data: any): Promise<void> => {
   return new Promise<void>((resolve: () => void, reject: (e: Error) => void) => {
@@ -72,7 +72,7 @@ export const writeFile = (filePath: string, data: any): Promise<void> => {
 
 /**
  * Read file async.
- * @param filePath - Path to read the file from.
+ * @param filePath Path to read the file from.
  */
 export const readFile = (filePath: string): Promise<string> => {
   return new Promise<string>((resolve: (data: string) => void, reject: (e: Error) => void) => {
@@ -87,6 +87,10 @@ export const readFile = (filePath: string): Promise<string> => {
   });
 };
 
+/**
+ * Read configuration file sync.
+ * @param filePath File path.
+ */
 export const readConfigFile = <T>(filePath: string): T => {
   if (fs.existsSync(filePath)) {
     return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -102,8 +106,8 @@ export const readConfigFile = <T>(filePath: string): T => {
 
 /**
  * Merge objects deep.
- * @param object - Base object.
- * @param sources - Source objects to merge.
+ * @param object Base object.
+ * @param sources Source objects to merge.
  */
 export const mergeDeep = (object, ...sources) => {
   return mergeWith(object, ...sources, (objValue, srcValue) => {
@@ -123,8 +127,8 @@ export const mergeDeep = (object, ...sources) => {
 
 /**
  * Watch source for changes and execute callback function
- * @param watchPath - Watch path or paths glob collection.
- * @param callback - Callback function to execute on change
+ * @param watchPath Watch path or paths glob collection.
+ * @param callback Callback function to execute on change
  */
 export const watchSource = async (watchPath: string | string[], callback: () => Promise<void>) => {
   await callback();
@@ -141,8 +145,8 @@ export const watchSource = async (watchPath: string | string[], callback: () => 
 
 /**
  * Import peer dependencies dynamically on runtime.
- * @param module - Module name.
- * @param log - Logger reference.
+ * @param module Module name.
+ * @param log Logger reference.
  */
 export const requireDependency = (module: string, log: Logger): any => {
   const requirePath = require.resolve(module, {

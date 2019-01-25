@@ -7,7 +7,7 @@ import { TestEnvironment } from '../model/test-environment';
 
 /**
  * Parse style extension by preprocessor type.
- * @param preprocessor - Style preprocessor type.
+ * @param preprocessor Style preprocessor type.
  */
 export const parseStylePreprocessorExtension = (preprocessor: StylePreprocessor): string => {
   switch (preprocessor) {
@@ -26,7 +26,7 @@ export const parseStylePreprocessorExtension = (preprocessor: StylePreprocessor)
 
 /**
  * Parse license file name by license type.
- * @param license - License type.
+ * @param license License type.
  */
 export const parseLicenseType = (license: string): string => {
   let licenseFileName = '';
@@ -66,7 +66,7 @@ export const parseLicenseType = (license: string): string => {
 
 /**
  * Parse script transpiler by preprocessor type.
- * @param preprocessor - Script preprocessor type.
+ * @param preprocessor Script preprocessor type.
  */
 export const parseScriptPreprocessorExtension = (preprocessor: ScriptPreprocessor): string => {
   switch (preprocessor) {
@@ -80,7 +80,7 @@ export const parseScriptPreprocessorExtension = (preprocessor: ScriptPreprocesso
 
 /**
  * Parse script transpiler by preprocessor type and extract extension glob.
- * @param preprocessor - Script preprocessor type.
+ * @param preprocessor Script preprocessor type.
  */
 export const parseScriptPreprocessorExtensionGlob = (preprocessor: ScriptPreprocessor): string => {
   const scriptExt = parseScriptPreprocessorExtension(preprocessor);
@@ -89,7 +89,7 @@ export const parseScriptPreprocessorExtensionGlob = (preprocessor: ScriptPreproc
 
 /**
  * Parse karma script transpiler by preprocessor type and extract extension glob.
- * @param preprocessor - Script preprocessor type.
+ * @param preprocessor Script preprocessor type.
  */
 export const parseKarmaScriptPreprocessorExtensionGlob = (preprocessor: ScriptPreprocessor): string => {
   const scriptExt = parseScriptPreprocessorExtension(preprocessor);
@@ -98,7 +98,7 @@ export const parseKarmaScriptPreprocessorExtensionGlob = (preprocessor: ScriptPr
 
 /**
  * Parse package build mode.
- * @param packerOptions - Packer options object.
+ * @param packerOptions Packer options object.
  */
 export const parseBuildMode = (packerOptions: PackerOptions): BuildMode => {
   if (packerOptions.browserCompliant) {
@@ -112,7 +112,7 @@ export const parseBuildMode = (packerOptions: PackerOptions): BuildMode => {
 
 /**
  * Parse test environment type.
- * @param packerOptions - Packer options object.
+ * @param packerOptions Packer options object.
  */
 export const parseTestEnvironment = (packerOptions: PackerOptions): TestEnvironment => {
   let testEnvironment: TestEnvironment = 'node';

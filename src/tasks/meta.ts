@@ -11,7 +11,6 @@ import { Logger } from '../common/logger';
 import { crossValidateConfig, packerSchema } from './validation-util';
 import { args, mergeDeep, readConfigFile, readFile } from './util';
 import { parseScriptPreprocessorExtensionGlob } from './parser';
-import { ScriptPreprocessor } from '../model/script-preprocessor';
 
 /**
  * Metadata reader class.
@@ -29,7 +28,7 @@ class MetaData {
    * Return if already exist in cache, else read -> validate -> sanitize configuration data.
    * Configuration read logic will lookup for all extend packer config paths and merged configuration
    * from base to local order.
-   * @param log - Logger reference.
+   * @param log Logger reference.
    */
   public fetchPackerConfig(log: Logger): void {
     if (this.packerConfig) {
@@ -76,21 +75,23 @@ class MetaData {
     crossValidateConfig(sanitizedData, log);
     // Replace glob extension pattern with dynamic extensions.
     const mochaConf = sanitizedData.test.advanced.mocha;
-    mochaConf.coverageWatch =
-      this.replaceExtensionGlob(sanitizedData.compiler.script.preprocessor, mochaConf.coverageWatch);
-    mochaConf.coverageDefault =
-      this.replaceExtensionGlob(sanitizedData.compiler.script.preprocessor, mochaConf.coverageDefault);
-    mochaConf.watch =
-      this.replaceExtensionGlob(sanitizedData.compiler.script.preprocessor, mochaConf.watch);
-    mochaConf.default =
-      this.replaceExtensionGlob(sanitizedData.compiler.script.preprocessor, mochaConf.default);
+    const formatConf = sanitizedData.format.advanced;
+    const extGlob = parseScriptPreprocessorExtensionGlob(sanitizedData.compiler.script.preprocessor);
+    mochaConf.coverageWatch = this.replaceExtensionGlob(extGlob, mochaConf.coverageWatch);
+    mochaConf.coverageDefault = this.replaceExtensionGlob(extGlob, mochaConf.coverageDefault);
+    mochaConf.watch = this.replaceExtensionGlob(extGlob, mochaConf.watch);
+    mochaConf.default = this.replaceExtensionGlob(extGlob, mochaConf.default);
+
+    const formatExtGlob = sanitizedData.format.extensions.join(',');
+    formatConf.command = this.replaceExtensionGlob(formatExtGlob, formatConf.command);
+    formatConf.command = this.setRootDir(formatConf.command);
 
     this.packerConfig = sanitizedData;
   }
 
   /**
    * Read and cache packer configuration.
-   * @param log - Logger reference.
+   * @param log Logger reference.
    */
   public readPackerConfig(log: Logger): PackerConfig {
     if (this.packerConfig) {
@@ -164,7 +165,7 @@ class MetaData {
   /**
    * Read packer configuration path.
    * Use dynamic packer config path if available, else use .packerrc.js config in project root.
-   * @param log - Logger reference.
+   * @param log Logger reference.
    */
   private readConfigPath(log: Logger): string {
     const dynamicConfIndex = args.findIndex((value: string): boolean => {
@@ -202,12 +203,19 @@ class MetaData {
 
   /**
    * Replace extension glob pattern with actual extension.
-   * @param preprocessor - Script preprocessor.
-   * @param command - Target command string.
+   * @param extGlob Extension glob.
+   * @param command Target command.
    */
-  private replaceExtensionGlob(preprocessor: ScriptPreprocessor, command: string): string {
-    const extGlob = parseScriptPreprocessorExtensionGlob(preprocessor);
+  private replaceExtensionGlob(extGlob: string, command: string): string {
     return command.replace('<ext-glob>', extGlob);
+  }
+
+  /**
+   * Replace root directory with actual path.
+   * @param command Target command.
+   */
+  private setRootDir(command: string): string {
+    return command.replace('<root-dir>', process.cwd());
   }
 }
 

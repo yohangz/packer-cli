@@ -7,8 +7,8 @@ import { parseScriptPreprocessorExtensionGlob } from './parser';
 /**
  * Run unit test framework in node environment.
  * Support running test spec with coverage mode and normal mode.
- * @param packerConfig - Packer config object.
- * @param log - Logger reference.
+ * @param packerConfig Packer config object.
+ * @param log Logger reference.
  */
 export const runNodeUnitTest = async (packerConfig: PackerConfig, log: Logger): Promise<void> => {
   try {

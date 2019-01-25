@@ -10,9 +10,9 @@ import { BuildMode } from '../model/build-mode';
 
 /**
  * Copy example style sheets.
- * @param styleExt - Style sheet extension.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param styleExt Style sheet extension.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyExampleStyleSheets = (styleExt: string, projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy styles');
@@ -30,8 +30,8 @@ export const copyExampleStyleSheets = (styleExt: string, projectDir: string, log
 
 /**
  * Copy example handlebars templates.
- * @param projectDir - Project root directory.
- * @param log -  Logger reference.
+ * @param project DirProject root directory.
+ * @param log Logger reference.
  */
 export const copyExampleTemplates = (projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy templates');
@@ -49,8 +49,8 @@ export const copyExampleTemplates = (projectDir: string, log: Logger): TaskFunct
 
 /**
  * Copy example assets.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyExampleAsset = (projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy assets');
@@ -68,12 +68,12 @@ export const copyExampleAsset = (projectDir: string, log: Logger): TaskFunction 
 
 /**
  * Copy example source.
- * @param packerOptions - Packer options object.
- * @param buildMode - Package build mode.
- * @param scriptExt - Script file extension.
- * @param styleExt - Style sheet extension.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param buildMode Package build mode.
+ * @param scriptExt Script file extension.
+ * @param styleExt Style sheet extension.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const copyExampleSource = (packerOptions: PackerOptions, buildMode: BuildMode, scriptExt: string,
                                   styleExt: string, projectDir: string, log: Logger): TaskFunction => {
@@ -110,12 +110,12 @@ export const copyExampleSource = (packerOptions: PackerOptions, buildMode: Build
 
 /**
  * Get example source generation gulp tasks.
- * @param packerOptions - Packer options object.
- * @param styleExt - Style sheet file extension.
- * @param scriptExt - Script file extension.
- * @param buildMode - Project build mode.
- * @param projectDir - Project root directory.
- * @param log - Logger reference.
+ * @param packerOptions Packer options object.
+ * @param styleExt Style sheet file extension.
+ * @param scriptExt Script file extension.
+ * @param buildMode Project build mode.
+ * @param projectDir Project root directory.
+ * @param log Logger reference.
  */
 export const getExampleSourceGenerationsTasks = (packerOptions: PackerOptions, styleExt: string, scriptExt: string,
                                                  buildMode: BuildMode, projectDir: string,
