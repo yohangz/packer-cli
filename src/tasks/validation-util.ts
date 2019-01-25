@@ -590,7 +590,7 @@ export const packerSchema = {
             command: {
               type: 'string',
               optional: false,
-              def: 'prettier --write {,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
+              def: 'prettier --write **/*.{<ext-glob>}'
             }
           }
         }

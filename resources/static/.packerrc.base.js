@@ -768,7 +768,7 @@ module.exports = {
        * Prettier format command.
        * @type {string}
        */
-      command: 'prettier --write {,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
+      command: 'prettier --write **/*.{<ext-glob>}'
     }
   }
 };
