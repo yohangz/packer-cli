@@ -9,7 +9,6 @@ import logger from '../common/logger';
  * Initialize lint gulp tasks.
  */
 export default function init() {
-
   /**
    * Lint style source gulp task.
    * Execute style lint on source directory.

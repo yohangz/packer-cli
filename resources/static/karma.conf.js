@@ -1,6 +1,6 @@
 process.env.CHROME_BIN = require('puppeteer').executablePath();
 
-module.exports = function (config) {
+module.exports = function(config) {
   const reporters = ['progress', 'coverage'];
   const plugins = [];
   const client = {};
@@ -30,9 +30,9 @@ module.exports = function (config) {
   config.set({
     basePath: '',
 
-    frameworks: [ config.packer.framework ],
+    frameworks: [config.packer.framework],
 
-    browsers: [ process.env.CI ? 'ChromeHeadless' : 'Chrome' ],
+    browsers: [process.env.CI ? 'ChromeHeadless' : 'Chrome'],
 
     port: 9876,
 

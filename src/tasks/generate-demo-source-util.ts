@@ -17,9 +17,8 @@ export const copyDemoHelperRequireJs = (projectDir: string, log: Logger): TaskFu
   const srcPath = path.join(__dirname, '../resources/dynamic/demo/helper/require.min.js');
   log.trace('require.min.js path: %s', srcPath);
   return () => {
-    return gulp.src([
-      srcPath
-    ])
+    return gulp
+      .src([srcPath])
       .on('error', (e) => {
         log.error('missing helper file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -38,9 +37,8 @@ export const copyDemoHelperSystemJs = (projectDir: string, log: Logger): TaskFun
   const srcPath = path.join(__dirname, '../resources/dynamic/demo/helper/system.min.js');
   log.trace('require.min.js path: %s', srcPath);
   return () => {
-    return gulp.src([
-      srcPath
-    ])
+    return gulp
+      .src([srcPath])
       .on('error', (e) => {
         log.error('missing helper file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -58,8 +56,13 @@ export const copyDemoHelperSystemJs = (projectDir: string, log: Logger): TaskFun
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyDemoSource = (packerOptions: PackerOptions, buildMode: BuildMode, packageName: string,
-                               projectDir: string, log: Logger): TaskFunction => {
+export const copyDemoSource = (
+  packerOptions: PackerOptions,
+  buildMode: BuildMode,
+  packageName: string,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
   log.trace('copy demo resources');
   const isAmd = packerOptions.bundleFormat === 'amd';
   const isIife = packerOptions.bundleFormat === 'umd' || packerOptions.bundleFormat === 'iife';
@@ -84,12 +87,13 @@ export const copyDemoSource = (packerOptions: PackerOptions, buildMode: BuildMod
   log.trace('template data: %o', templateData);
 
   return () => {
-    return gulp.src([
-      demoTemplateGlob
-    ])
-      .pipe(gulpHbsRuntime(templateData, {
-        replaceExt: ''
-      }))
+    return gulp
+      .src([demoTemplateGlob])
+      .pipe(
+        gulpHbsRuntime(templateData, {
+          replaceExt: ''
+        })
+      )
       .pipe(gulp.dest(path.join(projectDir, 'demo')));
   };
 };
@@ -102,8 +106,13 @@ export const copyDemoSource = (packerOptions: PackerOptions, buildMode: BuildMod
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const getDemoSourceGenerationTasks = (packerOptions: PackerOptions, buildMode: BuildMode, packageName: string,
-                                             projectDir: string, log: Logger): TaskFunction[] => {
+export const getDemoSourceGenerationTasks = (
+  packerOptions: PackerOptions,
+  buildMode: BuildMode,
+  packageName: string,
+  projectDir: string,
+  log: Logger
+): TaskFunction[] => {
   const tasks: TaskFunction[] = [];
 
   if (buildMode !== 'node-cli') {

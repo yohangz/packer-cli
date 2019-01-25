@@ -37,7 +37,7 @@ export const karmaPackerPlugin = (log: Logger) => {
       log.trace('identified as coverage task');
       coveragePlugins = [
         rollupIstanbul({
-          exclude: [ 'node_modules/**' ]
+          exclude: ['node_modules/**']
         })
       ];
     }
@@ -53,7 +53,7 @@ export const karmaPackerPlugin = (log: Logger) => {
         format: 'iife',
         name: 'test',
         sourcemap: 'inline',
-        globals: packerConfig.bundle.globals,
+        globals: packerConfig.bundle.globals
       },
       plugins: [
         ...getStyleBuildPlugins(packerConfig, packageConfig, false, false, log),

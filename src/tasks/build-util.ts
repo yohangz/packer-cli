@@ -54,8 +54,12 @@ export const getBanner = async (packerConfig: PackerConfig, packageConfig: Packa
  * @param sourceMap If true, a separate sourcemap file will be created. If inline, the sourcemap will be appended to
  * the resulting output file as a data URI.
  */
-export const getBaseConfig = (packerConfig: PackerConfig, packageConfig: PackageConfig, banner: string,
-                              sourceMap?: boolean | 'inline') => {
+export const getBaseConfig = (
+  packerConfig: PackerConfig,
+  packageConfig: PackageConfig,
+  banner: string,
+  sourceMap?: boolean | 'inline'
+) => {
   return {
     input: path.join(packerConfig.source, packerConfig.entry),
     output: {
@@ -75,8 +79,13 @@ export const getBaseConfig = (packerConfig: PackerConfig, packageConfig: Package
  * unless style inline mode is enabled.
  * @param log Logger reference.
  */
-export const getStyleBuildPlugins = (packerConfig: PackerConfig, packageConfig: PackageConfig, watch: boolean,
-                                     main: boolean, log: Logger) => {
+export const getStyleBuildPlugins = (
+  packerConfig: PackerConfig,
+  packageConfig: PackageConfig,
+  watch: boolean,
+  main: boolean,
+  log: Logger
+) => {
   if (!packerConfig.compiler.style) {
     log.trace('style build disabled');
     return [];
@@ -85,10 +94,15 @@ export const getStyleBuildPlugins = (packerConfig: PackerConfig, packageConfig: 
   if (!main && !packerConfig.compiler.style.inline) {
     log.trace('ignore style imports to avoid redundant style compilation');
     return [
-      rollupIgnoreImport(mergeDeep({
-        exclude: 'node_modules/**',
-        extensions: ['.scss', '.sass', '.styl', '.css', '.less']
-      }, packerConfig.compiler.advanced.rollup.pluginOptions.ignoreImport))
+      rollupIgnoreImport(
+        mergeDeep(
+          {
+            exclude: 'node_modules/**',
+            extensions: ['.scss', '.sass', '.styl', '.css', '.less']
+          },
+          packerConfig.compiler.advanced.rollup.pluginOptions.ignoreImport
+        )
+      )
     ];
   }
 
@@ -99,18 +113,23 @@ export const getStyleBuildPlugins = (packerConfig: PackerConfig, packageConfig: 
   log.trace('stylesheet dist file name %s', styleDist);
 
   return [
-    rollupPostCss(mergeDeep({
-      exclude: 'node_modules/**',
-      extract: packerConfig.compiler.style.inline ? false : styleDist,
-      config: {
-        path: path.join(process.cwd(), 'postcss.config.js'),
-        ctx: {
-          config: packerConfig
-        }
-      },
-      // disable sourcemaps when inline bundling
-      sourceMap: packerConfig.compiler.style.inline ? false : packerConfig.compiler.sourceMap
-    }, packerConfig.compiler.advanced.rollup.pluginOptions.postCss))
+    rollupPostCss(
+      mergeDeep(
+        {
+          exclude: 'node_modules/**',
+          extract: packerConfig.compiler.style.inline ? false : styleDist,
+          config: {
+            path: path.join(process.cwd(), 'postcss.config.js'),
+            ctx: {
+              config: packerConfig
+            }
+          },
+          // disable sourcemaps when inline bundling
+          sourceMap: packerConfig.compiler.style.inline ? false : packerConfig.compiler.sourceMap
+        },
+        packerConfig.compiler.advanced.rollup.pluginOptions.postCss
+      )
+    )
   ];
 };
 
@@ -120,8 +139,11 @@ export const getStyleBuildPlugins = (packerConfig: PackerConfig, packageConfig: 
  * @param packageConfig Package configuration object.
  * @param log Logger reference.
  */
-export const generateMinStyleSheet = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
-                                            log: Logger): Promise<void> => {
+export const generateMinStyleSheet = async (
+  packerConfig: PackerConfig,
+  packageConfig: PackageConfig,
+  log: Logger
+): Promise<void> => {
   if (!packerConfig.compiler.style || packerConfig.compiler.style.inline) {
     return;
   }
@@ -175,25 +197,33 @@ export const generateMinStyleSheet = async (packerConfig: PackerConfig, packageC
 export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
   const plugins = [
     rollupIgnore(packerConfig.ignore),
-    rollupResolve(mergeDeep({
-      module: true,
-      jsnext: true,
-      main: true,
-      extensions: [ '.mjs', '.js', '.jsx', '.json', '.node' ],
-      browser: packerConfig.compiler.buildMode === 'browser',
-      preferBuiltins: true
-    }, packerConfig.compiler.advanced.rollup.pluginOptions.nodeResolve)),
-    rollupCommonjs(mergeDeep({
-      include: 'node_modules/**'
-    }, packerConfig.compiler.advanced.rollup.pluginOptions.commonjs)),
+    rollupResolve(
+      mergeDeep(
+        {
+          module: true,
+          jsnext: true,
+          main: true,
+          extensions: ['.mjs', '.js', '.jsx', '.json', '.node'],
+          browser: packerConfig.compiler.buildMode === 'browser',
+          preferBuiltins: true
+        },
+        packerConfig.compiler.advanced.rollup.pluginOptions.nodeResolve
+      )
+    ),
+    rollupCommonjs(
+      mergeDeep(
+        {
+          include: 'node_modules/**'
+        },
+        packerConfig.compiler.advanced.rollup.pluginOptions.commonjs
+      )
+    ),
     rollupJson(packerConfig.compiler.advanced.rollup.pluginOptions.json)
   ];
 
   // include global and builtin plugins only when browser build mode is enabled
   if (packerConfig.compiler.buildMode === 'browser') {
-    plugins.push(
-      rollupGlobals(packerConfig.compiler.advanced.rollup.pluginOptions.globals)
-    );
+    plugins.push(rollupGlobals(packerConfig.compiler.advanced.rollup.pluginOptions.globals));
   }
 
   return plugins;
@@ -209,9 +239,15 @@ export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
  * @param typescript Typescript compiler reference.
  * @param log  Logger reference.
  */
-export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateDefinition: boolean, check: boolean,
-                                     packerConfig: PackerConfig, babelConfig: BabelConfig, typescript: any,
-                                     log: Logger) => {
+export const getScriptBuildPlugin = (
+  packageModule: PackageModuleType,
+  generateDefinition: boolean,
+  check: boolean,
+  packerConfig: PackerConfig,
+  babelConfig: BabelConfig,
+  typescript: any,
+  log: Logger
+) => {
   const plugins = [];
   if (packerConfig.compiler.script.preprocessor === 'typescript') {
     const buildConf: RollupPluginTypescriptOptions = {
@@ -245,14 +281,19 @@ export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateD
   }
 
   plugins.push(
-    rollupBabel(mergeDeep({
-      babelrc: false,
-      exclude: 'node_modules/**',
-      extensions: ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx'],
-      plugins: moduleConfig.plugins || [],
-      presets: moduleConfig.presets || [],
-      runtimeHelpers: true,
-    }, packerConfig.compiler.advanced.rollup.pluginOptions.babel))
+    rollupBabel(
+      mergeDeep(
+        {
+          babelrc: false,
+          exclude: 'node_modules/**',
+          extensions: ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx'],
+          plugins: moduleConfig.plugins || [],
+          presets: moduleConfig.presets || [],
+          runtimeHelpers: true
+        },
+        packerConfig.compiler.advanced.rollup.pluginOptions.babel
+      )
+    )
   );
 
   return plugins;
@@ -265,19 +306,31 @@ export const getScriptBuildPlugin = (packageModule: PackageModuleType, generateD
 export const getPreBundlePlugins = (packerConfig: PackerConfig) => {
   const plugins = [];
   if (packerConfig.replacePatterns.length) {
-    plugins.push(rollupReplace(mergeDeep({
-      exclude: 'node_modules/**',
-      patterns: packerConfig.replacePatterns
-    }, packerConfig.compiler.advanced.rollup.pluginOptions.replace)));
+    plugins.push(
+      rollupReplace(
+        mergeDeep(
+          {
+            exclude: 'node_modules/**',
+            patterns: packerConfig.replacePatterns
+          },
+          packerConfig.compiler.advanced.rollup.pluginOptions.replace
+        )
+      )
+    );
   }
   plugins.push(
     rollupHandlebars(packerConfig.compiler.advanced.rollup.pluginOptions.handlebars),
-    rollupImage(mergeDeep({
-      exclude: 'node_modules/**',
-      extensions: /\.(png|jpg|jpeg|gif|svg)$/,
-      limit: packerConfig.compiler.script.image.inlineLimit,
-      output: path.join(packerConfig.dist, packerConfig.compiler.script.image.outDir)
-    }, packerConfig.compiler.advanced.rollup.pluginOptions.image))
+    rollupImage(
+      mergeDeep(
+        {
+          exclude: 'node_modules/**',
+          extensions: /\.(png|jpg|jpeg|gif|svg)$/,
+          limit: packerConfig.compiler.script.image.inlineLimit,
+          output: path.join(packerConfig.dist, packerConfig.compiler.script.image.outDir)
+        },
+        packerConfig.compiler.advanced.rollup.pluginOptions.image
+      )
+    )
   );
 
   return plugins;
@@ -290,15 +343,20 @@ export const getPreBundlePlugins = (packerConfig: PackerConfig) => {
  * @param type Package module type message.
  */
 const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string, type: string) => {
-  return rollupFilesize(mergeDeep({
-    showMinifiedSize: false,
-    showBrotliSize: false,
-    showGzippedSize: false,
-    render: (options: any, sourceBundle: any, { gzipSize, bundleSize }): string => {
-      const bundleFormatted = `bundle size: ${chalk.red(bundleSize)}`;
-      return chalk.yellow(`${logger.currentTime} ${chalk.green(taskName)} ${type} ${bundleFormatted}`);
-    }
-  }, packerConfig.compiler.advanced.rollup.pluginOptions.filesize));
+  return rollupFilesize(
+    mergeDeep(
+      {
+        showMinifiedSize: false,
+        showBrotliSize: false,
+        showGzippedSize: false,
+        render: (options: any, sourceBundle: any, { gzipSize, bundleSize }): string => {
+          const bundleFormatted = `bundle size: ${chalk.red(bundleSize)}`;
+          return chalk.yellow(`${logger.currentTime} ${chalk.green(taskName)} ${type} ${bundleFormatted}`);
+        }
+      },
+      packerConfig.compiler.advanced.rollup.pluginOptions.filesize
+    )
+  );
 };
 
 /**
@@ -309,9 +367,7 @@ const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string,
  */
 export const getPostBundlePlugins = (packerConfig: PackerConfig, task: string, type: PackageModuleType) => {
   if (logger.level <= LogLevel.INFO) {
-    return [
-      getBundleSizeLoggerPlugin(packerConfig, task, type)
-    ];
+    return [getBundleSizeLoggerPlugin(packerConfig, task, type)];
   }
 
   return [];
@@ -340,15 +396,21 @@ export const customRollupPlugins = (packerConfig: PackerConfig, type: PackageMod
  * @param trackBuildPerformance Track rollup build performance.
  * @param log Logger reference.
  */
-export const generateBundle = async (packerConfig: PackerConfig, packageConfig: PackageConfig,
-                                     bundleConfig: RollupOptions, type: PackageModuleType, minify: boolean,
-                                     trackBuildPerformance: boolean, log: Logger): Promise<void> => {
+export const generateBundle = async (
+  packerConfig: PackerConfig,
+  packageConfig: PackageConfig,
+  bundleConfig: RollupOptions,
+  type: PackageModuleType,
+  minify: boolean,
+  trackBuildPerformance: boolean,
+  log: Logger
+): Promise<void> => {
   log.trace('%s bundle build start', type);
   const bundle = await rollup(mergeDeep(bundleConfig, packerConfig.compiler.advanced.rollup.inputOptions));
   const outputOptions = mergeDeep(bundleConfig.output, packerConfig.compiler.advanced.rollup.outputOptions);
   const { output } = await bundle.write(outputOptions);
   const chunks: OutputChunk[] = output.filter((chunk: any) => !chunk.isAsset) as OutputChunk[];
-  const { map, code }  = chunks[0];
+  const { map, code } = chunks[0];
 
   log.trace('%s bundle build end', type);
 
@@ -378,18 +440,27 @@ export const generateBundle = async (packerConfig: PackerConfig, packageConfig: 
       minSourceMapConfig = undefined;
     }
 
-    const minData = terser.minify(code, mergeDeep({
-      sourceMap: minSourceMapConfig,
-      output: {
-        comments: /@preserve|@license|@cc_on/i
-      }
-    }, packerConfig.compiler.advanced.other.terser));
+    const minData = terser.minify(
+      code,
+      mergeDeep(
+        {
+          sourceMap: minSourceMapConfig,
+          output: {
+            comments: /@preserve|@license|@cc_on/i
+          }
+        },
+        packerConfig.compiler.advanced.other.terser
+      )
+    );
     log.trace('%s minified bundle terser config\n%o', type, minData);
 
     if (minData.error) {
       const { message, line, col: column } = minData.error;
-      log.error('%s bundle min build failure \n%s', type,
-        codeFrameColumns(code, { start: { line, column } }, { message }));
+      log.error(
+        '%s bundle min build failure \n%s',
+        type,
+        codeFrameColumns(code, { start: { line, column } }, { message })
+      );
       process.exit(1);
     } else {
       await writeFile(minFileDist, minData.code);

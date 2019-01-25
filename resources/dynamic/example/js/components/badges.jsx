@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default class Badges extends React.Component {
-  render () {
+  render() {
     return (
       <div className="packer-badges">
         <a href={this.props.badges.buildStatus.redirectUrl} target="_blank">

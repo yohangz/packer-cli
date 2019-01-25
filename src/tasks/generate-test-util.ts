@@ -27,26 +27,34 @@ export const parseSpecScriptExtension = (packerOptions: PackerOptions, scriptExt
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyJasmineConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment, projectDir: string,
-                                  log: Logger): TaskFunction =>  {
+export const copyJasmineConfig = (
+  packerOptions: PackerOptions,
+  testEnvironment: TestEnvironment,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
   const jasmine = path.join(__dirname, '../resources/dynamic/jasmine.json.hbs');
   log.trace('jasmine.json path: %s', jasmine);
 
   return () => {
-    return gulp.src([
-      jasmine
-    ])
+    return gulp
+      .src([jasmine])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
       })
-      .pipe(gulpHbsRuntime({
-        isTypescript: packerOptions.scriptPreprocessor === 'typescript',
-        useEnzyme: packerOptions.useEnzyme,
-        useJsDom: testEnvironment === 'jsdom'
-      }, {
-        replaceExt: ''
-      }))
+      .pipe(
+        gulpHbsRuntime(
+          {
+            isTypescript: packerOptions.scriptPreprocessor === 'typescript',
+            useEnzyme: packerOptions.useEnzyme,
+            useJsDom: testEnvironment === 'jsdom'
+          },
+          {
+            replaceExt: ''
+          }
+        )
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -56,14 +64,13 @@ export const copyJasmineConfig = (packerOptions: PackerOptions, testEnvironment:
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyJasmineHelpers = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyJasmineHelpers = (projectDir: string, log: Logger): TaskFunction => {
   const helpersGlob = path.join(__dirname, '../resources/dynamic/example/test/jasmine/helpers/**/*');
   log.trace('jasmine helpers path glob: %s', helpersGlob);
 
   return () => {
-    return gulp.src([
-      helpersGlob
-    ])
+    return gulp
+      .src([helpersGlob])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -79,16 +86,23 @@ export const copyJasmineHelpers = (projectDir: string, log: Logger): TaskFunctio
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyJasmineSpec = (scriptGlob: string, scriptExt: string, projectDir: string,
-                                log: Logger): TaskFunction =>  {
-  const specGlob = path.join(__dirname, '../resources/dynamic/example/test/jasmine',
-    scriptExt, `spec/**/*.${scriptGlob}`);
+export const copyJasmineSpec = (
+  scriptGlob: string,
+  scriptExt: string,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
+  const specGlob = path.join(
+    __dirname,
+    '../resources/dynamic/example/test/jasmine',
+    scriptExt,
+    `spec/**/*.${scriptGlob}`
+  );
   log.trace('jasmine spec path glob: %s', specGlob);
 
   return () => {
-    return gulp.src([
-      specGlob
-    ])
+    return gulp
+      .src([specGlob])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -104,16 +118,23 @@ export const copyJasmineSpec = (scriptGlob: string, scriptExt: string, projectDi
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyKarmaJasmineSpec = (scriptGlob: string, scriptExt: string, projectDir: string,
-                                     log: Logger): TaskFunction =>  {
-  const specGlob = path.join(__dirname, '../resources/dynamic/example/test/karma/jasmine',
-    scriptExt, `spec/**/*.${scriptGlob}`);
+export const copyKarmaJasmineSpec = (
+  scriptGlob: string,
+  scriptExt: string,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
+  const specGlob = path.join(
+    __dirname,
+    '../resources/dynamic/example/test/karma/jasmine',
+    scriptExt,
+    `spec/**/*.${scriptGlob}`
+  );
   log.trace('jasmine spec path glob: %s', specGlob);
 
   return () => {
-    return gulp.src([
-      specGlob
-    ])
+    return gulp
+      .src([specGlob])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -129,26 +150,34 @@ export const copyKarmaJasmineSpec = (scriptGlob: string, scriptExt: string, proj
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyMochaConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment, projectDir: string,
-                                log: Logger): TaskFunction =>  {
+export const copyMochaConfig = (
+  packerOptions: PackerOptions,
+  testEnvironment: TestEnvironment,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
   const mocha = path.join(__dirname, '../resources/dynamic/mocha.opts.hbs');
   log.trace('mocha.opts path: %s', mocha);
 
   return () => {
-    return gulp.src([
-      mocha
-    ])
+    return gulp
+      .src([mocha])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
       })
-      .pipe(gulpHbsRuntime({
-        isTypescript: packerOptions.scriptPreprocessor === 'typescript',
-        useEnzyme: packerOptions.useEnzyme,
-        useJsDom: testEnvironment === 'jsdom'
-      }, {
-        replaceExt: ''
-      }))
+      .pipe(
+        gulpHbsRuntime(
+          {
+            isTypescript: packerOptions.scriptPreprocessor === 'typescript',
+            useEnzyme: packerOptions.useEnzyme,
+            useJsDom: testEnvironment === 'jsdom'
+          },
+          {
+            replaceExt: ''
+          }
+        )
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -158,14 +187,13 @@ export const copyMochaConfig = (packerOptions: PackerOptions, testEnvironment: T
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyMochaHelpers = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyMochaHelpers = (projectDir: string, log: Logger): TaskFunction => {
   const helpersGlob = path.join(__dirname, '../resources/dynamic/example/test/mocha/helpers/**/*');
   log.trace('mocha helpers path glob: %s', helpersGlob);
 
   return () => {
-    return gulp.src([
-      helpersGlob
-    ])
+    return gulp
+      .src([helpersGlob])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -181,16 +209,23 @@ export const copyMochaHelpers = (projectDir: string, log: Logger): TaskFunction 
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyMochaTestSpec = (scriptGlob: string, scriptExt: string, projectDir: string,
-                                  log: Logger): TaskFunction =>  {
-  const testGlob = path.join(__dirname, '../resources/dynamic/example/test/mocha',
-    scriptExt, `test/**/*.${scriptGlob}`);
+export const copyMochaTestSpec = (
+  scriptGlob: string,
+  scriptExt: string,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
+  const testGlob = path.join(
+    __dirname,
+    '../resources/dynamic/example/test/mocha',
+    scriptExt,
+    `test/**/*.${scriptGlob}`
+  );
   log.trace('mocha test spec path glob: %s', testGlob);
 
   return () => {
-    return gulp.src([
-      testGlob
-    ])
+    return gulp
+      .src([testGlob])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -205,14 +240,13 @@ export const copyMochaTestSpec = (scriptGlob: string, scriptExt: string, project
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyKarmaMochaTestSpec = (scriptExt: string, projectDir: string, log: Logger): TaskFunction =>  {
+export const copyKarmaMochaTestSpec = (scriptExt: string, projectDir: string, log: Logger): TaskFunction => {
   const testGlob = path.join(__dirname, '../resources/dynamic/example/test/karma/mocha', scriptExt, 'spec/**/*');
   log.trace('mocha test spec path glob: %s', testGlob);
 
   return () => {
-    return gulp.src([
-      testGlob
-    ])
+    return gulp
+      .src([testGlob])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -228,26 +262,34 @@ export const copyKarmaMochaTestSpec = (scriptExt: string, projectDir: string, lo
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyJestConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment, projectDir: string,
-                               log: Logger): TaskFunction =>  {
+export const copyJestConfig = (
+  packerOptions: PackerOptions,
+  testEnvironment: TestEnvironment,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
   const jest = path.join(__dirname, '../resources/dynamic/jest.config.js.hbs');
   log.trace('jest.config.js path: %s', jest);
 
   return () => {
-    return gulp.src([
-      jest
-    ])
+    return gulp
+      .src([jest])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
       })
-      .pipe(gulpHbsRuntime({
-        isTypescript: packerOptions.scriptPreprocessor === 'typescript',
-        testEnvironment,
-        useEnzyme: packerOptions.useEnzyme
-      }, {
-        replaceExt: ''
-      }))
+      .pipe(
+        gulpHbsRuntime(
+          {
+            isTypescript: packerOptions.scriptPreprocessor === 'typescript',
+            testEnvironment,
+            useEnzyme: packerOptions.useEnzyme
+          },
+          {
+            replaceExt: ''
+          }
+        )
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -257,14 +299,13 @@ export const copyJestConfig = (packerOptions: PackerOptions, testEnvironment: Te
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyJestMockScripts = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyJestMockScripts = (projectDir: string, log: Logger): TaskFunction => {
   const mockScriptGlob = path.join(__dirname, '../resources/dynamic/example/test/jest/__mocks__/**/*');
   log.trace('mock script glob bath: %s', mockScriptGlob);
 
   return () => {
-    return gulp.src([
-      mockScriptGlob
-    ])
+    return gulp
+      .src([mockScriptGlob])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -280,16 +321,18 @@ export const copyJestMockScripts = (projectDir: string, log: Logger): TaskFuncti
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyJestTests = (scriptGlob: string, scriptExt: string, projectDir: string,
-                              log: Logger): TaskFunction =>  {
-  const testsGlob = path.join(__dirname, '../resources/dynamic/example/test/jest',
-    scriptExt, `__tests__/**/*.${scriptGlob}`);
+export const copyJestTests = (scriptGlob: string, scriptExt: string, projectDir: string, log: Logger): TaskFunction => {
+  const testsGlob = path.join(
+    __dirname,
+    '../resources/dynamic/example/test/jest',
+    scriptExt,
+    `__tests__/**/*.${scriptGlob}`
+  );
   log.trace('jest tests path glob: %s', testsGlob);
 
   return () => {
-    return gulp.src([
-      testsGlob
-    ])
+    return gulp
+      .src([testsGlob])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -303,14 +346,13 @@ export const copyJestTests = (scriptGlob: string, scriptExt: string, projectDir:
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyTestTypescriptConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyTestTypescriptConfig = (projectDir: string, log: Logger): TaskFunction => {
   const tsconfig = path.join(__dirname, '../resources/static/tsconfig.test.json');
   log.trace('tsconfig.test.json path: %s', tsconfig);
 
   return () => {
-    return gulp.src([
-      tsconfig
-    ])
+    return gulp
+      .src([tsconfig])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -324,14 +366,13 @@ export const copyTestTypescriptConfig = (projectDir: string, log: Logger): TaskF
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyKarmaConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyKarmaConfig = (projectDir: string, log: Logger): TaskFunction => {
   const karma = path.join(__dirname, '../resources/static/karma.conf.js');
   log.trace('karma.conf.js path: %s', karma);
 
   return () => {
-    return gulp.src([
-      karma
-    ])
+    return gulp
+      .src([karma])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -348,9 +389,13 @@ export const copyKarmaConfig = (projectDir: string, log: Logger): TaskFunction =
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const getTestSpecGeneratorTasks = (packerOptions: PackerOptions, scriptExt: string,
-                                          testEnvironment: TestEnvironment, projectDir: string,
-                                          log: Logger): TaskFunction[] => {
+export const getTestSpecGeneratorTasks = (
+  packerOptions: PackerOptions,
+  scriptExt: string,
+  testEnvironment: TestEnvironment,
+  projectDir: string,
+  log: Logger
+): TaskFunction[] => {
   const tasks: TaskFunction[] = [];
   const scriptGlob = parseSpecScriptExtension(packerOptions, scriptExt);
 

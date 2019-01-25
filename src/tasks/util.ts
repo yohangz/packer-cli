@@ -29,12 +29,14 @@ export const runShellCommand = (command: string, dir: string, log: Logger) => {
   log.trace('shell command execution options:\n%o', options);
   log.trace('shell command: %s %s', cmd, commandSegments.join(' '));
 
-  return new Promise((resolve: () => void): void => {
-    const childProcess = spawn(cmd, commandSegments, options);
-    childProcess.on('close', () => {
-      resolve();
-    });
-  });
+  return new Promise(
+    (resolve: () => void): void => {
+      const childProcess = spawn(cmd, commandSegments, options);
+      childProcess.on('close', () => {
+        resolve();
+      });
+    }
+  );
 };
 
 /**
@@ -59,14 +61,18 @@ export const makeRelativeDirPath = (...fragments: string[]): void => {
  */
 export const writeFile = (filePath: string, data: any): Promise<void> => {
   return new Promise<void>((resolve: () => void, reject: (e: Error) => void) => {
-    fs.writeFile(filePath, data, (err: NodeJS.ErrnoException): void => {
-      if (err) {
-        reject(err);
-        return;
-      }
+    fs.writeFile(
+      filePath,
+      data,
+      (err: NodeJS.ErrnoException): void => {
+        if (err) {
+          reject(err);
+          return;
+        }
 
-      resolve();
-    });
+        resolve();
+      }
+    );
   });
 };
 
@@ -76,14 +82,17 @@ export const writeFile = (filePath: string, data: any): Promise<void> => {
  */
 export const readFile = (filePath: string): Promise<string> => {
   return new Promise<string>((resolve: (data: string) => void, reject: (e: Error) => void) => {
-    fs.readFile(filePath, (err: NodeJS.ErrnoException, data: Buffer): void => {
-      if (err) {
-        reject(err);
-        return;
-      }
+    fs.readFile(
+      filePath,
+      (err: NodeJS.ErrnoException, data: Buffer): void => {
+        if (err) {
+          reject(err);
+          return;
+        }
 
-      resolve(data.toString('utf8'));
-    });
+        resolve(data.toString('utf8'));
+      }
+    );
   });
 };
 
@@ -150,9 +159,9 @@ export const watchSource = async (watchPath: string | string[], callback: () => 
  */
 export const requireDependency = (module: string, log: Logger): any => {
   const requirePath = require.resolve(module, {
-    paths: [ path.join(process.cwd(), 'node_modules') ]
+    paths: [path.join(process.cwd(), 'node_modules')]
   });
 
-  log.trace('import \'%s\' module from \'%s\'', module, requirePath);
+  log.trace("import '%s' module from '%s'", module, requirePath);
   return require(requirePath);
 };

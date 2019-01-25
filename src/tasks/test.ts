@@ -12,7 +12,6 @@ import { karmaPackerPlugin } from '../plugins/karma-packer-plugin';
  * Initialize test associated gulp tasks.
  */
 export default function init() {
-
   /**
    * Unit test execution gulp task.
    *
@@ -33,7 +32,7 @@ export default function init() {
         const karmaPackerConfig: any = {
           packer: karmaPackerPlugin(log)
         };
-        const karmaConfig = config.parseConfig(path.join(process.cwd(), 'karma.conf.js'),  karmaPackerConfig);
+        const karmaConfig = config.parseConfig(path.join(process.cwd(), 'karma.conf.js'), karmaPackerConfig);
         const server = new Server(karmaConfig, (exitCode) => {
           log.info('Karma has exited with %d', exitCode);
           process.exit(exitCode);

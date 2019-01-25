@@ -1,25 +1,16 @@
 {
   "defaultSeverity": "error",
-  "extends": [
-    "tslint:recommended"
-  ],
-  "jsRules": {
-  },
+  "extends": ["tslint:recommended"],
+  "jsRules": {},
   "rules": {
-    "indent": [
-      true,
-      "spaces",
-      2
-    ],
-    "quotemark": [
-      true,
-      "single"
-    ],
+    "indent": [true, "spaces", 2],
+    "quotemark": false,
     "trailing-comma": false,
     "ordered-imports": false,
     "no-console": false,
     "object-literal-sort-keys": false,
-    "interface-name": [true, "never-prefix"]
+    "interface-name": [true, "never-prefix"],
+    "object-literal-key-quotes": [true, "as-needed"]
   },
   "rulesDirectory": []
 }

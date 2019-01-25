@@ -46,36 +46,45 @@ export const parseBundleFormat = (packerOptions: PackerOptions): NodeBundleForma
  * @param testEnvironment Test environment type.
  * @param projectDir Project root directory.
  */
-export const copyPackerConfig = (packerOptions: PackerOptions, scriptExt: string, buildMode: BuildMode,
-                                 testEnvironment: TestEnvironment, projectDir: string): TaskFunction => {
+export const copyPackerConfig = (
+  packerOptions: PackerOptions,
+  scriptExt: string,
+  buildMode: BuildMode,
+  testEnvironment: TestEnvironment,
+  projectDir: string
+): TaskFunction => {
   const entryFile = `index.${scriptExt}`;
   const mapMode = parseDependencyMapMode(packerOptions);
   const bundleFormat = parseBundleFormat(packerOptions);
   const packerTemplatePath = path.join(__dirname, '../resources/dynamic/.packerrc.js.hbs');
 
   return () => {
-    return gulp.src([
-      packerTemplatePath
-    ])
-      .pipe(gulpHbsRuntime({
-        entry: entryFile,
-        buildMode,
-        scriptPreprocessor: packerOptions.scriptPreprocessor,
-        styleSupport: packerOptions.styleSupport,
-        inlineStyle: packerOptions.bundleStyles,
-        stylePreprocessor: packerOptions.stylePreprocessor,
-        isMocha: packerOptions.testFramework === 'mocha',
-        isReactLib: packerOptions.reactLib,
-        bundleFormat,
-        namespace: packerOptions.namespace,
-        amdId: packerOptions.amdId,
-        testFramework: packerOptions.testFramework,
-        testEnvironment,
-        serveSupport: packerOptions.browserCompliant,
-        dependencyMapMode: mapMode
-      }, {
-        replaceExt: ''
-      }))
+    return gulp
+      .src([packerTemplatePath])
+      .pipe(
+        gulpHbsRuntime(
+          {
+            entry: entryFile,
+            buildMode,
+            scriptPreprocessor: packerOptions.scriptPreprocessor,
+            styleSupport: packerOptions.styleSupport,
+            inlineStyle: packerOptions.bundleStyles,
+            stylePreprocessor: packerOptions.stylePreprocessor,
+            isMocha: packerOptions.testFramework === 'mocha',
+            isReactLib: packerOptions.reactLib,
+            bundleFormat,
+            namespace: packerOptions.namespace,
+            amdId: packerOptions.amdId,
+            testFramework: packerOptions.testFramework,
+            testEnvironment,
+            serveSupport: packerOptions.browserCompliant,
+            dependencyMapMode: mapMode
+          },
+          {
+            replaceExt: ''
+          }
+        )
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -99,16 +108,17 @@ export const licenseCopy = (packerOptions: PackerOptions, projectDir: string, lo
   log.trace('template data: %o', templateData);
 
   return () => {
-    return gulp.src([
-      licenseFilePath
-    ])
+    return gulp
+      .src([licenseFilePath])
       .on('error', (e) => {
         log.error('missing license file template: %s\n', e.stack || e.message);
         process.exit(1);
       })
-      .pipe(gulpHbsRuntime(templateData, {
-        rename: 'LICENSE'
-      }))
+      .pipe(
+        gulpHbsRuntime(templateData, {
+          rename: 'LICENSE'
+        })
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -129,16 +139,17 @@ export const copyReadme = (packageConfig: PackageConfig, projectDir: string, log
   log.trace('template data: %o', templateData);
 
   return () => {
-    return gulp.src([
-      path.join(__dirname, '../resources/dynamic/README.md.hbs')
-    ])
+    return gulp
+      .src([path.join(__dirname, '../resources/dynamic/README.md.hbs')])
       .on('error', (e) => {
         log.error('missing README.md template: %s\n', e.stack || e.message);
         process.exit(1);
       })
-      .pipe(gulpHbsRuntime(templateData, {
-        replaceExt: ''
-      }))
+      .pipe(
+        gulpHbsRuntime(templateData, {
+          replaceExt: ''
+        })
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -151,8 +162,13 @@ export const copyReadme = (packageConfig: PackageConfig, projectDir: string, log
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMode, testEnvironment: TestEnvironment,
-                                projectDir: string, log: Logger): TaskFunction => {
+export const copyBabelConfig = (
+  packerOptions: PackerOptions,
+  buildMode: BuildMode,
+  testEnvironment: TestEnvironment,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
   log.trace('copy babel config');
   const babelrc = path.join(__dirname, '../resources/dynamic/.babelrc.hbs');
   log.trace('babel config glob: %s', babelrc);
@@ -166,12 +182,13 @@ export const copyBabelConfig = (packerOptions: PackerOptions, buildMode: BuildMo
   log.trace('template data: %o', templateData);
 
   return () => {
-    return gulp.src([
-      babelrc
-    ])
-      .pipe(gulpHbsRuntime(templateData, {
-        replaceExt: ''
-      }))
+    return gulp
+      .src([babelrc])
+      .pipe(
+        gulpHbsRuntime(templateData, {
+          replaceExt: ''
+        })
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -187,16 +204,20 @@ export const copyGitIgnore = (projectDir: string, log: Logger): TaskFunction => 
   log.trace('.gitignore.hbs path: %s', gitignore);
 
   return () => {
-    return gulp.src([
-      gitignore
-    ])
+    return gulp
+      .src([gitignore])
       .on('error', (e) => {
         log.error('missing .gitignore template: %s\n', e.stack || e.message);
         process.exit(1);
       })
-      .pipe(gulpHbsRuntime({}, {
-        replaceExt: ''
-      }))
+      .pipe(
+        gulpHbsRuntime(
+          {},
+          {
+            replaceExt: ''
+          }
+        )
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -215,10 +236,8 @@ export const copyPackerAssets = (projectDir: string, log: Logger): TaskFunction 
   log.trace('bin template path: %s', bin);
 
   return () => {
-    return gulp.src([
-      banner,
-      bin
-    ])
+    return gulp
+      .src([banner, bin])
       .on('error', (e) => {
         log.error('missing packer asset: %s\n', e.stack || e.message);
         process.exit(1);
@@ -232,7 +251,7 @@ export const copyPackerAssets = (projectDir: string, log: Logger): TaskFunction 
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyTypescriptConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyTypescriptConfig = (projectDir: string, log: Logger): TaskFunction => {
   const tsconfig = path.join(__dirname, '../resources/static/tsconfig.json');
   log.trace('tsconfig.json path: %s', tsconfig);
 
@@ -240,10 +259,8 @@ export const copyTypescriptConfig = (projectDir: string, log: Logger): TaskFunct
   log.trace('tslint.json path: %s', tslint);
 
   return () => {
-    return gulp.src([
-      tsconfig,
-      tslint
-    ])
+    return gulp
+      .src([tsconfig, tslint])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -257,14 +274,13 @@ export const copyTypescriptConfig = (projectDir: string, log: Logger): TaskFunct
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyPostCssConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyPostCssConfig = (projectDir: string, log: Logger): TaskFunction => {
   const postCss = path.join(__dirname, '../resources/static/postcss.config.js');
   log.trace('karma.conf.js path: %s', postCss);
 
   return () => {
-    return gulp.src([
-      postCss
-    ])
+    return gulp
+      .src([postCss])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -278,14 +294,13 @@ export const copyPostCssConfig = (projectDir: string, log: Logger): TaskFunction
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyEsLintConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyEsLintConfig = (projectDir: string, log: Logger): TaskFunction => {
   const eslintrc = path.join(__dirname, '../resources/static/.eslintrc.yml');
   log.trace('eslintrc.yml path: %s', eslintrc);
 
   return () => {
-    return gulp.src([
-      eslintrc
-    ])
+    return gulp
+      .src([eslintrc])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -299,14 +314,13 @@ export const copyEsLintConfig = (projectDir: string, log: Logger): TaskFunction 
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyStyleLintConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyStyleLintConfig = (projectDir: string, log: Logger): TaskFunction => {
   const styleLintrc = path.join(__dirname, '../resources/static/.stylelintrc.json');
   log.trace('.stylelintrc.json path: %s', styleLintrc);
 
   return () => {
-    return gulp.src([
-      styleLintrc
-    ])
+    return gulp
+      .src([styleLintrc])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -330,10 +344,8 @@ export const copyCommonConfig = (packageConfig: PackageConfig, projectDir: strin
   log.trace('.travis.yml path: %s', travis);
 
   return () => {
-    return gulp.src([
-      editorConfig,
-      travis,
-    ])
+    return gulp
+      .src([editorConfig, travis])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -348,14 +360,15 @@ export const copyCommonConfig = (packageConfig: PackageConfig, projectDir: strin
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyPrettierConfig = (projectDir: string, log: Logger): TaskFunction =>  {
+export const copyPrettierConfig = (projectDir: string, log: Logger): TaskFunction => {
   const prettierrc = path.join(__dirname, '../resources/static/.prettierrc');
+  const prettierignore = path.join(__dirname, '../resources/static/.prettierignore');
   log.trace('.prettierrc path: %s', prettierrc);
+  log.trace('.prettierignore path: %s', prettierignore);
 
   return () => {
-    return gulp.src([
-      prettierrc
-    ])
+    return gulp
+      .src([prettierrc, prettierignore])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -374,9 +387,15 @@ export const copyPrettierConfig = (projectDir: string, log: Logger): TaskFunctio
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const getConfigFileGenerateTasks = (packerOptions: PackerOptions, packageConfig: PackageConfig,
-                                           buildMode: BuildMode, scriptExt: string, testEnvironment: TestEnvironment,
-                                           projectDir: string, log: Logger): TaskFunction[] => {
+export const getConfigFileGenerateTasks = (
+  packerOptions: PackerOptions,
+  packageConfig: PackageConfig,
+  buildMode: BuildMode,
+  scriptExt: string,
+  testEnvironment: TestEnvironment,
+  projectDir: string,
+  log: Logger
+): TaskFunction[] => {
   const tasks: TaskFunction[] = [];
 
   if (packerOptions.scriptPreprocessor === 'typescript') {

@@ -12,8 +12,11 @@ import logger from '../common/logger';
 import { meta } from './meta';
 import {
   getScriptBuildPlugin,
-  generateBundle, customRollupPlugins, getExternalFilter,
-  extractBundleExternals, generateMinStyleSheet,
+  generateBundle,
+  customRollupPlugins,
+  getExternalFilter,
+  extractBundleExternals,
+  generateMinStyleSheet,
   getBanner,
   getBaseConfig,
   getPostBundlePlugins,
@@ -27,7 +30,6 @@ import { args, requireDependency } from './util';
  * Initialize build associated gulp tasks.
  */
 export default function init() {
-
   /**
    * Copy build essentials gulp task.
    * This task will copy dynamically generated package.json file and packer config specified copy globs.
@@ -57,8 +59,9 @@ export default function init() {
       }
 
       if (config.compiler.script.preprocessor === 'typescript') {
-        targetPackage.typings =
-          config.compiler.script.tsd ? path.join(config.compiler.script.tsd, 'index.d.ts') : 'index.d.ts';
+        targetPackage.typings = config.compiler.script.tsd
+          ? path.join(config.compiler.script.tsd, 'index.d.ts')
+          : 'index.d.ts';
       }
 
       if (config.compiler.build.es5Min) {
@@ -106,11 +109,15 @@ export default function init() {
       // copy the needed additional files in the 'dist' folder
       if (config.copy.length > 0) {
         log.trace('copy static files and package.json');
-        return gulp.src(config.copy.map((copyFile: string) => {
-          return path.join(process.cwd(), copyFile);
-        }), {
-          base: process.cwd()
-        })
+        return gulp
+          .src(
+            config.copy.map((copyFile: string) => {
+              return path.join(process.cwd(), copyFile);
+            }),
+            {
+              base: process.cwd()
+            }
+          )
           .on('error', (e) => {
             log.error('copy source missing: %s\n', e.stack || e.message);
             process.exit(1);
@@ -128,7 +135,6 @@ export default function init() {
             log.trace('end');
           });
       }
-
     } catch (e) {
       log.error('task failure: %s\n', e.stack || e.message);
       process.exit(1);
@@ -152,32 +158,40 @@ export default function init() {
         return;
       }
 
-      return gulp.src([path.join(process.cwd(), '.packer/bin.hbs')])
+      return gulp
+        .src([path.join(process.cwd(), '.packer/bin.hbs')])
         .on('error', (e) => {
           log.error('bin source missing: %s\n', e.stack || e.message);
           process.exit(1);
         })
-        .pipe(gulpHbsRuntime({
-          packageName: packageJson.name,
-          format: config.bundle.format
-        }, {
-          rename: `${packageJson.name}.js`
-        }))
-        .pipe(chmod({
-          group: {
-            execute: true,
-            read: true
-          },
-          others: {
-            execute: true,
-            read: true
-          },
-          owner: {
-            execute: true,
-            read: true,
-            write: true
-          }
-        })) // Grant read and execute permission.
+        .pipe(
+          gulpHbsRuntime(
+            {
+              packageName: packageJson.name,
+              format: config.bundle.format
+            },
+            {
+              rename: `${packageJson.name}.js`
+            }
+          )
+        )
+        .pipe(
+          chmod({
+            group: {
+              execute: true,
+              read: true
+            },
+            others: {
+              execute: true,
+              read: true
+            },
+            owner: {
+              execute: true,
+              read: true,
+              write: true
+            }
+          })
+        ) // Grant read and execute permission.
         .pipe(gulp.dest(path.join(process.cwd(), config.dist, 'bin')))
         .on('finish', () => {
           log.trace('end');
@@ -240,8 +254,16 @@ export default function init() {
 
       log.trace('flat bundle rollup config:\n%o', flatConfig);
       buildTasks.push(
-        generateBundle(packerConfig, packageConfig, flatConfig, 'bundle',
-          packerConfig.compiler.build.bundleMin, trackBuildPerformance, log));
+        generateBundle(
+          packerConfig,
+          packageConfig,
+          flatConfig,
+          'bundle',
+          packerConfig.compiler.build.bundleMin,
+          trackBuildPerformance,
+          log
+        )
+      );
 
       if (packerConfig.compiler.build.es5) {
         // FESM+ES5 flat module bundle.
@@ -264,8 +286,16 @@ export default function init() {
 
         log.trace('es5 bundle rollup config:\n%o', es5config);
         buildTasks.push(
-          generateBundle(packerConfig,  packageConfig, es5config, 'es5',
-            packerConfig.compiler.build.es5Min, trackBuildPerformance, log));
+          generateBundle(
+            packerConfig,
+            packageConfig,
+            es5config,
+            'es5',
+            packerConfig.compiler.build.es5Min,
+            trackBuildPerformance,
+            log
+          )
+        );
       }
 
       if (packerConfig.compiler.build.esnext) {
@@ -289,8 +319,16 @@ export default function init() {
 
         log.trace('esnext bundle rollup config:\n%o', esnextConfig);
         buildTasks.push(
-          generateBundle(packerConfig,  packageConfig, esnextConfig, 'esnext',
-            packerConfig.compiler.build.esnextMin, trackBuildPerformance, log));
+          generateBundle(
+            packerConfig,
+            packageConfig,
+            esnextConfig,
+            'esnext',
+            packerConfig.compiler.build.esnextMin,
+            trackBuildPerformance,
+            log
+          )
+        );
       }
 
       if (packerConfig.compiler.concurrentBuild) {

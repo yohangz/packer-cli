@@ -47,17 +47,7 @@ export const packerSchema = {
         packageFieldsToCopy: {
           type: 'array',
           optional: false,
-          def: [
-            'name',
-            'version',
-            'description',
-            'keywords',
-            'author',
-            'repository',
-            'license',
-            'bugs',
-            'homepage'
-          ],
+          def: ['name', 'version', 'description', 'keywords', 'author', 'repository', 'license', 'bugs', 'homepage'],
           items: {
             type: 'string'
           }
@@ -125,7 +115,7 @@ export const packerSchema = {
             tsd: {
               type: 'string',
               optional: false,
-              def: 'typings',
+              def: 'typings'
             },
             image: {
               type: 'object',
@@ -328,10 +318,7 @@ export const packerSchema = {
       items: {
         type: 'string'
       },
-      def: [
-        'README.md',
-        'LICENSE'
-      ]
+      def: ['README.md', 'LICENSE']
     },
     ignore: {
       type: 'array',
@@ -352,14 +339,14 @@ export const packerSchema = {
             optional: false,
             items: {
               type: 'string'
-            },
+            }
           },
           exclude: {
             type: ['string', 'array'],
             optional: true,
             items: {
               type: 'string'
-            },
+            }
           },
           test: {
             type: ['string', 'object'],
@@ -591,9 +578,7 @@ export const packerSchema = {
         extensions: {
           type: 'array',
           optional: false,
-          def: [
-            'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json'
-          ],
+          def: ['js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json'],
           items: {
             type: 'string'
           }
@@ -606,7 +591,7 @@ export const packerSchema = {
               type: 'string',
               optional: false,
               def: 'prettier --write {,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
-            },
+            }
           }
         }
       }
@@ -635,7 +620,6 @@ const mapObjectDefaults = (schema) => {
  * Extend schema inspector sanitizations.
  */
 inspector.Sanitization.extend({
-
   /**
    * Map object defaults if invalid.
    * @param schema Inspector schema.
@@ -643,7 +627,7 @@ inspector.Sanitization.extend({
    */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
-  mapDef: function (schema, candidate) {
+  mapDef: function(schema, candidate) {
     let invalidType: boolean;
     if (Array.isArray(schema.type)) {
       invalidType = !schema.type.includes(typeof candidate);
@@ -665,7 +649,7 @@ inspector.Sanitization.extend({
    */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
-  acceptOnly: function (schema, candidate) {
+  acceptOnly: function(schema, candidate) {
     if (schema.$acceptOnly && typeof candidate === 'boolean') {
       if (String(candidate) !== schema.$acceptOnly) {
         this.report(`support only boolean value '${schema.$acceptOnly}' or object`);
@@ -681,7 +665,6 @@ inspector.Sanitization.extend({
  * Extend schema inspector validations.
  */
 inspector.Validation.extend({
-
   /**
    * Validate whether candidate value is accept only boolean value.
    * @param schema Inspector schema.
@@ -689,7 +672,7 @@ inspector.Validation.extend({
    */
   // Do not use arrow functions for this.
   // tslint:disable-next-line
-  acceptOnly: function (schema, candidate) {
+  acceptOnly: function(schema, candidate) {
     if (schema.$acceptOnly && typeof candidate === 'boolean') {
       if (String(candidate) !== schema.$acceptOnly) {
         this.report(`support only boolean value '${schema.$acceptOnly}' or object`);
@@ -707,46 +690,50 @@ inspector.Validation.extend({
 export const crossValidateConfig = (packerConfig: PackerConfig, log: Logger): void => {
   const commonMsg = 'malformed packer config (.packerrc.js):\n';
   const entryExt = path.extname(packerConfig.entry);
-  if (packerConfig.compiler.script.preprocessor === 'typescript'
-    && !['.ts', '.tsx'].includes(entryExt)) {
-    log.error(commonMsg + 'Entry extension must be \'.ts\' when script preprocessor is \'typescript\'');
+  if (packerConfig.compiler.script.preprocessor === 'typescript' && !['.ts', '.tsx'].includes(entryExt)) {
+    log.error(commonMsg + "Entry extension must be '.ts' when script preprocessor is 'typescript'");
     process.exit(1);
   }
 
-  if (packerConfig.compiler.script.preprocessor === 'none'
-    && !['.js', '.jsx', '.es6', '.es', '.mjs'].includes(entryExt)) {
-    log.error(commonMsg + 'Entry extension must be \'.js\', \'.jsx\', \'.es6\', \'.es\' or \'.mjs\' ' +
-      'when script preprocessor is \'none\'');
+  if (
+    packerConfig.compiler.script.preprocessor === 'none' &&
+    !['.js', '.jsx', '.es6', '.es', '.mjs'].includes(entryExt)
+  ) {
+    log.error(
+      commonMsg +
+        "Entry extension must be '.js', '.jsx', '.es6', '.es' or '.mjs' " +
+        "when script preprocessor is 'none'"
+    );
     process.exit(1);
   }
 
   if (['node', 'node-cli'].includes(packerConfig.compiler.buildMode)) {
     if (!['cjs', 'esm'].includes(packerConfig.bundle.format)) {
-      log.error(commonMsg + 'Bundle format must be \'cjs\' or \'esm\' when bundle mode is \'node\' or \'node-cli\'');
+      log.error(commonMsg + "Bundle format must be 'cjs' or 'esm' when bundle mode is 'node' or 'node-cli'");
       process.exit(1);
     }
 
     if (packerConfig.serve !== false) {
-      log.error(commonMsg + 'Serve on watch mode is not supported when bundle format is \'cjs\' or \'esm\'');
+      log.error(commonMsg + "Serve on watch mode is not supported when bundle format is 'cjs' or 'esm'");
       process.exit(1);
     }
   }
 
-  if (packerConfig.compiler.buildMode === 'browser'
-    && !['umd', 'amd', 'iife', 'system'].includes(packerConfig.bundle.format)) {
-    log.error(commonMsg +
-      'Bundle format must be \'umd\', \'amd\', \'iife\' or \'system\' when bundle mode is \'browser\'');
+  if (
+    packerConfig.compiler.buildMode === 'browser' &&
+    !['umd', 'amd', 'iife', 'system'].includes(packerConfig.bundle.format)
+  ) {
+    log.error(commonMsg + "Bundle format must be 'umd', 'amd', 'iife' or 'system' when bundle mode is 'browser'");
     process.exit(1);
   }
 
   if (packerConfig.test.framework === 'jest' && packerConfig.test.environment === 'browser') {
-    log.error(commonMsg + 'Test environment \'browser\' is not supported when test framework is \'jest\'');
+    log.error(commonMsg + "Test environment 'browser' is not supported when test framework is 'jest'");
     process.exit(1);
   }
 
   if (['jasmine', 'mocha'].includes(packerConfig.test.framework) && packerConfig.test.environment === 'enzyme') {
-    log.error(commonMsg +
-      'Test environment \'enzyme\' is only supported when test framework is \'jasmine\' or \'mocha\'');
+    log.error(commonMsg + "Test environment 'enzyme' is only supported when test framework is 'jasmine' or 'mocha'");
     process.exit(1);
   }
 };

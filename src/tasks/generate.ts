@@ -18,7 +18,7 @@ import {
   parseStylePreprocessorExtension,
   parseTestEnvironment
 } from './parser';
-import { getConfigFileGenerateTasks, } from './generate-config-util';
+import { getConfigFileGenerateTasks } from './generate-config-util';
 import { getTestSpecGeneratorTasks } from './generate-test-util';
 import { getExampleSourceGenerationsTasks } from './generate-source-util';
 import { getDemoSourceGenerationTasks } from './generate-demo-source-util';
@@ -28,7 +28,6 @@ import { buildPackageConfig } from './generate-package-config';
  * Initialize project generation associated gulp tasks
  */
 export default function init() {
-
   /**
    * Project generate gulp task.
    */
@@ -48,12 +47,12 @@ export default function init() {
           type: 'input'
         },
         {
-          message: 'Author\'s name (optional)?',
+          message: "Author's name (optional)?",
           name: 'author',
           type: 'input'
         },
         {
-          message: 'Author\'s email address (optional)?',
+          message: "Author's email address (optional)?",
           name: 'email',
           type: 'input',
           when: (answers) => {
@@ -64,7 +63,7 @@ export default function init() {
           }
         },
         {
-          message: 'Author\'s github username (optional)?',
+          message: "Author's github username (optional)?",
           name: 'githubUsername',
           type: 'input',
           validate: (value) => {
@@ -80,12 +79,9 @@ export default function init() {
           }
         },
         {
-          choices: [
-            'none',
-            'typescript'
-          ],
+          choices: ['none', 'typescript'],
           default: 0,
-          message: 'What\'s the script pre processor you want to use?',
+          message: "What's the script pre processor you want to use?",
           name: 'scriptPreprocessor',
           type: 'list'
         },
@@ -96,15 +92,9 @@ export default function init() {
           type: 'confirm'
         },
         {
-          choices: [
-            'scss',
-            'sass',
-            'less',
-            'stylus',
-            'none'
-          ],
+          choices: ['scss', 'sass', 'less', 'stylus', 'none'],
           default: 0,
-          message: 'What\'s the style pre processor you want to use?',
+          message: "What's the style pre processor you want to use?",
           name: 'stylePreprocessor',
           type: 'list',
           when: (answers) => {
@@ -145,14 +135,9 @@ export default function init() {
           }
         },
         {
-          choices: [
-            'umd',
-            'amd',
-            'iife',
-            'system'
-          ],
+          choices: ['umd', 'amd', 'iife', 'system'],
           default: 0,
-          message: 'What\'s the build bundle format you want to use?',
+          message: "What's the build bundle format you want to use?",
           name: 'bundleFormat',
           type: 'list',
           validate: (value) => {
@@ -164,12 +149,12 @@ export default function init() {
         },
         {
           default: 'my-lib',
-          message: 'What\'s the AMD id you want to use?',
+          message: "What's the AMD id you want to use?",
           name: 'amdId',
           type: 'input',
           validate: (value) => {
             const matches = value.match(/^(?:[a-z]\d*(?:-[a-z])?)*$/i);
-            return !!matches || 'AMD id should only contain alphabetic characters, i.e: \'my-bundle\'';
+            return !!matches || "AMD id should only contain alphabetic characters, i.e: 'my-bundle'";
           },
           when: (answers) => {
             return answers.bundleFormat === 'umd' || answers.bundleFormat === 'amd';
@@ -177,25 +162,21 @@ export default function init() {
         },
         {
           default: 'com.lib',
-          message: 'What\'s the library namespace you want to use?',
+          message: "What's the library namespace you want to use?",
           name: 'namespace',
           type: 'input',
           validate: (value) => {
             const matches = value.match(/^(?:[a-z]\d*(?:\.[a-z])?)+$/i);
-            return !!matches || 'Namespace should be an object path, i.e: \'ys.nml.lib\'';
+            return !!matches || "Namespace should be an object path, i.e: 'ys.nml.lib'";
           },
           when: (answers) => {
-            return answers.bundleFormat === 'umd'
-              || answers.bundleFormat === 'iife'
-              || answers.bundleFormat === 'system';
+            return (
+              answers.bundleFormat === 'umd' || answers.bundleFormat === 'iife' || answers.bundleFormat === 'system'
+            );
           }
         },
         {
-          choices: [
-            'jest',
-            'mocha',
-            'jasmine'
-          ],
+          choices: ['jest', 'mocha', 'jasmine'],
           default: 0,
           message: 'Which unit test framework do you want to use?',
           name: 'testFramework',
@@ -205,11 +186,7 @@ export default function init() {
           }
         },
         {
-          choices: [
-            'mocha',
-            'jasmine',
-            'jest'
-          ],
+          choices: ['mocha', 'jasmine', 'jest'],
           default: 0,
           message: 'Which unit test framework do you want to use?',
           name: 'testFramework',
@@ -228,22 +205,22 @@ export default function init() {
           }
         },
         {
-          choices: [
-            'jsdom',
-            'browser'
-          ],
+          choices: ['jsdom', 'browser'],
           default: 0,
           message: 'Choose the test environment that will be used for testing?',
           name: 'testEnvironment',
           type: 'list',
           when: (answers) => {
-            return answers.browserCompliant && !answers.reactLib
-              && (answers.testFramework === 'jasmine' || answers.testFramework === 'mocha');
+            return (
+              answers.browserCompliant &&
+              !answers.reactLib &&
+              (answers.testFramework === 'jasmine' || answers.testFramework === 'mocha')
+            );
           }
         },
         {
-          default: (new Date()).getFullYear(),
-          message: 'What\'s the library copyright year (optional)?',
+          default: new Date().getFullYear(),
+          message: "What's the library copyright year (optional)?",
           name: 'year',
           type: 'input'
         },
@@ -260,7 +237,7 @@ export default function init() {
             LicenseType.UNLICENSE
           ],
           default: 0,
-          message: 'What\'s the license you want to use?',
+          message: "What's the license you want to use?",
           name: 'license',
           type: 'list',
           validate: (value) => {
@@ -276,8 +253,10 @@ export default function init() {
       ];
 
       if (args.length < 2) {
-        log.error('Please provide a library name to generate the project\n%s',
-          chalk.blue('npx packer-cli generate my-library'));
+        log.error(
+          'Please provide a library name to generate the project\n%s',
+          chalk.blue('npx packer-cli generate my-library')
+        );
         process.exit(1);
         return;
       }
@@ -305,13 +284,16 @@ export default function init() {
         ...getConfigFileGenerateTasks(options, packageConfig, buildMode, scriptExt, testEnvironment, projectDir, log)
       ];
 
-      await gulp.series([gulp.parallel(tasks), async () => {
-        if (!args.includes('--skipInstall') && !args.includes('-sk')) {
-          await runShellCommand(options.isYarn ? 'yarn install' : 'npm install', projectDir, log);
-        }
+      await gulp.series([
+        gulp.parallel(tasks),
+        async () => {
+          if (!args.includes('--skipInstall') && !args.includes('-sk')) {
+            await runShellCommand(options.isYarn ? 'yarn install' : 'npm install', projectDir, log);
+          }
 
-        log.info('📦 package generated 🚀');
-      }])(() => {
+          log.info('📦 package generated 🚀');
+        }
+      ])(() => {
         // No implementation
       });
     } catch (e) {

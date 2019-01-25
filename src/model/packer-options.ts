@@ -21,7 +21,7 @@ export interface PackerOptions {
   bundleStyles: boolean;
   browserCompliant: boolean;
   cliProject: boolean;
-  bundleFormat: BrowserBundleFormat|NodeBundleFormat;
+  bundleFormat: BrowserBundleFormat | NodeBundleFormat;
   amdId: string;
   namespace: string;
   testFramework: TestFramework;

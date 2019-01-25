@@ -8,7 +8,6 @@ import logger from '../common/logger';
  * Initialize lint gulp tasks.
  */
 export default function init() {
-
   /**
    * Auto format source gulp task.
    * Execute prettier on source directory.

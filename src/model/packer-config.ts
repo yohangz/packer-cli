@@ -63,7 +63,7 @@ export interface PackerConfig {
     dependencyMapMode: DependencyMap;
     packageFieldsToCopy: string[];
     sourceMap: boolean | 'inline';
-    customRollupPluginExtractor: null | CustomRollupPluginExtractorCallback,
+    customRollupPluginExtractor: null | CustomRollupPluginExtractorCallback;
     build: {
       bundleMin: boolean;
       es5: boolean;
@@ -78,7 +78,7 @@ export interface PackerConfig {
       image: {
         inlineLimit: number;
         outDir: string;
-      }
+      };
     };
     style: false | PackerStyleConfig;
     concurrentBuild: boolean;
@@ -114,10 +114,10 @@ export interface PackerConfig {
   ignore: string[];
   replacePatterns: PathReplacePattern[];
   bundle: {
-    externals: string[],
+    externals: string[];
     globals: {
       [key: string]: string;
-    },
+    };
     mapExternals: boolean;
     format: NodeBundleFormat | BrowserBundleFormat;
     namespace: string;
@@ -133,7 +133,7 @@ export interface PackerConfig {
       jasmine: UnitTestCommand;
       mocha: UnitTestCommand;
       jest: UnitTestCommand;
-    }
+    };
   };
   serve: false | PackerWatchConfig;
   license: {
@@ -142,7 +142,7 @@ export interface PackerConfig {
   format: {
     extensions: string[];
     advanced: {
-      command: string
+      command: string;
     };
   };
 }

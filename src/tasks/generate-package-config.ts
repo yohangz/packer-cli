@@ -8,25 +8,14 @@ import {
   name as sourcePackageName,
   version as sourcePackageVersion,
   devDependencies as sourceDevDependencies,
-  dependencies as sourceDependencies,
+  dependencies as sourceDependencies
 } from '../../package.json';
 import { TestEnvironment } from '../model/test-environment';
 
 const IstanbulConfig = {
-  'extension': [
-    '.js',
-    '.jsx',
-    '.ts',
-    '.tsx'
-  ],
-  'include': [
-    'src/**'
-  ],
-  'reporter': [
-    'lcov',
-    'text-summary',
-    'html'
-  ],
+  extension: ['.js', '.jsx', '.ts', '.tsx'],
+  include: ['src/**'],
+  reporter: ['lcov', 'text-summary', 'html'],
   'temp-dir': '.tmp/nyc_output'
 };
 
@@ -44,8 +33,11 @@ const mapDependencies = (dependencies: string[]): PackageKeyValueLiteral => {
  * @param testEnvironment Test environment type.
  * @param packageName Package name.
  */
-export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment: TestEnvironment,
-                                   packageName: string): PackageConfig => {
+export const buildPackageConfig = (
+  packerOptions: PackerOptions,
+  testEnvironment: TestEnvironment,
+  packageName: string
+): PackageConfig => {
   let projectAuthor = '';
   if (packerOptions.author) {
     projectAuthor = packerOptions.author;
@@ -68,21 +60,21 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
     description: packerOptions.description || '',
     keywords: packerOptions.keywords ? packerOptions.keywords.split(',') : [],
     scripts: {
-      'build': 'packer build',
-      'watch': 'packer watch',
-      'start': 'npm run watch',
-      'test': 'packer test --watch',
+      build: 'packer build',
+      watch: 'packer watch',
+      start: 'npm run watch',
+      test: 'packer test --watch',
       'test:coverage': 'packer test --coverage --watch',
       'test:ci': 'packer test',
       'test:coverage:ci': 'packer test --coverage',
-      'clean': 'packer clean',
-      'preversion': 'npm run build',
-      'postversion': 'git push && git push --tags',
-      'prerelease': 'npm run build',
-      'release': 'npm publish dist',
-      'lint': 'packer lint',
+      clean: 'packer clean',
+      preversion: 'npm run build',
+      postversion: 'git push && git push --tags',
+      prerelease: 'npm run build',
+      release: 'npm publish dist',
+      lint: 'packer lint',
       'lint:script': 'packer lint --script',
-      'format': 'packer format'
+      format: 'packer format'
     },
     author: projectAuthor,
     repository: projectRepository,
@@ -93,9 +85,7 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
     private: false
   };
 
-  const dependencies = [
-    '@babel/runtime-corejs2'
-  ];
+  const dependencies = ['@babel/runtime-corejs2'];
 
   const devDependencies = [
     '@babel/core',
@@ -120,8 +110,14 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
       devDependencies.push('@types/react', '@types/react-dom');
     }
   } else {
-    devDependencies.push('eslint', 'eslint-config-standard', 'eslint-plugin-import', 'eslint-plugin-node',
-      'eslint-plugin-promise', 'eslint-plugin-standard');
+    devDependencies.push(
+      'eslint',
+      'eslint-config-standard',
+      'eslint-plugin-import',
+      'eslint-plugin-node',
+      'eslint-plugin-promise',
+      'eslint-plugin-standard'
+    );
   }
 
   if (packerOptions.testFramework === 'jest') {
@@ -152,8 +148,15 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
     }
 
     if (testEnvironment === 'browser') {
-      devDependencies.push('puppeteer', 'karma', 'karma-chrome-launcher', 'karma-coverage', 'jasmine-core',
-        'karma-jasmine', 'karma-jasmine-html-reporter');
+      devDependencies.push(
+        'puppeteer',
+        'karma',
+        'karma-chrome-launcher',
+        'karma-coverage',
+        'jasmine-core',
+        'karma-jasmine',
+        'karma-jasmine-html-reporter'
+      );
     } else {
       packageConfig.nyc = IstanbulConfig;
 
@@ -183,8 +186,15 @@ export const buildPackageConfig = (packerOptions: PackerOptions, testEnvironment
     }
 
     if (testEnvironment === 'browser') {
-      devDependencies.push('puppeteer', 'karma', 'karma-chrome-launcher', 'karma-coverage', 'karma-mocha', 'mocha',
-        'chai');
+      devDependencies.push(
+        'puppeteer',
+        'karma',
+        'karma-chrome-launcher',
+        'karma-coverage',
+        'karma-mocha',
+        'mocha',
+        'chai'
+      );
     } else {
       packageConfig.nyc = IstanbulConfig;
 

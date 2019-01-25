@@ -31,11 +31,7 @@ module.exports = {
   // ],
 
   // A list of reporter names that Jest uses when writing coverage reports
-  coverageReporters: [
-    'lcov',
-    'text-summary',
-    'html'
-  ],
+  coverageReporters: ['lcov', 'text-summary', 'html'],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: null,
@@ -55,7 +51,7 @@ module.exports = {
   // A set of global variables that need to be available in all test environments
   globals: {
     'ts-jest': {
-      'tsConfig': 'tsconfig.json'
+      tsConfig: 'tsconfig.json'
     }
   },
 
@@ -65,27 +61,17 @@ module.exports = {
   // ],
 
   // An array of file extensions your modules use
-  moduleFileExtensions: [
-    'ts',
-    'tsx',
-    'js',
-    'jsx',
-    'json',
-    'node'
-  ],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/file-mock.js',
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      '<rootDir>/__mocks__/file-mock.js',
     '\\.(css|scss|sass|less|styl)$': '<rootDir>/__mocks__/style-mock.js'
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  modulePathIgnorePatterns: [
-    '/resources/',
-    '/dist/',
-    '/dist2/'
-  ],
+  modulePathIgnorePatterns: ['/resources/', '/dist/', '/dist2/'],
 
   // Activates notifications for test results
   // notify: false,
@@ -118,9 +104,7 @@ module.exports = {
   // rootDir: null,
 
   // A list of paths to directories that Jest should use to search for files in
-  roots: [
-    '<rootDir>'
-  ],
+  roots: ['<rootDir>'],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
@@ -149,12 +133,7 @@ module.exports = {
   // ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/resources/',
-    '/dist/',
-    '/dist2/'
-  ],
+  testPathIgnorePatterns: ['/node_modules/', '/resources/', '/dist/', '/dist2/'],
 
   // The regexp pattern Jest uses to detect test files
   testRegex: '(/__tests__/.*|(\\.|/)(spec))\\.tsx?$',

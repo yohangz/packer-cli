@@ -21,10 +21,7 @@ export const copyExampleStyleSheets = (styleExt: string, projectDir: string, log
   log.trace('style glob: %s', styleGlob);
 
   return () => {
-    return gulp.src([
-      styleGlob
-    ])
-      .pipe(gulp.dest(path.join(projectDir, 'src/style')));
+    return gulp.src([styleGlob]).pipe(gulp.dest(path.join(projectDir, 'src/style')));
   };
 };
 
@@ -40,10 +37,7 @@ export const copyExampleTemplates = (projectDir: string, log: Logger): TaskFunct
   log.trace('template path: %s', templatePath);
 
   return () => {
-    return gulp.src([
-      templatePath
-    ])
-      .pipe(gulp.dest(path.join(projectDir, 'src/templates')));
+    return gulp.src([templatePath]).pipe(gulp.dest(path.join(projectDir, 'src/templates')));
   };
 };
 
@@ -55,14 +49,11 @@ export const copyExampleTemplates = (projectDir: string, log: Logger): TaskFunct
 export const copyExampleAsset = (projectDir: string, log: Logger): TaskFunction => {
   log.trace('copy assets');
 
-  const assetsPath  = path.join(__dirname, '../resources/dynamic/example/common/assets/**/*');
+  const assetsPath = path.join(__dirname, '../resources/dynamic/example/common/assets/**/*');
   log.trace('assets path: %s', assetsPath);
 
   return () => {
-    return gulp.src([
-      assetsPath
-    ])
-      .pipe(gulp.dest(path.join(projectDir, 'src/assets')));
+    return gulp.src([assetsPath]).pipe(gulp.dest(path.join(projectDir, 'src/assets')));
   };
 };
 
@@ -75,17 +66,27 @@ export const copyExampleAsset = (projectDir: string, log: Logger): TaskFunction 
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyExampleSource = (packerOptions: PackerOptions, buildMode: BuildMode, scriptExt: string,
-                                  styleExt: string, projectDir: string, log: Logger): TaskFunction => {
+export const copyExampleSource = (
+  packerOptions: PackerOptions,
+  buildMode: BuildMode,
+  scriptExt: string,
+  styleExt: string,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
   log.trace('copy source');
 
-  const fileExtensions = [ scriptExt, 'hbs' ];
+  const fileExtensions = [scriptExt, 'hbs'];
   if (packerOptions.reactLib) {
     fileExtensions.push(`${scriptExt}x`);
   }
 
-  const exampleGlob = path.join(__dirname, '../resources/dynamic/example', scriptExt,
-    `**/*.{${fileExtensions.join(',')}}`);
+  const exampleGlob = path.join(
+    __dirname,
+    '../resources/dynamic/example',
+    scriptExt,
+    `**/*.{${fileExtensions.join(',')}}`
+  );
   log.trace('example glob: %s', exampleGlob);
 
   const templateData = {
@@ -98,12 +99,13 @@ export const copyExampleSource = (packerOptions: PackerOptions, buildMode: Build
   log.trace('template data: %o', templateData);
 
   return () => {
-    return gulp.src([
-      exampleGlob
-    ])
-      .pipe(gulpHbsRuntime(templateData, {
-        replaceExt: ''
-      }))
+    return gulp
+      .src([exampleGlob])
+      .pipe(
+        gulpHbsRuntime(templateData, {
+          replaceExt: ''
+        })
+      )
       .pipe(gulp.dest(path.join(projectDir, 'src')));
   };
 };
@@ -117,9 +119,14 @@ export const copyExampleSource = (packerOptions: PackerOptions, buildMode: Build
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const getExampleSourceGenerationsTasks = (packerOptions: PackerOptions, styleExt: string, scriptExt: string,
-                                                 buildMode: BuildMode, projectDir: string,
-                                                 log: Logger): TaskFunction[] => {
+export const getExampleSourceGenerationsTasks = (
+  packerOptions: PackerOptions,
+  styleExt: string,
+  scriptExt: string,
+  buildMode: BuildMode,
+  projectDir: string,
+  log: Logger
+): TaskFunction[] => {
   const tasks: TaskFunction[] = [
     copyExampleAsset(projectDir, log),
     copyExampleSource(packerOptions, buildMode, scriptExt, styleExt, projectDir, log)

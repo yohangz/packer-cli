@@ -12,7 +12,8 @@ import {
   getBaseConfig,
   getPreBundlePlugins,
   getDependencyResolvePlugins,
-  getStyleBuildPlugins, customRollupPlugins
+  getStyleBuildPlugins,
+  customRollupPlugins
 } from './build-util';
 
 import { meta } from './meta';
@@ -23,7 +24,6 @@ import logger from '../common/logger';
  * Initialize source watch associated gulp tasks.
  */
 export default function init() {
-
   /**
    * Watch and build source gulp task.
    * Watch source and realtime compile when source files change.
@@ -47,22 +47,27 @@ export default function init() {
         const additionalServeDir = packerConfig.serve.serveDir.map((dir: string) => path.join(process.cwd(), dir));
 
         rollupServePlugins = [
-          rollupBrowserSync(mergeDeep({
-            server: [
-              path.join(process.cwd(), packerConfig.tmp, 'watch'),
-              path.join(process.cwd(), packerConfig.serve.demoDir),
-              path.join(process.cwd(), packerConfig.serve.helperDir),
-              ...additionalServeDir
-            ],
-            open: packerConfig.serve.open,
-            ui: {
-              port: packerConfig.serve.port
-            },
-            files: [
-              path.join(process.cwd(), packerConfig.tmp, 'watch/**/*'),
-              path.join(process.cwd(), packerConfig.serve.demoDir, '**/*')
-            ]
-          }, packerConfig.compiler.advanced.rollup.pluginOptions.browserSync))
+          rollupBrowserSync(
+            mergeDeep(
+              {
+                server: [
+                  path.join(process.cwd(), packerConfig.tmp, 'watch'),
+                  path.join(process.cwd(), packerConfig.serve.demoDir),
+                  path.join(process.cwd(), packerConfig.serve.helperDir),
+                  ...additionalServeDir
+                ],
+                open: packerConfig.serve.open,
+                ui: {
+                  port: packerConfig.serve.port
+                },
+                files: [
+                  path.join(process.cwd(), packerConfig.tmp, 'watch/**/*'),
+                  path.join(process.cwd(), packerConfig.serve.demoDir, '**/*')
+                ]
+              },
+              packerConfig.compiler.advanced.rollup.pluginOptions.browserSync
+            )
+          )
         ];
       } else {
         log.trace('build serve disabled or not supported for bundle type');
@@ -92,9 +97,7 @@ export default function init() {
       });
       log.trace('rollup config:\n%o', watchConfig);
 
-      const watcher = await watch([
-        mergeDeep(watchConfig, packerConfig.compiler.advanced.rollup.watchOptions)
-      ]);
+      const watcher = await watch([mergeDeep(watchConfig, packerConfig.compiler.advanced.rollup.watchOptions)]);
       watcher.on('event', (event) => {
         switch (event.code) {
           case 'START':

@@ -167,16 +167,21 @@ class MetaData {
    * @param log Logger reference.
    */
   private readConfigPath(log: Logger): string {
-    const dynamicConfIndex = args.findIndex((value: string): boolean => {
-      return value.startsWith('--config') || value.startsWith('-c');
-    });
+    const dynamicConfIndex = args.findIndex(
+      (value: string): boolean => {
+        return value.startsWith('--config') || value.startsWith('-c');
+      }
+    );
 
     let confPath: string;
     if (dynamicConfIndex > -1) {
       const dynamicConf = args[dynamicConfIndex + 1];
       if (!dynamicConf) {
-        log.error('config file path not defined with config option.\n%s "%s"',
-          chalk.reset('correct packer command with'), chalk.blue('packer <command> --config path/to/packerrc.js'));
+        log.error(
+          'config file path not defined with config option.\n%s "%s"',
+          chalk.reset('correct packer command with'),
+          chalk.blue('packer <command> --config path/to/packerrc.js')
+        );
         process.exit(1);
       }
 
@@ -191,8 +196,12 @@ class MetaData {
       confPath = path.join(process.cwd(), '.packerrc.js');
 
       if (!fs.existsSync(confPath)) {
-        log.error('Current directory does not contain packer config.\n%s "%s %s"',
-          chalk.reset('Generate new project via'), chalk.blue('packer generate'), chalk.green('<project name>'));
+        log.error(
+          'Current directory does not contain packer config.\n%s "%s %s"',
+          chalk.reset('Generate new project via'),
+          chalk.blue('packer generate'),
+          chalk.green('<project name>')
+        );
         process.exit(1);
       }
     }

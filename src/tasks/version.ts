@@ -8,7 +8,6 @@ import logger from '../common/logger';
  * Initialize version log associated gulp tasks.
  */
 export default function init() {
-
   /**
    * Log packer version gulp task.
    */

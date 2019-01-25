@@ -3,31 +3,31 @@ declare module 'gulp-clean' {
 }
 
 declare module 'gulp-add' {
-  export default function(filename: string|{ [key: string]: string }, fileContent: string): NodeJS.ReadWriteStream;
+  export default function(filename: string | { [key: string]: string }, fileContent: string): NodeJS.ReadWriteStream;
 }
 
 declare interface PermissionOptions {
   owner?: {
-    read?: boolean,
-    write?: boolean,
-    execute?: boolean
+    read?: boolean;
+    write?: boolean;
+    execute?: boolean;
   };
   group?: {
-    read?: boolean,
-    write?: boolean,
-    execute?: boolean
+    read?: boolean;
+    write?: boolean;
+    execute?: boolean;
   };
   others?: {
-    read?: boolean,
-    write?: boolean,
-    execute?: boolean
+    read?: boolean;
+    write?: boolean;
+    execute?: boolean;
   };
 }
 
 declare interface PackageValidity {
   validForNewPackages: false;
   validForOldPackages: true;
-  warnings: string [];
+  warnings: string[];
   errors: string[];
 }
 
@@ -36,7 +36,7 @@ declare module 'gulp-chmod' {
 }
 
 declare module 'gulp-filter' {
-  export default function(glob: string|string[]): NodeJS.ReadWriteStream;
+  export default function(glob: string | string[]): NodeJS.ReadWriteStream;
 }
 
 declare module 'validate-npm-package-name' {
@@ -50,11 +50,11 @@ declare module 'glob-to-regexp' {
 }
 
 declare interface RollupFilterOptions {
-  include?: string|string[];
-  exclude?: string|string[];
+  include?: string | string[];
+  exclude?: string | string[];
 }
 
-declare interface RollupPluginIstanbulOptions extends RollupFilterOptions  {
+declare interface RollupPluginIstanbulOptions extends RollupFilterOptions {
   instrumenterConfig?: any;
 }
 
@@ -98,7 +98,7 @@ declare interface RollupPluginPostCssOptions extends RollupFilterOptions {
   syntax?: string | any;
   exec?: boolean;
   config?: boolean | PostCssConfig;
-  use?: string[]| any[];
+  use?: string[] | any[];
   loaders?: any[];
   onImport?: PostCssOnImport;
 }
@@ -131,13 +131,13 @@ declare interface RenamePattern extends RollupFilterOptions {
   transform?: RenameTransform;
 }
 
-declare interface RollupPluginRenameOptions extends RollupFilterOptions  {
+declare interface RollupPluginRenameOptions extends RollupFilterOptions {
   defines?: {
-    IS_SKIP?: boolean,
-    IS_REMOVE?: boolean,
+    IS_SKIP?: boolean;
+    IS_REMOVE?: boolean;
   };
   replaces?: {
-    [key: string]: string
+    [key: string]: string;
   };
   patterns: RenamePattern[];
 }
@@ -172,12 +172,12 @@ declare module 'rollup-plugin-node-resolve' {
   export default function(options?: RollupPluginNodeResolveOptions): Plugin;
 }
 
-declare interface RollupPluginCommonjsOptions extends RollupFilterOptions  {
+declare interface RollupPluginCommonjsOptions extends RollupFilterOptions {
   extensions?: string[];
   ignoreGlobal?: boolean;
   sourceMap?: boolean;
   namedExports?: {
-    [key: string]: string[]
+    [key: string]: string[];
   };
   ignore?: string[];
 }
@@ -230,7 +230,7 @@ declare module 'rollup-plugin-babel' {
   export default function(options?: RollupPluginBabelOptions): Plugin;
 }
 
-declare interface RollupPluginHbsOptions extends RollupFilterOptions  {
+declare interface RollupPluginHbsOptions extends RollupFilterOptions {
   handlebars?: {
     id?: string;
     options?: {
@@ -247,7 +247,7 @@ declare module 'rollup-plugin-hbs' {
   export default function(options?: RollupPluginHbsOptions): Plugin;
 }
 
-declare interface RollupPluginImageOptions extends RollupFilterOptions  {
+declare interface RollupPluginImageOptions extends RollupFilterOptions {
   limit?: number;
   output?: string;
   extensions?: RegExp;

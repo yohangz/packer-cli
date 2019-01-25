@@ -34,7 +34,6 @@ module.exports = {
    * Packer compiler options
    */
   compiler: {
-
     /**
      * Dependency map mode option in target package.json file.
      * - 'cross-map-peer-dependency' : Map project dependencies to target peerDependencies
@@ -92,7 +91,6 @@ module.exports = {
      * @default {}
      */
     build: {
-
       /**
        * Generate flat bundle minified build artifact.
        * @type {boolean}
@@ -145,7 +143,6 @@ module.exports = {
      * @default {}
      */
     script: {
-
       /**
        * Script preprocessor.
        * - 'typescript' : use typescript preprocessor to transpile source.
@@ -170,7 +167,6 @@ module.exports = {
        * @default {}
        */
       image: {
-
         /**
          * Inline image if image size is less than or equal to specified limit.
          * @type {number}
@@ -184,7 +180,7 @@ module.exports = {
          * @default 'images'
          */
         outDir: 'images'
-      },
+      }
     },
 
     /**
@@ -194,7 +190,6 @@ module.exports = {
      * @default {}
      */
     style: {
-
       /**
        * Bundle styles inline within target build and inject to head at runtime.
        * @type {boolean}
@@ -228,7 +223,6 @@ module.exports = {
        * @default {}
        */
       image: {
-
         /**
          * Inline image if image size is less than or equal to specified limit.
          * @type {number}
@@ -258,14 +252,12 @@ module.exports = {
      * @type {{}}
      */
     advanced: {
-
       /**
        * Rollup plugins.
        * refer: https://rollupjs.org
        * @type {{}}
        */
       rollup: {
-
         /**
          * Override rollup build task input options.
          * refer: https://rollupjs.org inputOptions section.
@@ -293,7 +285,6 @@ module.exports = {
          * @type {{}}
          */
         pluginOptions: {
-
           /**
            * Override ignore import plugin options
            * refer: https://github.com/yohangz/rollup-plugin-ignore-import
@@ -390,7 +381,6 @@ module.exports = {
        * Other plugins.
        */
       other: {
-
         /**
          * Override terser plugin options.
          * refer: https://github.com/terser-js/terser
@@ -414,9 +404,7 @@ module.exports = {
    * @type {Array<string>}
    * @default []
    */
-  assetPaths: [
-    'src/assets'
-  ],
+  assetPaths: ['src/assets'],
 
   /**
    * List of files paths to copy on build.
@@ -424,10 +412,7 @@ module.exports = {
    * @type {Array<string>}
    * @default [ 'README.md', 'LICENSE' ]
    */
-  copy: [
-    'README.md',
-    'LICENSE'
-  ],
+  copy: ['README.md', 'LICENSE'],
 
   /**
    * Import paths to ignore with noop implementation.
@@ -486,18 +471,13 @@ module.exports = {
    * @type {{}}
    */
   bundle: {
-
     /**
      * Bundle output external dependencies (dependency modules to treat as externals).
      * Refer rollup options for more info.
      * @type {Array<string>}
      * @default []
      */
-    externals: [
-      'regenerator-runtime/**',
-      '@babel/runtime/**',
-      '@babel/runtime-corejs2/**'
-    ],
+    externals: ['regenerator-runtime/**', '@babel/runtime/**', '@babel/runtime-corejs2/**'],
 
     /**
      * Bundle output global dependencies (dependency modules to tread as globals).
@@ -506,7 +486,7 @@ module.exports = {
      * @default {}
      */
     globals: {
-      'react': 'React',
+      react: 'React',
       'react-dom': 'ReactDOM'
     },
 
@@ -546,7 +526,6 @@ module.exports = {
      * @default {}
      */
     amd: {
-
       /**
        * AMD flat bundle define function name
        * @type {string}
@@ -568,7 +547,6 @@ module.exports = {
    * @type {{}}
    */
   test: {
-
     /**
      * Unit test framework
      *  - 'jasmine' - https://jasmine.github.io/
@@ -597,14 +575,12 @@ module.exports = {
      * @default {}
      */
     advanced: {
-
       /**
        * Jasmine CLI commands used with none browser test environments.
        * @type {{}}
        * @default {}
        */
       jasmine: {
-
         /**
          * Execute test spec on single run mode command.
          * @type {string}
@@ -633,7 +609,7 @@ module.exports = {
          * @type {string}
          * @default 'nyc jasmine --config=jasmine.json'
          */
-        coverageWatch: 'nyc jasmine --config=jasmine.json',
+        coverageWatch: 'nyc jasmine --config=jasmine.json'
       },
 
       /**
@@ -642,7 +618,6 @@ module.exports = {
        * @default {}
        */
       mocha: {
-
         /**
          * Execute test spec on single run mode command.
          * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
@@ -669,7 +644,7 @@ module.exports = {
          * <ext-glob> is replaced with script extensions glob depending on script preprocessor at runtime.
          * @type {string}
          */
-        coverageWatch: 'nyc mocha --opts mocha.opts --watch ./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>',
+        coverageWatch: 'nyc mocha --opts mocha.opts --watch ./{,!(node_modules)/**/}*.[sS]pec.<ext-glob>'
       },
 
       /**
@@ -678,7 +653,6 @@ module.exports = {
        * @default {}
        */
       jest: {
-
         /**
          * Execute test spec on single run mode command.
          * @type {string}
@@ -705,7 +679,7 @@ module.exports = {
          * @type {string}
          * @default 'jest --config=jest.config.js --coverage --watchAll'
          */
-        coverageWatch: 'jest --config=jest.config.js --coverage --watchAll',
+        coverageWatch: 'jest --config=jest.config.js --coverage --watchAll'
       }
     }
   },
@@ -717,7 +691,6 @@ module.exports = {
    * @default {}
    */
   serve: {
-
     /**
      * Demo watch source directory which contains index.html to serve.
      * This path should be relative to root.
@@ -740,10 +713,7 @@ module.exports = {
      * @type {Array<string>}
      * @default []
      */
-    serveDir: [
-      'node_modules/react/umd',
-      'node_modules/react-dom/umd'
-    ],
+    serveDir: ['node_modules/react/umd', 'node_modules/react-dom/umd'],
 
     /**
      * Open browser tab on watch mode build if true
@@ -766,7 +736,6 @@ module.exports = {
    * @default {}
    */
   license: {
-
     /**
      * Include inline header banner parsed via .packer/.banner.hbs template to build artifacts.
      * @type {boolean}
@@ -787,7 +756,7 @@ module.exports = {
      * @type {string[]}
      * @default [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ]
      */
-    extensions: [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ],
+    extensions: ['js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json'],
 
     /**
      * Code format advanced configuration.
@@ -795,7 +764,6 @@ module.exports = {
      * @default {}
      */
     advanced: {
-
       /**
        * Prettier format command.
        * @type {string}

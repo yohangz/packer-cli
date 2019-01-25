@@ -9,7 +9,6 @@ import logger from '../common/logger';
  * Initialize clean gulp tasks
  */
 export default function init() {
-
   /**
    * Temporary file clean gulp task.
    * Clean tmp directory specified in packer config.
@@ -19,10 +18,11 @@ export default function init() {
     try {
       log.trace('start');
       const config = meta.readPackerConfig(log);
-      return gulp.src([path.join(process.cwd(), config.tmp)], {
-        allowEmpty: true,
-        read: false
-      })
+      return gulp
+        .src([path.join(process.cwd(), config.tmp)], {
+          allowEmpty: true,
+          read: false
+        })
         .pipe(clean());
     } catch (e) {
       log.error('task failure:\n', e.stack || e.message);
@@ -39,10 +39,11 @@ export default function init() {
     try {
       log.trace('start');
       const config = meta.readPackerConfig(log);
-      return gulp.src([path.join(process.cwd(), config.tmp, 'watch')], {
-        allowEmpty: true,
-        read: false
-      })
+      return gulp
+        .src([path.join(process.cwd(), config.tmp, 'watch')], {
+          allowEmpty: true,
+          read: false
+        })
         .pipe(clean());
     } catch (e) {
       log.error('task failure:\n', e.stack || e.message);
@@ -54,15 +55,16 @@ export default function init() {
    * Build distribution clean gulp task.
    * Clean dist directory specified in packer config.
    */
-  gulp.task('build:clean',  () => {
+  gulp.task('build:clean', () => {
     const log = logger.create('[build:clean]');
     try {
       log.trace('start');
       const config = meta.readPackerConfig(log);
-      return gulp.src([path.join(process.cwd(), config.dist)], {
-        allowEmpty: true,
-        read: false
-      })
+      return gulp
+        .src([path.join(process.cwd(), config.dist)], {
+          allowEmpty: true,
+          read: false
+        })
         .pipe(clean());
     } catch (e) {
       log.error('task failure:\n', e.message, e.stack);

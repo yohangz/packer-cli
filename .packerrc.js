@@ -41,7 +41,6 @@ module.exports = {
    * Packer compiler options
    */
   compiler: {
-
     /**
      * Dependency map mode option in target package.json file.
      * - 'cross-map-peer-dependency' : Map project dependencies to target peerDependencies
@@ -99,7 +98,6 @@ module.exports = {
      * @default {}
      */
     build: {
-
       /**
        * Generate flat bundle minified build artifact.
        * @type {boolean}
@@ -152,7 +150,6 @@ module.exports = {
      * @default {}
      */
     script: {
-
       /**
        * Script preprocessor.
        * - 'typescript' : use typescript preprocessor to transpile source.
@@ -177,7 +174,6 @@ module.exports = {
        * @default {}
        */
       image: {
-
         /**
          * Inline image if image size is less than or equal to specified limit.
          * @type {number}
@@ -191,7 +187,7 @@ module.exports = {
          * @default 'images'
          */
         outDir: 'images'
-      },
+      }
     },
 
     /**
@@ -224,12 +220,7 @@ module.exports = {
    * @type {Array<string>}
    * @default [ 'README.md', 'LICENSE' ]
    */
-  copy: [
-    'README.md',
-    'LICENSE',
-    "resources/**/{.*,*}",
-    "docs/**/{.*,*}",
-  ],
+  copy: ['README.md', 'LICENSE', 'resources/**/{.*,*}', 'docs/**/{.*,*}'],
 
   /**
    * Import paths to ignore with noop implementation.
@@ -272,7 +263,6 @@ module.exports = {
    * @type {{}}
    */
   bundle: {
-
     /**
      * Bundle output external dependencies (dependency modules to treat as externals).
      * Refer rollup options for more info.
@@ -347,7 +337,6 @@ module.exports = {
      * @default {}
      */
     amd: {
-
       /**
        * AMD flat bundle define function name
        * @type {string}
@@ -369,7 +358,6 @@ module.exports = {
    * @type {{}}
    */
   test: {
-
     /**
      * Unit test framework
      *  - 'jasmine' - https://jasmine.github.io/
@@ -406,7 +394,6 @@ module.exports = {
    * @default {}
    */
   license: {
-
     /**
      * Include inline header banner parsed via .packer/.banner.hbs template to build artifacts.
      * @type {boolean}
@@ -427,6 +414,6 @@ module.exports = {
      * @type {string[]}
      * @default [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ]
      */
-    extensions: [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ]
+    extensions: ['js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json']
   }
 };
