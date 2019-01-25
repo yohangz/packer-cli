@@ -130,7 +130,7 @@
     "mocha": "^5.2.0",
     "node-sass": "^4.11.0",
     "nyc": "^13.1.0",
-    "packer-cli": "^2.13.1",
+    "packer-cli": "^2.13.2",
     "postcss-url": "^8.0.0",
     "puppeteer": "^1.11.0",
     "react": "^16.6.3",
