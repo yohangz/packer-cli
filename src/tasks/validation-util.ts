@@ -605,7 +605,7 @@ export const packerSchema = {
             command: {
               type: 'string',
               optional: false,
-              def: 'prettier --write <root-dir>/{,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
+              def: 'prettier --write {,!(coverage|dist|.idea)/**/}*.{<ext-glob>}'
             },
           }
         }

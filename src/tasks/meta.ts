@@ -84,7 +84,6 @@ class MetaData {
 
     const formatExtGlob = sanitizedData.format.extensions.join(',');
     formatConf.command = this.replaceExtensionGlob(formatExtGlob, formatConf.command);
-    formatConf.command = this.setRootDir(formatConf.command);
 
     this.packerConfig = sanitizedData;
   }
@@ -208,14 +207,6 @@ class MetaData {
    */
   private replaceExtensionGlob(extGlob: string, command: string): string {
     return command.replace('<ext-glob>', extGlob);
-  }
-
-  /**
-   * Replace root directory with actual path.
-   * @param command Target command.
-   */
-  private setRootDir(command: string): string {
-    return command.replace('<root-dir>', process.cwd());
   }
 }
 

@@ -7684,10 +7684,10 @@ package-hash@^2.0.0:
     md5-hex "^2.0.0"
     release-zalgo "^1.0.0"
 
-packer-cli@^2.12.0:
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.12.0.tgz#dcbf852965c47c129184180b9ce7df5ae343c0c7"
-  integrity sha512-0WBTW68PC2KI7wzPW+t24R3UER8V3vv2Pc0j/AySdtmvXSGc21s50xCmalI6ON6QJ29RSN2vCjpVGqs4qfeyDQ==
+packer-cli@^2.13.0:
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.13.0.tgz#b9524004665f0d222112900a21835c6ebe34187a"
+  integrity sha512-plIlnS8n0qipRcARFP2eCqHksg4V1kg80H3EIiio5nrY6sWEJjJGPNmb/kDYbVXgFeUfKHJj2//4ZmSC7ZgejQ==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     "@babel/core" "^7.2.2"
@@ -7703,6 +7703,7 @@ packer-cli@^2.12.0:
     karma-rollup-preprocessor "^7.0.0-rc.2"
     lodash "^4.17.10"
     plugin-error "^1.0.1"
+    prettier "^1.16.1"
     rollup "^1.1.2"
     rollup-plugin-babel "^4.0.3"
     rollup-plugin-browsersync "^1.0.0"
