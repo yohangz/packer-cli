@@ -7684,10 +7684,10 @@ package-hash@^2.0.0:
     md5-hex "^2.0.0"
     release-zalgo "^1.0.0"
 
-packer-cli@^2.13.2:
-  version "2.13.2"
-  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.13.2.tgz#54d0eff0dca955606c68771777311e5d228b7989"
-  integrity sha512-eSBt7u+Rs1YriLDrfjxTKF+0S8FLTmLmHvHlXVufMYVUQPvvMG5W4ZoEFVYFx/N5CgkYu+TbGfjaSoXEsJYIlw==
+packer-cli@^2.13.3:
+  version "2.13.3"
+  resolved "https://registry.yarnpkg.com/packer-cli/-/packer-cli-2.13.3.tgz#eaf04170e0b5339a79290a9596da8e65b6198922"
+  integrity sha512-BWbYuqf5lgg63XYET0qp++bkJdO89LD3aeRfZJpJA/LkWmhwlg7sHD1/7OEltm1cXty58BwYU+VH68qmvvVavA==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     "@babel/core" "^7.2.2"
