@@ -150,6 +150,6 @@ export interface PackerConfig {
       style: string;
       typescript: string;
       javascript: string;
-    }
+    };
   };
 }

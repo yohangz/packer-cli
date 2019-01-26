@@ -304,6 +304,10 @@ export const copyEsLintConfig = (packerOptions: PackerOptions, projectDir: strin
   return () => {
     return gulp
       .src([eslintrc, eslintignore])
+      .on('error', (e) => {
+        log.error('missing config file: %s\n', e.stack || e.message);
+        process.exit(1);
+      })
       .pipe(
         gulpHbsRuntime(
           {
@@ -314,10 +318,6 @@ export const copyEsLintConfig = (packerOptions: PackerOptions, projectDir: strin
           }
         )
       )
-      .on('error', (e) => {
-        log.error('missing config file: %s\n', e.stack || e.message);
-        process.exit(1);
-      })
       .pipe(gulp.dest(projectDir));
   };
 };

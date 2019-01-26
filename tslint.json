@@ -14,13 +14,6 @@
   },
   "rulesDirectory": [],
   "linterOptions": {
-    "exclude": [
-      ".git/**",
-      ".idea/**",
-      "node_modules/**",
-      ".tmp/**",
-      "coverage/**",
-      "dist/**"
-    ]
+    "exclude": [".git/**", ".idea/**", "node_modules/**", ".tmp/**", "coverage/**", "dist/**"]
   }
 }

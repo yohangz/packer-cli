@@ -608,12 +608,12 @@ export const packerSchema = {
             style: {
               type: 'string',
               optional: false,
-              def: 'stylelint **/*.{styl,scss,sass,less,css}',
+              def: 'stylelint **/*.{styl,scss,sass,less,css}'
             },
             typescript: {
               type: 'string',
               optional: false,
-              def: 'tslint **/*.{ts,tsx}',
+              def: 'tslint **/*.{ts,tsx}'
             },
             javascript: {
               type: 'string',

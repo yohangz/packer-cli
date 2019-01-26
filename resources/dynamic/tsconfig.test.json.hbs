@@ -5,7 +5,9 @@
     "module": "commonjs",
     "jsx": "react",
     "allowJs": true,
-    "esModuleInterop": true
+    "esModuleInterop": true{{#if isJest}},
+    "typeRoots" : ["./node_modules/@types", "./node_modules/jest-enzyme"]
+{{/if}}
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

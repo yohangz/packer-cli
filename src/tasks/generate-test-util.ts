@@ -343,12 +343,17 @@ export const copyJestTests = (scriptGlob: string, scriptExt: string, projectDir:
 
 /**
  * Copy test typescript configuration (tsconfig.test.json) file.
+ * @param packerOptions Packer options object reference.
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyTestTypescriptConfig = (projectDir: string, log: Logger): TaskFunction => {
-  const tsconfig = path.join(__dirname, '../resources/static/tsconfig.test.json');
-  log.trace('tsconfig.test.json path: %s', tsconfig);
+export const copyTestTypescriptConfig = (
+  packerOptions: PackerOptions,
+  projectDir: string,
+  log: Logger
+): TaskFunction => {
+  const tsconfig = path.join(__dirname, '../resources/dynamic/tsconfig.test.json.hbs');
+  log.trace('tsconfig.test.json.hbs path: %s', tsconfig);
 
   return () => {
     return gulp
@@ -357,6 +362,16 @@ export const copyTestTypescriptConfig = (projectDir: string, log: Logger): TaskF
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
       })
+      .pipe(
+        gulpHbsRuntime(
+          {
+            isJest: packerOptions.testFramework === 'jest'
+          },
+          {
+            replaceExt: ''
+          }
+        )
+      )
       .pipe(gulp.dest(projectDir));
   };
 };
@@ -405,7 +420,7 @@ export const getTestSpecGeneratorTasks = (
     tasks.push(copyJestTests(scriptGlob, scriptExt, projectDir, log));
 
     if (packerOptions.scriptPreprocessor === 'typescript') {
-      tasks.push(copyTestTypescriptConfig(projectDir, log));
+      tasks.push(copyTestTypescriptConfig(packerOptions, projectDir, log));
     }
   } else {
     if (testEnvironment === 'browser') {
@@ -420,7 +435,7 @@ export const getTestSpecGeneratorTasks = (
       }
     } else {
       if (packerOptions.scriptPreprocessor === 'typescript') {
-        tasks.push(copyTestTypescriptConfig(projectDir, log));
+        tasks.push(copyTestTypescriptConfig(packerOptions, projectDir, log));
       }
 
       if (packerOptions.testFramework === 'jasmine') {

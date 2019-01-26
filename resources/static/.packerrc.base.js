@@ -778,14 +778,12 @@ module.exports = {
    * @default {}
    */
   lint: {
-
     /**
      * Advance options to override linter configuration.
      * Caution! change only if you know what you are doing.
      * @type {{}}
      */
     advanced: {
-
       /**
        * Execute style lint command.
        * @type {string}
