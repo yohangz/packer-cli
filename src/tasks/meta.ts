@@ -76,6 +76,7 @@ class MetaData {
     // Replace glob extension pattern with dynamic extensions.
     const mochaConf = sanitizedData.test.advanced.mocha;
     const formatConf = sanitizedData.format.advanced;
+    const lintConf = sanitizedData.lint.advanced;
     const extGlob = parseScriptPreprocessorExtensionGlob(sanitizedData.compiler.script.preprocessor);
     mochaConf.coverageWatch = this.replaceExtensionGlob(extGlob, mochaConf.coverageWatch);
     mochaConf.coverageDefault = this.replaceExtensionGlob(extGlob, mochaConf.coverageDefault);

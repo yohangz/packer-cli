@@ -21,10 +21,7 @@ export default function init() {
       if (config.compiler.style) {
         log.info('start');
 
-        const src = path.join(config.source, '**/*.{styl,scss,sass,less,css}');
-        log.trace('style source path: %s', src);
-
-        await runShellCommand(`stylelint ${src}`, process.cwd(), log);
+        await runShellCommand(config.lint.advanced.style, process.cwd(), log);
         log.info('end');
       } else {
         log.trace('skip style lint');
@@ -47,10 +44,7 @@ export default function init() {
       if (config.compiler.script.preprocessor === 'typescript') {
         log.info('start');
 
-        const src = path.join(config.source, '**/*.{ts,tsx}');
-        log.trace('script source path: %s', src);
-
-        await runShellCommand(`tslint ${src}`, process.cwd(), log);
+        await runShellCommand(config.lint.advanced.typescript, process.cwd(), log);
         log.info('end');
       } else {
         log.trace('skip script tslint');
@@ -73,10 +67,7 @@ export default function init() {
       if (config.compiler.script.preprocessor === 'none') {
         log.info('start');
 
-        const src = path.join(config.source, '**/*.{js,mjs}');
-        log.trace('script source path: %s', src);
-
-        await runShellCommand(`eslint ${src}`, process.cwd(), log);
+        await runShellCommand(config.lint.advanced.javascript, process.cwd(), log);
         log.info('end');
       } else {
         log.trace('skip script eslint');

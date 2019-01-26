@@ -12,5 +12,15 @@
     "interface-name": [true, "never-prefix"],
     "object-literal-key-quotes": [true, "as-needed"]
   },
-  "rulesDirectory": []
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": [
+      ".git/**",
+      ".idea/**",
+      "node_modules/**",
+      ".tmp/**",
+      "coverage/**",
+      "dist/**"
+    ]
+  }
 }

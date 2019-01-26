@@ -945,9 +945,9 @@ module.exports = {
     extensions: [ 'js', 'jsx', 'ts', 'tsx', 'html', 'scss', 'css', 'less', 'json' ],
 
     /**
-     * Code format advanced configuration.
+     * Advance options to override formatter configuration.
+     * Caution! change only if you know what you are doing.
      * @type \{{}}
-     * @default {}
      */
     advanced: {
 
@@ -956,6 +956,40 @@ module.exports = {
        * @type {string}
        */
       command: 'prettier --write **/*.{<ext-glob>}'
+    }
+  },
+
+  /**
+   * Linter configuration.
+   * @type \{{}}
+   * @default {}
+   */
+  lint: {
+
+    /**
+     * Advance options to override linter configuration.
+     * Caution! change only if you know what you are doing.
+     * @type \{{}}
+     */
+    advanced: {
+
+      /**
+       * Execute style lint command.
+       * @type {string}
+       */
+      style: 'stylelint **/*.{styl,scss,sass,less,css}',
+
+      /**
+       * Execute tslint command.
+       * @type {string}
+       */
+      typescript: 'tslint **/*.{ts,tsx}',
+
+      /**
+       * Execute eslint command.
+       * @type {string}
+       */
+      javascript: 'eslint **/*.{js,mjs}'
     }
   }
 };

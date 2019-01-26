@@ -595,6 +595,34 @@ export const packerSchema = {
           }
         }
       }
+    },
+    lint: {
+      type: 'object',
+      optional: false,
+      $mapDef: true,
+      properties: {
+        advanced: {
+          optional: false,
+          $mapDef: true,
+          properties: {
+            style: {
+              type: 'string',
+              optional: false,
+              def: 'stylelint **/*.{styl,scss,sass,less,css}',
+            },
+            typescript: {
+              type: 'string',
+              optional: false,
+              def: 'tslint **/*.{ts,tsx}',
+            },
+            javascript: {
+              type: 'string',
+              optional: false,
+              def: 'eslint **/*.{js,mjs}'
+            }
+          }
+        }
+      }
     }
   }
 };

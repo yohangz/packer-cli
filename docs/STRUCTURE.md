@@ -30,9 +30,12 @@
 │   └── /index.{ts,js}          # Library entry point file configured in packer config. Exports in this file are exposed by bundled build artifact.
 ├── .babelrc                    # Babel configuration file (https://babeljs.io/).
 ├── .editorconfig               # Define and maintain consistent coding styles between different editors and IDE's (https://editorconfig.org/).
-├── .eslintrc.yml               # ESLint configuration (https://eslint.org/). Optional: applicable only when script preprecessor is 'none'.
+├── .eslintignore               # Configuration to ignore specific files and directorie when running ESLint.
+├── .eslintrc.json              # ESLint configuration (https://eslint.org/). Optional: applicable only when script preprecessor is 'none'.
 ├── .gitignore                  # Contains files to be ignored from git repository (https://git-scm.com/docs/gitignore).
 ├── .packerrc.js                # Packer configuration file containing project build options (https://github.com/yohangz/packer-cli).
+├── .prettierignore             # Configuration to ignore specific files and directorie when running prettier.
+├── .stylelintignore            # Configuration to ignore specific files and directorie when running stylelint.
 ├── .stylelintrc.json           # Style lint configuration (https://stylelint.io). Optional: applicable only when style support is enabled.
 ├── .travis.yml                 # Travis CI configuration file (https://travis-ci.com/).
 ├── jasmine.json                # Jasmine test framework configuration file (https://jasmine.github.io/). Optional: applicable only when test framework is 'jasmine' & test environment is 'browser'.

@@ -9,5 +9,15 @@
     "object-literal-sort-keys": false,
     "interface-name": [true, "never-prefix"]
   },
-  "rulesDirectory": []
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": [
+      ".git/**",
+      ".idea/**",
+      "node_modules/**",
+      ".tmp/**",
+      "coverage/**",
+      "dist/**"
+    ]
+  }
 }

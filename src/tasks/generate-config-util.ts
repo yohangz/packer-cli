@@ -291,16 +291,29 @@ export const copyPostCssConfig = (projectDir: string, log: Logger): TaskFunction
 
 /**
  * Copy ESLint configuration file.
+ * @param packerOptions Packer options object reference.
  * @param projectDir Project root directory.
  * @param log Logger reference.
  */
-export const copyEsLintConfig = (projectDir: string, log: Logger): TaskFunction => {
-  const eslintrc = path.join(__dirname, '../resources/static/.eslintrc.yml');
-  log.trace('eslintrc.yml path: %s', eslintrc);
+export const copyEsLintConfig = (packerOptions: PackerOptions, projectDir: string, log: Logger): TaskFunction => {
+  const eslintrc = path.join(__dirname, '../resources/dynamic/.eslintrc.json.hbs');
+  const eslintignore = path.join(__dirname, '../resources/static/.eslintignore');
+  log.trace('eslintrc.json.hbs path: %s', eslintrc);
+  log.trace('eslintignore path: %s', eslintignore);
 
   return () => {
     return gulp
-      .src([eslintrc])
+      .src([eslintrc, eslintignore])
+      .pipe(
+        gulpHbsRuntime(
+          {
+            testFramework: packerOptions.testFramework
+          },
+          {
+            replaceExt: ''
+          }
+        )
+      )
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -315,12 +328,14 @@ export const copyEsLintConfig = (projectDir: string, log: Logger): TaskFunction 
  * @param log Logger reference.
  */
 export const copyStyleLintConfig = (projectDir: string, log: Logger): TaskFunction => {
-  const styleLintrc = path.join(__dirname, '../resources/static/.stylelintrc.json');
-  log.trace('.stylelintrc.json path: %s', styleLintrc);
+  const stylelintrc = path.join(__dirname, '../resources/static/.stylelintrc.json');
+  const stylelintignore = path.join(__dirname, '../resources/static/.stylelintignore');
+  log.trace('.stylelintrc.json path: %s', stylelintrc);
+  log.trace('.stylelintignore path: %s', stylelintignore);
 
   return () => {
     return gulp
-      .src([styleLintrc])
+      .src([stylelintrc, stylelintignore])
       .on('error', (e) => {
         log.error('missing config file: %s\n', e.stack || e.message);
         process.exit(1);
@@ -401,7 +416,7 @@ export const getConfigFileGenerateTasks = (
   if (packerOptions.scriptPreprocessor === 'typescript') {
     tasks.push(copyTypescriptConfig(projectDir, log));
   } else {
-    tasks.push(copyEsLintConfig(projectDir, log));
+    tasks.push(copyEsLintConfig(packerOptions, projectDir, log));
   }
 
   if (packerOptions.styleSupport) {

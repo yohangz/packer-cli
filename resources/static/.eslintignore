@@ -1,0 +1,7 @@
+.git
+.idea
+node_modules
+.tmp
+**/*.min.js
+coverage
+dist

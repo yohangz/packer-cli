@@ -145,4 +145,11 @@ export interface PackerConfig {
       command: string;
     };
   };
+  lint: {
+    advanced: {
+      style: string;
+      typescript: string;
+      javascript: string;
+    }
+  };
 }
