@@ -264,7 +264,12 @@ export default function init() {
       const packageName = args[1];
       const packageNameValidity = npmValidate(packageName);
       if (!packageNameValidity.validForNewPackages) {
-        log.error(packageNameValidity.errors.join('\n'));
+        if (packageNameValidity.errors) {
+          log.error('Package name error: %s', packageNameValidity.errors.join('\n'));
+        } else if (packageNameValidity.warnings) {
+          log.error('Package name error: %s', packageNameValidity.warnings.join('\n'));
+        }
+
         process.exit(1);
         return;
       }
