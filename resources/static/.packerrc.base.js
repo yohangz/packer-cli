@@ -415,8 +415,7 @@ module.exports = {
   copy: ['README.md', 'LICENSE'],
 
   /**
-   * Import paths to ignore with noop implementation.
-   * Paths should be relative to project root.
+   * Prevent a module from showing up in the output bundle. You will get export default {} instead.
    * @type {Array<string>}
    * @default []
    */
