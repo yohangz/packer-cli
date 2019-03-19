@@ -1,4 +1,6 @@
 import chalk from 'chalk';
+import padStart from 'lodash/padStart';
+
 import { args } from '../tasks/util';
 import { LogLevel } from '../model/log-level';
 
@@ -48,10 +50,10 @@ export class Logger {
    */
   public static get currentTime(): string {
     const d = new Date();
-    const h = d.getHours();
-    const m = d.getMinutes();
-    const s = d.getSeconds();
-    const ms = d.getMilliseconds();
+    const h = padStart(String(d.getHours()), 2, '0');
+    const m = padStart(String(d.getMinutes()), 2, '0');
+    const s = padStart(String(d.getSeconds()), 2, '0');
+    const ms = padStart(String(d.getMilliseconds()), 3, '0');
     const time = `[${h}:${m}:${s}:${ms}]`;
     return chalk.gray(time);
   }
