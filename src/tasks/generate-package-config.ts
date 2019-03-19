@@ -122,6 +122,8 @@ export const buildPackageConfig = (
 
   if (packerOptions.testFramework === 'jest') {
     devDependencies.push('jest');
+    devDependencies.push('jest-haste-map');
+    devDependencies.push('jest-resolve');
 
     if (packerOptions.scriptPreprocessor === 'typescript') {
       devDependencies.push('@types/jest', 'ts-jest');
