@@ -30,6 +30,7 @@ import { LogLevel } from '../model/log-level';
 import { mergeDeep, readFile, requireDependency, writeFile } from './util';
 import { PackageModuleType } from '../model/package-module-type';
 import { BabelConfig } from '../model/babel-config';
+import fileSize from 'fileSize';
 
 /**
  * Get distribution banner comment.
@@ -337,29 +338,6 @@ export const getPreBundlePlugins = (packerConfig: PackerConfig) => {
 };
 
 /**
- * Get bundle size logger rollup plugin.
- * @param packerConfig Packer configuration object.
- * @param taskName Gulp task name.
- * @param type Package module type message.
- */
-const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string, type: string) => {
-  return rollupFilesize(
-    mergeDeep(
-      {
-        showMinifiedSize: false,
-        showBrotliSize: false,
-        showGzippedSize: false,
-        render: (options: any, sourceBundle: any, { gzipSize, bundleSize }): string => {
-          const bundleFormatted = `bundle size: ${chalk.red(bundleSize)}`;
-          return chalk.yellow(`${logger.currentTime} ${chalk.green(taskName)} ${type} ${bundleFormatted}`);
-        }
-      },
-      packerConfig.compiler.advanced.rollup.pluginOptions.filesize
-    )
-  );
-};
-
-/**
  * Get post bundle rollup plugins.
  * @param task Gulp task name.
  * @param type Package module type.
@@ -367,7 +345,22 @@ const getBundleSizeLoggerPlugin = (packerConfig: PackerConfig, taskName: string,
  */
 export const getPostBundlePlugins = (packerConfig: PackerConfig, task: string, type: PackageModuleType) => {
   if (logger.level <= LogLevel.INFO) {
-    return [getBundleSizeLoggerPlugin(packerConfig, task, type)];
+    return [
+      rollupFilesize(
+        mergeDeep(
+          {
+            showMinifiedSize: false,
+            showBrotliSize: false,
+            showGzippedSize: false,
+            render: (options: any, sourceBundle: any, { gzipSize, bundleSize }): string => {
+              const bundleFormatted = `bundle size: ${chalk.red(bundleSize)}`;
+              return chalk.yellow(`${logger.currentTime} ${chalk.green(task)} ${type} ${bundleFormatted}`);
+            }
+          },
+          packerConfig.compiler.advanced.rollup.pluginOptions.filesize
+        )
+      )
+    ];
   }
 
   return [];
@@ -470,9 +463,12 @@ export const generateBundle = async (
       }
 
       if (logger.level <= LogLevel.INFO) {
-        const task = log.taskName.replace(' ', '');
-        const sizeDetail = getBundleSizeLoggerPlugin(packerConfig, task, `${type} minified`);
-        sizeDetail.generateBundle.call(sizeDetail, null, output, false);
+        const  formatOptions = packerConfig.compiler.advanced.rollup.pluginOptions.filesize.format;
+        const size = fileSize(Buffer.byteLength(minData.code), mergeDeep({
+          base: 10
+        }, formatOptions));
+        const minType = `${type} minified size:`;
+        log.info(chalk.yellow(minType), chalk.red(size));
       }
     }
 
