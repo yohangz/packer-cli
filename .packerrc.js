@@ -28,7 +28,7 @@ module.exports = {
    * @type {string}
    * @default 'dist'
    */
-  dist: 'dist',
+  dist: 'dist2',
 
   /**
    * Watch and build temporary file directory

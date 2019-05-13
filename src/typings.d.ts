@@ -40,13 +40,13 @@ declare module 'gulp-filter' {
 }
 
 declare module 'validate-npm-package-name' {
-  export default function(packageName: string): PackageValidity;
+  export default function(packageName: string, options?: any): PackageValidity;
 }
 
 declare module 'schema-inspector';
 
 declare module 'glob-to-regexp' {
-  export default function(globPatten: string): RegExp;
+  export default function(globPatten: string, options?: any): RegExp;
 }
 
 declare interface RollupFilterOptions {
@@ -55,6 +55,7 @@ declare interface RollupFilterOptions {
 }
 
 declare interface RollupPluginIstanbulOptions extends RollupFilterOptions {
+  instrumenter?: any;
   instrumenterConfig?: any;
 }
 
@@ -153,10 +154,7 @@ declare module 'rollup-plugin-ignore' {
 }
 
 declare interface RollupPluginNodeResolveOptions {
-  module?: boolean;
-  jsnext?: boolean;
-  main?: boolean;
-  browser?: boolean;
+  mainFields: Array<'module'|'jsnext'|'main'|'browser'>;
   extensions?: string[];
   preferBuiltins?: boolean;
   jail?: string;
@@ -188,7 +186,7 @@ declare module 'rollup-plugin-commonjs' {
 }
 
 declare enum RollupPluginTypescriptVerbosity {
-  Error = 1,
+  Error = 0,
   Warning,
   Info,
   Debug

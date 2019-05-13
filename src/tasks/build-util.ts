@@ -196,14 +196,17 @@ export const generateMinStyleSheet = async (
  * @param packerConfig  Packer configuration object.
  */
 export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
+  const mainFields = [ 'module', 'jsnext', 'main' ];
+  if (packerConfig.compiler.buildMode) {
+    mainFields.push('browser');
+  }
+
   const plugins = [
     rollupIgnore(packerConfig.ignore),
     rollupResolve(
       mergeDeep(
         {
-          module: true,
-          jsnext: true,
-          main: true,
+          mainFields,
           extensions: ['.mjs', '.js', '.jsx', '.json', '.node'],
           browser: packerConfig.compiler.buildMode === 'browser',
           preferBuiltins: true
