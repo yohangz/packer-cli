@@ -30,7 +30,7 @@ import { LogLevel } from '../model/log-level';
 import { mergeDeep, readFile, requireDependency, writeFile } from './util';
 import { PackageModuleType } from '../model/package-module-type';
 import { BabelConfig } from '../model/babel-config';
-import fileSize from 'fileSize';
+import fileSize from 'filesize';
 
 /**
  * Get distribution banner comment.
