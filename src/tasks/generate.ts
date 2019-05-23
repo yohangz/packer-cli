@@ -35,7 +35,7 @@ export default function init() {
     const log = logger.create('[generate]');
     try {
       log.trace('start');
-      const questions: Questions = [
+      const questions: Questions<PackerOptions> = [
         {
           message: 'Give us a small description about the library (optional)?',
           name: 'description',
@@ -55,10 +55,10 @@ export default function init() {
           message: "Author's email address (optional)?",
           name: 'email',
           type: 'input',
-          when: (answers) => {
-            return answers.author;
+          when: (answers: PackerOptions) => {
+            return !!answers.author;
           },
-          validate: (value) => {
+          validate: (value: string) => {
             return !value || isEmail(value) ? true : 'Value must be a valid email address';
           }
         },
@@ -66,7 +66,7 @@ export default function init() {
           message: "Author's github username (optional)?",
           name: 'githubUsername',
           type: 'input',
-          validate: (value) => {
+          validate: () => {
             return true; // todo: add GH username validation here
           }
         },
@@ -74,7 +74,7 @@ export default function init() {
           message: 'Library homepage link (optional)?',
           name: 'website',
           type: 'input',
-          validate: (value) => {
+          validate: (value: string) => {
             return !value || isUrl(value) ? true : 'Value must be a valid URL';
           }
         },
@@ -97,7 +97,7 @@ export default function init() {
           message: "What's the style pre processor you want to use?",
           name: 'stylePreprocessor',
           type: 'list',
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return answers.styleSupport;
           }
         },
@@ -106,7 +106,7 @@ export default function init() {
           message: 'Do you want to inline bundle styles within script?',
           name: 'bundleStyles',
           type: 'confirm',
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return answers.styleSupport;
           }
         },
@@ -121,7 +121,7 @@ export default function init() {
           message: 'Are you building a node CLI project?',
           name: 'cliProject',
           type: 'confirm',
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return !answers.browserCompliant;
           }
         },
@@ -130,7 +130,7 @@ export default function init() {
           message: 'Are you building a react library?',
           name: 'reactLib',
           type: 'confirm',
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return answers.browserCompliant;
           }
         },
@@ -140,10 +140,7 @@ export default function init() {
           message: "What's the build bundle format you want to use?",
           name: 'bundleFormat',
           type: 'list',
-          validate: (value) => {
-            return !!value || 'Bundle format is required';
-          },
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return answers.browserCompliant;
           }
         },
@@ -152,11 +149,11 @@ export default function init() {
           message: "What's the AMD id you want to use?",
           name: 'amdId',
           type: 'input',
-          validate: (value) => {
+          validate: (value: string) => {
             const matches = value.match(/^(?:[a-z]\d*(?:-[a-z])?)*$/i);
             return !!matches || "AMD id should only contain alphabetic characters, i.e: 'my-bundle'";
           },
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return answers.bundleFormat === 'umd' || answers.bundleFormat === 'amd';
           }
         },
@@ -165,11 +162,11 @@ export default function init() {
           message: "What's the library namespace you want to use?",
           name: 'namespace',
           type: 'input',
-          validate: (value) => {
+          validate: (value: string) => {
             const matches = value.match(/^(?:[a-z]\d*(?:\.[a-z])?)+$/i);
             return !!matches || "Namespace should be an object path, i.e: 'ys.nml.lib'";
           },
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return (
               answers.bundleFormat === 'umd' || answers.bundleFormat === 'iife' || answers.bundleFormat === 'system'
             );
@@ -181,7 +178,7 @@ export default function init() {
           message: 'Which unit test framework do you want to use?',
           name: 'testFramework',
           type: 'list',
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return answers.reactLib;
           }
         },
@@ -191,7 +188,7 @@ export default function init() {
           message: 'Which unit test framework do you want to use?',
           name: 'testFramework',
           type: 'list',
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return !answers.reactLib;
           }
         },
@@ -200,7 +197,7 @@ export default function init() {
           message: 'Do you want to use enzyme to test react components?',
           name: 'useEnzyme',
           type: 'confirm',
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return answers.reactLib;
           }
         },
@@ -210,7 +207,7 @@ export default function init() {
           message: 'Choose the test environment that will be used for testing?',
           name: 'testEnvironment',
           type: 'list',
-          when: (answers) => {
+          when: (answers: PackerOptions) => {
             return (
               answers.browserCompliant &&
               !answers.reactLib &&
@@ -239,10 +236,7 @@ export default function init() {
           default: 0,
           message: "What's the license you want to use?",
           name: 'license',
-          type: 'list',
-          validate: (value) => {
-            return !!value || 'License is required';
-          }
+          type: 'list'
         },
         {
           default: false,
