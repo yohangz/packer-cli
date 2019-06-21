@@ -10,7 +10,10 @@
             "targets": {
               "esmodules": false
             },
-            "useBuiltIns": "usage"
+            "useBuiltIns": "usage",
+            "corejs": {
+              "version": 3
+            }
           }
         ]{{#if reactLib}},
         [
@@ -21,7 +24,7 @@
         [
           "@babel/plugin-transform-runtime",
           {
-            "corejs": 2,
+            "corejs": 3,
             "helpers": true,
             "regenerator": true,
             "useESModules": false
@@ -51,7 +54,10 @@
             "targets": {
               "esmodules": false
             },
-            "useBuiltIns": "usage"
+            "useBuiltIns": "usage",
+            "corejs": {
+              "version": 3
+            }
           }
         ]{{#if reactLib}},
         [
@@ -62,7 +68,7 @@
         [
           "@babel/plugin-transform-runtime",
           {
-            "corejs": 2,
+            "corejs": 3,
             "helpers": true,
             "regenerator": true,
             "useESModules": false

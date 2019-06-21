@@ -85,7 +85,7 @@ export const buildPackageConfig = (
     private: false
   };
 
-  const dependencies = ['@babel/runtime-corejs2'];
+  const dependencies = ['@babel/runtime-corejs3', 'core-js'];
 
   const devDependencies = [
     '@babel/core',
