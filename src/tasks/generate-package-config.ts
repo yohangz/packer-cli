@@ -89,7 +89,6 @@ export const buildPackageConfig = (
 
   const devDependencies = [
     '@babel/core',
-    '@babel/polyfill',
     '@babel/preset-env',
     '@babel/register',
     '@babel/plugin-transform-runtime'
