@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import isEmail from 'validator/lib/isEmail';
 import isUrl from 'validator/lib/isURL';
 import npmValidate from 'validate-npm-package-name';
-import inquirer, { Questions } from 'inquirer';
+import inquirer, { QuestionCollection } from 'inquirer';
 
 import { args, runShellCommand } from './util';
 import logger from '../common/logger';
@@ -35,7 +35,7 @@ export default function init() {
     const log = logger.create('[generate]');
     try {
       log.trace('start');
-      const questions: Questions<PackerOptions> = [
+      const questions: QuestionCollection<PackerOptions> = [
         {
           message: 'Give us a small description about the library (optional)?',
           name: 'description',
