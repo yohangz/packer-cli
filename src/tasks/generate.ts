@@ -269,6 +269,8 @@ export default function init() {
       }
 
       const options: PackerOptions = await inquirer.prompt<PackerOptions>(questions);
+      options.bundleFormat = options.bundleFormat || 'cjs';
+
       const testEnvironment = parseTestEnvironment(options);
       const packageConfig = buildPackageConfig(options, testEnvironment, packageName);
       const scriptExt = parseScriptPreprocessorExtension(options.scriptPreprocessor);
