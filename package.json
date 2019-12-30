@@ -52,7 +52,7 @@
     "rollup-plugin-browsersync": "^1.0.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-filesize": "^6.2.0",
-    "rollup-plugin-hbs": "^1.2.5",
+    "rollup-plugin-hbs": "^1.2.6",
     "rollup-plugin-ignore": "^1.0.5",
     "rollup-plugin-ignore-import": "^1.3.0",
     "rollup-plugin-img": "^1.1.0",

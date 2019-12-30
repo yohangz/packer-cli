@@ -10090,6 +10090,11 @@ rollup-plugin-hbs@^1.2.5:
   resolved "https://registry.yarnpkg.com/rollup-plugin-hbs/-/rollup-plugin-hbs-1.2.5.tgz#0c1a9853345ad5677679d3c3690d9ba4546f0da1"
   integrity sha512-RoGNsO8DzUOJMB/yuH6AnoWIpx9/JoWPYtZeuNscp28ttwMOqx0wHb1GHyY3yDOGpObGOCLOxJwXuI7dAijtXA==
 
+rollup-plugin-hbs@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-hbs/-/rollup-plugin-hbs-1.2.6.tgz#5bbedbcb311f64e654f621fc295e8b2271ea2409"
+  integrity sha512-qtF1Fovc/+h/hgF6/Xx6Rt8NrEvcy5LKFJ1L/DHIGSNDJeTgS0lcF07clkiC1GC2MVnwPvxisQb9vEQUzvpmKQ==
+
 rollup-plugin-ignore-import@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/rollup-plugin-ignore-import/-/rollup-plugin-ignore-import-1.1.2.tgz#be8e0ba6cae6d38f9579fc32b0ae9ccf38ba7fb0"
