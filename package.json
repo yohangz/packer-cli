@@ -41,7 +41,7 @@
     "gulp-add": "^0.1.0",
     "gulp-chmod": "^3.0.0",
     "gulp-clean": "^0.4.0",
-    "handlebars": "^4.4.0",
+    "handlebars": "^4.5.3",
     "inquirer": "^7.0.0",
     "karma-rollup-preprocessor": "^7.0.2",
     "lodash": "^4.17.15",
