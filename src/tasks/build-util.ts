@@ -7,7 +7,7 @@ import get from 'lodash/get';
 
 import codeFrameColumns from '@babel/code-frame';
 
-import { OutputChunk, rollup, RollupOptions } from 'rollup';
+import { OutputChunk, OutputOptions, rollup, RollupOptions } from 'rollup';
 import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupPostCss from 'rollup-plugin-postcss';
 import rollupReplace from 'rollup-plugin-re';
@@ -418,7 +418,7 @@ export const generateBundle = async (
 
   if (minify) {
     log.trace('%s minified bundle build start', type);
-    const minFileDist = bundleConfig.output.file.replace('.js', '.min.js');
+    const minFileDist = (bundleConfig.output as OutputOptions).file.replace('.js', '.min.js');
     const minMapFileDist = minFileDist.concat('.map');
     const minFileName = path.basename(minFileDist);
     const minMapFileName = minFileName.concat('.map');
