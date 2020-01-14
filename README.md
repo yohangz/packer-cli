@@ -64,7 +64,6 @@
 Proceed with next steps if your platform meet following prerequisites. 
 
 - Install [Node.js](https://nodejs.org/en/) on your device. 
-- Optional: Run `npm install -g npx` to install [npx](https://www.npmjs.com/package/npx) globally.
 
 ## :mag_right: Basic Usage
 
