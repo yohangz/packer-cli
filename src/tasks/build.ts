@@ -26,6 +26,8 @@ import {
 } from './build-util';
 import { args, requireDependency } from './util';
 
+import * as TS from 'typescript';
+
 /**
  * Initialize build associated gulp tasks.
  */
@@ -226,9 +228,9 @@ export default function init() {
       const bundleFileName = `${packageConfig.name}.${packerConfig.bundle.format}.js`;
       const trackBuildPerformance = args.includes('--perf') || args.includes('-P');
 
-      let typescript = null;
+      let typescript: typeof TS = null;
       if (packerConfig.compiler.script.preprocessor === 'typescript') {
-        typescript = requireDependency('typescript', log);
+        typescript = requireDependency<typeof TS>('typescript', log);
       }
 
       // flat bundle.
