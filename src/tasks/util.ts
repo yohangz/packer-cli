@@ -116,10 +116,12 @@ export const readConfigFile = <T>(filePath: string): T => {
 /**
  * Merge objects deep.
  * @param object Base object.
- * @param sources Source objects to merge.
+ * @param source Source objects to merge.
  */
-export const mergeDeep = (object, ...sources) => {
-  return mergeWith(object, ...sources, (objValue, srcValue) => {
+export function mergeDeep<K, J>(object: K, source: J): K;
+export function mergeDeep<K, J>(object: K, ...source: J[]): K & J;
+export function mergeDeep(object: any, ...source: any[]): any {
+  return mergeWith(object, source, (objValue, srcValue) => {
     if (Array.isArray(objValue)) {
       if (Array.isArray(srcValue)) {
         return srcValue;
@@ -128,11 +130,11 @@ export const mergeDeep = (object, ...sources) => {
       return [];
     }
 
-    if (typeof objValue !== typeof sources) {
+    if (typeof objValue !== typeof srcValue) {
       return srcValue;
     }
   });
-};
+}
 
 /**
  * Watch source for changes and execute callback function
@@ -157,11 +159,11 @@ export const watchSource = async (watchPath: string | string[], callback: () => 
  * @param module Module name.
  * @param log Logger reference.
  */
-export const requireDependency = (module: string, log: Logger): any => {
+export function requireDependency<T extends any>(module: string, log: Logger): T {
   const requirePath = require.resolve(module, {
     paths: [path.join(process.cwd(), 'node_modules')]
   });
 
   log.trace("import '%s' module from '%s'", module, requirePath);
   return require(requirePath);
-};
+}

@@ -15,12 +15,14 @@ import { Logger } from '../common/logger';
 
 import { meta } from '../tasks/meta';
 
+import * as TS from 'typescript';
+
 /**
  * Get karma packer plugin
  */
 export const karmaPackerPlugin = (log: Logger) => {
   try {
-    const typescript = requireDependency('typescript', log);
+    const typescript = requireDependency<typeof TS>('typescript', log);
     const packerConfig = meta.readPackerConfig(log);
     const packageConfig = meta.readPackageData();
     const babelConfig = meta.readBabelConfig();

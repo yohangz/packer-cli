@@ -272,6 +272,7 @@ module.exports = {
       '@babel/**',
       'rollup',
       'rollup-plugin-*',
+      '@rollup/**',
       'karma-rollup-preprocessor',
       'chalk',
       'glob-to-regexp',

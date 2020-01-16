@@ -12,15 +12,15 @@ import rollupIgnoreImport from 'rollup-plugin-ignore-import';
 import rollupPostCss from 'rollup-plugin-postcss';
 import rollupReplace from 'rollup-plugin-re';
 import rollupIgnore from 'rollup-plugin-ignore';
-import rollupResolve from 'rollup-plugin-node-resolve';
-import rollupCommonjs from 'rollup-plugin-commonjs';
+import rollupResolve from '@rollup/plugin-node-resolve';
+import rollupCommonjs from '@rollup/plugin-commonjs';
+import rollupJson, { RollupJsonOptions } from '@rollup/plugin-json';
 import rollupTypescript from 'rollup-plugin-typescript2';
 import rollupBabel from 'rollup-plugin-babel';
 import rollupHandlebars from 'rollup-plugin-hbs';
 import rollupImage from 'rollup-plugin-img';
 import rollupFilesize from 'rollup-plugin-filesize';
 import rollupGlobals from 'rollup-plugin-node-globals';
-import rollupJson from 'rollup-plugin-json';
 
 import { meta } from './meta';
 import { PackageConfig } from '../model/package-config';
@@ -31,6 +31,8 @@ import { mergeDeep, readFile, requireDependency, writeFile } from './util';
 import { PackageModuleType } from '../model/package-module-type';
 import { BabelConfig } from '../model/babel-config';
 import fileSize from 'filesize';
+import cssnano from 'cssnano';
+import * as TS from 'typescript';
 
 /**
  * Get distribution banner comment.
@@ -149,7 +151,7 @@ export const generateMinStyleSheet = async (
     return;
   }
 
-  const nano = requireDependency('cssnano', log);
+  const nano = requireDependency<typeof cssnano>('cssnano', log);
 
   const srcPath = path.join(process.cwd(), packerConfig.dist, packerConfig.compiler.style.outDir);
   const srcFileName = `${packageConfig.name}.css`;
@@ -222,7 +224,7 @@ export const getDependencyResolvePlugins = (packerConfig: PackerConfig) => {
         packerConfig.compiler.advanced.rollup.pluginOptions.commonjs
       )
     ),
-    rollupJson(packerConfig.compiler.advanced.rollup.pluginOptions.json)
+    rollupJson(packerConfig.compiler.advanced.rollup.pluginOptions.json as RollupJsonOptions)
   ];
 
   // include global and builtin plugins only when browser build mode is enabled
@@ -249,7 +251,7 @@ export const getScriptBuildPlugin = (
   check: boolean,
   packerConfig: PackerConfig,
   babelConfig: BabelConfig,
-  typescript: any,
+  typescript: typeof TS,
   log: Logger
 ) => {
   const plugins = [];
@@ -403,7 +405,8 @@ export const generateBundle = async (
 ): Promise<void> => {
   log.trace('%s bundle build start', type);
   const bundle = await rollup(mergeDeep(bundleConfig, packerConfig.compiler.advanced.rollup.inputOptions));
-  const outputOptions = mergeDeep(bundleConfig.output, packerConfig.compiler.advanced.rollup.outputOptions);
+  const outputOptions = mergeDeep(bundleConfig.output as OutputOptions,
+    packerConfig.compiler.advanced.rollup.outputOptions);
   const { output } = await bundle.write(outputOptions);
   const chunks: OutputChunk[] = output.filter((chunk: any) => !chunk.isAsset) as OutputChunk[];
   const { map, code } = chunks[0];

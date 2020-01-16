@@ -2,7 +2,7 @@ import gulp from 'gulp';
 import merge from 'lodash/merge';
 import path from 'path';
 
-import { RollupWatchOptions, watch } from 'rollup';
+import { RollupWatcherEvent, RollupWatchOptions, watch } from 'rollup';
 import rollupBrowserSync from 'rollup-plugin-browsersync';
 
 import {
@@ -20,6 +20,8 @@ import { meta } from './meta';
 import { makeRelativeDirPath, mergeDeep, requireDependency } from './util';
 import logger from '../common/logger';
 
+import * as TS from 'typescript';
+
 /**
  * Initialize source watch associated gulp tasks.
  */
@@ -32,7 +34,7 @@ export default function init() {
   gulp.task('build:watch', async () => {
     const log = logger.create('[watch]');
     try {
-      const typescript = requireDependency('typescript', log);
+      const typescript = requireDependency<typeof TS>('typescript', log);
       const packerConfig = meta.readPackerConfig(log);
       const packageConfig = meta.readPackageData();
       const babelConfig = meta.readBabelConfig();
@@ -98,19 +100,22 @@ export default function init() {
       log.trace('rollup config:\n%o', watchConfig);
 
       const watcher = await watch([mergeDeep(watchConfig, packerConfig.compiler.advanced.rollup.watchOptions)]);
-      watcher.on('event', (event) => {
+      watcher.on('event', (event: RollupWatcherEvent) => {
         switch (event.code) {
           case 'START':
-            log.info('%s - %s', 'watch', 'bundling start');
+            log.info('watch - bundling start');
+            break;
+          case 'BUNDLE_START':
+            log.info('watch - bundle start');
+            break;
+          case 'BUNDLE_END':
+            log.info('watch - bundle end (%d)', event.duration);
             break;
           case 'END':
-            log.info('%s - %s', 'watch', 'bundling end');
+            log.info('watch - bundling end');
             break;
           case 'ERROR':
-            log.error('%s - %s\n%o', 'watch', 'bundling failure', event.error);
-            break;
-          case 'FATAL':
-            log.error('%s - %s\n%o', 'watch', 'bundling crashed', event);
+            log.error('watch - bundling failure\n%o', event.error);
             break;
         }
       });

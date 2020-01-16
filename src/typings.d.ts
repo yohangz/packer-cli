@@ -153,38 +153,6 @@ declare module 'rollup-plugin-ignore' {
   export default function(modules: string[]): Plugin;
 }
 
-declare interface RollupPluginNodeResolveOptions {
-  mainFields: Array<'module'|'jsnext'|'main'|'browser'>;
-  extensions?: string[];
-  preferBuiltins?: boolean;
-  jail?: string;
-  only?: string[];
-  modulesOnly?: boolean;
-  customResolveOptions?: {
-    moduleDirectory: string;
-  };
-}
-
-declare module 'rollup-plugin-node-resolve' {
-  import { Plugin } from 'rollup';
-  export default function(options?: RollupPluginNodeResolveOptions): Plugin;
-}
-
-declare interface RollupPluginCommonjsOptions extends RollupFilterOptions {
-  extensions?: string[];
-  ignoreGlobal?: boolean;
-  sourceMap?: boolean;
-  namedExports?: {
-    [key: string]: string[];
-  };
-  ignore?: string[];
-}
-
-declare module 'rollup-plugin-commonjs' {
-  import { Plugin } from 'rollup';
-  export default function(options?: RollupPluginCommonjsOptions): Plugin;
-}
-
 declare enum RollupPluginTypescriptVerbosity {
   Error = 0,
   Warning,
@@ -289,18 +257,6 @@ declare interface RollupPluginNodeGlobalOptions {
 declare module 'rollup-plugin-node-globals' {
   import { Plugin } from 'rollup';
   export default function(options?: RollupPluginNodeGlobalOptions): Plugin;
-}
-
-declare interface RollupPluginJsonOptions extends RollupFilterOptions {
-  preferConst?: boolean;
-  indent?: string;
-  compact?: boolean;
-  namedExports?: boolean;
-}
-
-declare module 'rollup-plugin-json' {
-  import { Plugin } from 'rollup';
-  export default function(options?: RollupPluginJsonOptions): Plugin;
 }
 
 declare module 'rollup-plugin-browsersync' {
