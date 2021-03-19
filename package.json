@@ -65,7 +65,7 @@
     "rollup-plugin-re": "^1.0.7",
     "rollup-plugin-typescript2": "^0.25.3",
     "rollup-pluginutils": "^2.8.2",
-    "schema-inspector": "^1.6.9",
+    "schema-inspector": "^2.0.0",
     "terser": "^4.5.1",
     "through2": "^3.0.1",
     "tslib": "^1.10.0",
