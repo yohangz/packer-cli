@@ -71,7 +71,7 @@
     "tslib": "^1.10.0",
     "typescript": "^3.7.5",
     "validate-npm-package-name": "^3.0.0",
-    "validator": "^12.1.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.7.6",
